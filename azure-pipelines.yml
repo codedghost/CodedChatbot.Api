@@ -26,7 +26,7 @@ steps:
 - task: DownloadSecureFile@1
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
-    secureFile: 'ProdApiArchConfig.json'
+    secureFile: 'ApiArchConfig.json'
 - task: CmdLine@2
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
   inputs:
@@ -34,7 +34,7 @@ steps:
 - task: CmdLine@2
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
-    script: 'cp $(Agent.TempDirectory)/ProdApiArchConfig.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
+    script: 'cp $(Agent.TempDirectory)/ApiArchConfig.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
 - task: DownloadSecureFile@1
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
   inputs:
