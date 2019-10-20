@@ -1,0 +1,47 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+name: 1.0.$(BuildID)
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '087f7b3b-2160-4d35-8fb9-36edb3d5651b'
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'DevApiArchConfig.json'
+- task: CmdLine@2
+  inputs:
+    script: 'cp DevApiArchConfig.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'devApiHosting.json'
+- task: CmdLine@2
+  inputs:
+    script: 'cp devApiHosting.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/hosting.json'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'CoreCodedChatbot.Api/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: ApiAppDrop copy'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: ApiAppDrop
