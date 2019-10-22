@@ -19,37 +19,21 @@ steps:
     feedsToUse: 'select'
     vstsFeed: '087f7b3b-2160-4d35-8fb9-36edb3d5651b'
 - task: DownloadSecureFile@1
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
-  inputs:
-    secureFile: 'DevApiArchConfig.json'
-- task: DownloadSecureFile@1
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
     secureFile: 'ApiArchConfig.json'
-- task: CmdLine@2
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
-  inputs:
-    script: 'cp $(Agent.TempDirectory)/DevApiArchConfig.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
 - task: CmdLine@2
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
     script: 'cp $(Agent.TempDirectory)/ApiArchConfig.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
 - task: DownloadSecureFile@1
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
-  inputs:
-    secureFile: 'devApiHosting.json'
-- task: DownloadSecureFile@1
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
     secureFile: 'prodApiHosting.json'
 - task: CmdLine@2
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
-  inputs:
-    script: 'cp $(Agent.TempDirectory)/devApiHosting.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
-- task: CmdLine@2
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
-    script: 'cp $(Agent.TempDirectory)/prodApiHosting.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
+    script: 'cp $(Agent.TempDirectory)/prodApiHosting.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/hosting.json'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
