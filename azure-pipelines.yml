@@ -23,14 +23,6 @@ steps:
 - task: DownloadSecureFile@1
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
-    secureFile: 'ApiArchConfig.json'
-- task: CmdLine@2
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
-    script: 'cp $(Agent.TempDirectory)/ApiArchConfig.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/config.json'
-- task: DownloadSecureFile@1
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
     secureFile: 'prodApiHosting.json'
 - task: CmdLine@2
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
@@ -40,12 +32,11 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     publishWebProjects: true
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    arguments: '--output $(build.artifactstagingdirectory)'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: ApiAppDrop copy'
   inputs:
