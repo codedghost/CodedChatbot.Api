@@ -8,6 +8,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.Api
@@ -21,13 +22,16 @@ namespace CoreCodedChatbot.Api
                 .AddJsonFile("hosting.json", optional: true)
                 .Build();
 
-            CreateWebHostBuilder(args, config).Run();
+            CreateHostBuilder(args, config).Run();
         }
 
-        public static IWebHost CreateWebHostBuilder(string[] args, IConfigurationRoot config) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
+        public static IHost CreateHostBuilder(string[] args, IConfigurationRoot config) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder.UseConfiguration(config)
+                        .UseStartup<Startup>();
+                })
                 .Build();
     }
 }

@@ -47,6 +47,13 @@ namespace CoreCodedChatbot.Api
 
             var secretService = services.BuildServiceProvider().GetService<ISecretService>();
 
+            services
+                .AddDbContextFactory()
+                .AddTwitchServices(configService, secretService)
+                .AddLibraryServices();
+
+            services.AddRouting();
+
             services.AddAuthentication(op =>
                 {
                     op.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,21 +76,14 @@ namespace CoreCodedChatbot.Api
 
             services.AddAuthorization(options =>
             {
-                var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
-                    JwtBearerDefaults.AuthenticationScheme);
-                defaultAuthorizationPolicyBuilder =
-                    defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
-                options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+                options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, builder =>
+                {
+                    builder.RequireAuthenticatedUser()
+                        .Build();
+                });
             });
 
-            services
-                .AddDbContextFactory()
-                .AddTwitchServices(configService, secretService)
-                .AddLibraryServices();
-
-            services.AddRouting();
-
-            services.AddMvc();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,10 +99,10 @@ namespace CoreCodedChatbot.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
