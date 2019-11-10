@@ -22,11 +22,6 @@ namespace CoreCodedChatbot.Api
                 .Build();
 
             CreateWebHostBuilder(args, config).Run();
-
-            using (var context = new ChatbotContext())
-            {
-                context.Database.Migrate();
-            }
         }
 
         public static IWebHost CreateWebHostBuilder(string[] args, IConfigurationRoot config) =>

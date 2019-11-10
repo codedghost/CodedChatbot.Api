@@ -1,6 +1,6 @@
 ﻿using System;
+using CoreCodedChatbot.ApiContract.RequestModels.GuessingGame;
 using CoreCodedChatbot.Library.Interfaces.Services;
-using CoreCodedChatbot.Library.Models.ApiRequest.GuessingGame;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult StartGuessingGame([FromBody] StartGuessingGameModel songInfo)
+        public IActionResult StartGuessingGame([FromBody] StartGuessingGameRequest songInfo)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult SubmitGuess([FromBody] SubmitGuessModel submitGuessModel)
+        public IActionResult SubmitGuess([FromBody] SubmitGuessRequest submitGuessModel)
         {
             if (_guessingGameService.UserGuess(submitGuessModel.Username, submitGuessModel.Guess))
                 return Ok();

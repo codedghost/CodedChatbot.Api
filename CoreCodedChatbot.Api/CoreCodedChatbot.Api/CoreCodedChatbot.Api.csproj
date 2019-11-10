@@ -5,24 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings.Local.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.Local.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CoreCodedChatbot.Config" Version="1.0.296" />
-    <PackageReference Include="CoreCodedChatbot.Library" Version="1.0.320" />
-    <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.317" />
+    <PackageReference Include="CoreCodedChatbot.Config" Version="1.0.345" />
+    <PackageReference Include="CoreCodedChatbot.Library" Version="1.0.357" />
+    <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.346" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
