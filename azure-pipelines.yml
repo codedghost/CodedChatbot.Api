@@ -35,7 +35,7 @@ steps:
     publishWebProjects: true
     arguments: '--output $(build.artifactstagingdirectory)'
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: ApiAppDrop copy'
+  displayName: 'Publish Artifact: ApiAppDrop'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
     ArtifactName: ApiAppDrop
