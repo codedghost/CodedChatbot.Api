@@ -16,17 +16,17 @@ namespace CoreCodedChatbot.Api
     {
         public static void Main(string[] args)
         {
-            using (var context = new ChatbotContext())
-            {
-                context.Database.Migrate();
-            }
-
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("hosting.json", optional: true)
                 .Build();
 
             CreateWebHostBuilder(args, config).Run();
+
+            using (var context = new ChatbotContext())
+            {
+                context.Database.Migrate();
+            }
         }
 
         public static IWebHost CreateWebHostBuilder(string[] args, IConfigurationRoot config) =>

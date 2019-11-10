@@ -9,7 +9,7 @@ using Microsoft.Rest;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
-    [Route("api/StreamStatus")]
+    [Route("StreamStatus/[action]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StreamStatusController : Controller
     {
