@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.Api
 
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hosting.json", optional: true)
+                .AddJsonFile("hosting.json", optional: false)
                 .Build();
 
             Console.Error.WriteLine($"{string.Join('\n', config.AsEnumerable().Select(pair => $"{pair.Key} - {pair.Value}"))}");
