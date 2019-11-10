@@ -1,4 +1,6 @@
-﻿using CoreCodedChatbot.Library.Models.Data;
+﻿using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Library.Models.Data;
+using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
 using TwitchLib.Api;
 using TwitchLib.Client;
@@ -8,15 +10,15 @@ namespace CoreCodedChatbot.Api
 {
     public static class Package
     {
-        public static IServiceCollection AddTwitchServices(this IServiceCollection services, ConfigModel config)
+        public static IServiceCollection AddTwitchServices(this IServiceCollection services, IConfigService configService, ISecretService secretService)
         {
             var api = new TwitchAPI();
-            api.Settings.AccessToken = config.ChatbotAccessToken;
+            api.Settings.AccessToken = secretService.GetSecret<string>("ChatbotAccessToken");
 
             // TODO: Remove the need for the playlist service to talk directly in chat when opening the playlist.
-            var creds = new ConnectionCredentials(config.ChatbotNick, config.ChatbotPass);
+            var creds = new ConnectionCredentials(configService.Get<string>("ChatbotNick"), secretService.GetSecret<string>("ChatbotPass"));
             var client = new TwitchClient();
-            client.Initialize(creds, config.StreamerChannel);
+            client.Initialize(creds, configService.Get<string>("StreamerChannel"));
             client.Connect();
 
             services.AddSingleton(api);

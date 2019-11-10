@@ -6,3 +6,6 @@
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/netcoreapp2.1
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/obj
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/config.json
+/CoreCodedChatbot.Api/.vs
+/CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/netcoreapp3.0
+/CoreCodedChatbot.Api/CoreCodedChatbot.Api/appsettings.Local.json

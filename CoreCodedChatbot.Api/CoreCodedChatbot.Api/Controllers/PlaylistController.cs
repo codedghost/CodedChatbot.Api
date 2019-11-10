@@ -1,7 +1,7 @@
 ﻿using System;
+using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
+using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.Library.Interfaces.Services;
-using CoreCodedChatbot.Library.Models.ApiRequest.Playlist;
-using CoreCodedChatbot.Library.Models.ApiResponse.Playlist;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult EditRequest([FromBody] EditSongRequest editSongRequest)
         {
-            var success = _playlistService.EditRequest(editSongRequest.username, editSongRequest.commandText, editSongRequest.isMod, 
+            var success = _playlistService.EditRequest(editSongRequest.Username, editSongRequest.CommandText, editSongRequest.IsMod, 
                 out string songRequestText, out bool syntaxError);
 
             if (success)
@@ -101,7 +101,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult RemoveRockRequests([FromBody] RemoveSongRequest removeSongRequest)
         {
-            if (_playlistService.RemoveRockRequests(removeSongRequest.username, removeSongRequest.commandText, removeSongRequest.isMod))
+            if (_playlistService.RemoveRockRequests(removeSongRequest.Username, removeSongRequest.CommandText, removeSongRequest.IsMod))
                 return Ok();
 
             return BadRequest();
@@ -110,7 +110,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult RemoveSuperVip([FromBody] RemoveSuperVipRequest requestModel)
         {
-            if (_playlistService.RemoveSuperRequest(requestModel.username)) return Ok();
+            if (_playlistService.RemoveSuperRequest(requestModel.Username)) return Ok();
 
             return BadRequest();
         }
@@ -118,7 +118,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult AddRequest([FromBody] AddSongRequest requestModel)
         {
-            var addRequestResult = _playlistService.AddRequest(requestModel.username, requestModel.commandText, requestModel.isVipRequest);
+            var addRequestResult = _playlistService.AddRequest(requestModel.Username, requestModel.CommandText, requestModel.IsVipRequest);
             return new JsonResult(new AddRequestResponse
             {
                 Result = addRequestResult.Item1,
@@ -129,7 +129,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
         {
-            var addSuperVipResult = _playlistService.AddSuperVipRequest(requestModel.username, requestModel.commandText);
+            var addSuperVipResult = _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText);
 
             return new JsonResult(new AddRequestResponse
             {
@@ -141,7 +141,7 @@ namespace CoreCodedChatbot.Api.Controllers
         public IActionResult EditSuperVipRequest([FromBody] EditSuperVipRequest requestModel)
         {
             var editSuperVipResult =
-                _playlistService.EditSuperVipRequest(requestModel.username, requestModel.commandText);
+                _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText);
 
             return new JsonResult(new EditRequestResponse
             {
@@ -153,7 +153,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult PromoteRequest([FromBody] PromoteSongRequest promoteSongRequest)
         {
-            return new JsonResult(_playlistService.PromoteRequest(promoteSongRequest.username));
+            return new JsonResult(_playlistService.PromoteRequest(promoteSongRequest.Username));
         }
 
         [HttpGet]

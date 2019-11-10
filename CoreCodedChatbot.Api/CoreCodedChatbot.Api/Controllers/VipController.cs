@@ -1,6 +1,6 @@
 ﻿using System;
+using CoreCodedChatbot.ApiContract.RequestModels.Vip;
 using CoreCodedChatbot.Library.Interfaces.Services;
-using CoreCodedChatbot.Library.Models.ApiRequest.Vip;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult GiftVip([FromBody] GiftVipModel giftVipModel)
+        public IActionResult GiftVip([FromBody] GiftVipRequest giftVipModel)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult ModGiveVip([FromBody] ModGiveVipModel modGiveVipModel)
+        public IActionResult ModGiveVip([FromBody] ModGiveVipRequest modGiveVipModel)
         {
             try
             {
