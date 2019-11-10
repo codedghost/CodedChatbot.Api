@@ -17,10 +17,14 @@ namespace CoreCodedChatbot.Api
     {
         public static void Main(string[] args)
         {
+            Console.Error.WriteLine($"{Directory.GetCurrentDirectory()}");
+
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hosting.json", optional: true)
+                .AddJsonFile("hosting.json", optional: false)
                 .Build();
+
+            Console.Error.WriteLine($"{string.Join('\n', config.AsEnumerable().Select(pair => $"{pair.Key} - {pair.Value}"))}");
 
             CreateHostBuilder(args, config).Run();
         }
@@ -29,8 +33,9 @@ namespace CoreCodedChatbot.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(builder =>
                 {
-                    builder.UseConfiguration(config)
-                        .UseStartup<Startup>();
+                    builder.UseUrls(config["server.urls"]);
+                    builder.PreferHostingUrls(true);
+                    builder.UseStartup<Startup>();
                 })
                 .Build();
     }
