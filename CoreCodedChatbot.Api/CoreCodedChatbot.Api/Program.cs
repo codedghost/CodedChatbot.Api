@@ -33,7 +33,7 @@ namespace CoreCodedChatbot.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(builder =>
                 {
-                    builder.UseConfiguration(config);
+                    builder.UseUrls(config["server.urls"]);
                     builder.PreferHostingUrls(true);
                     builder.UseStartup<Startup>();
                 })
