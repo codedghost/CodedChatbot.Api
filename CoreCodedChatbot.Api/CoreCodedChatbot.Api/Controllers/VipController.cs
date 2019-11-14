@@ -30,7 +30,7 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
-                Console.Out.Write($"{e} - {e.InnerException}");
+                _logger.LogError(e, "Error in GiftVip");
             }
 
             return BadRequest();
@@ -45,7 +45,7 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
-                Console.Error.Write($"ModGiveVIP\nException:\n{e}\nInner:\n{e.InnerException}");
+                _logger.LogError(e, "Error in ModGiveVip");
             }
 
             return BadRequest();

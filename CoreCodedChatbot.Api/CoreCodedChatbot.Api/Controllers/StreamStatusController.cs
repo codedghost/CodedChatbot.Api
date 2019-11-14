@@ -47,6 +47,7 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "Error in PutStreamStatus");
                 Console.Error.WriteLine($"Could not save stream status. Exception: {e} - {e.InnerException}");
             }
 
