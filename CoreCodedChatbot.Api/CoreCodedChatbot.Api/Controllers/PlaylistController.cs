@@ -5,6 +5,8 @@ using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -13,10 +15,12 @@ namespace CoreCodedChatbot.Api.Controllers
     public class PlaylistController : Controller
     {
         private readonly IPlaylistService _playlistService;
+        private readonly ILogger<PlaylistController> _logger;
 
-        public PlaylistController(IPlaylistService playlistService)
+        public PlaylistController(IPlaylistService playlistService, ILogger<PlaylistController> logger)
         {
             _playlistService = playlistService;
+            _logger = logger;
         }
 
         public IActionResult TestEndpoint()
@@ -82,6 +86,7 @@ namespace CoreCodedChatbot.Api.Controllers
 
         public IActionResult IsPlaylistOpen()
         {
+            _logger.LogWarning($"Test Logging in PlaylistController");
             return Json(_playlistService.GetPlaylistState());
         }
 

@@ -5,6 +5,7 @@ using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
 
 namespace CoreCodedChatbot.Api.Controllers
@@ -14,10 +15,15 @@ namespace CoreCodedChatbot.Api.Controllers
     public class StreamStatusController : Controller
     {
         private readonly IStreamStatusService _streamStatusService;
+        private readonly ILogger<StreamStatusController> _logger;
 
-        public StreamStatusController(IStreamStatusService streamStatusService)
+        public StreamStatusController(
+            IStreamStatusService streamStatusService,
+            ILogger<StreamStatusController> logger
+            )
         {
             _streamStatusService = streamStatusService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -41,6 +47,7 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "Error in PutStreamStatus");
                 Console.Error.WriteLine($"Could not save stream status. Exception: {e} - {e.InnerException}");
             }
 

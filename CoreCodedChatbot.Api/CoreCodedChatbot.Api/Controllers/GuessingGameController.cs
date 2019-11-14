@@ -4,6 +4,8 @@ using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.KeyVault.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -12,12 +14,17 @@ namespace CoreCodedChatbot.Api.Controllers
     public class GuessingGameController : Controller
     {
         private IGuessingGameService _guessingGameService;
+        private readonly ILogger<GuessingGameController> _logger;
 
         private object timerLock = new object();
 
-        public GuessingGameController(IGuessingGameService guessingGameService)
+        public GuessingGameController(
+            IGuessingGameService guessingGameService,
+            ILogger<GuessingGameController> logger
+            )
         {
             _guessingGameService = guessingGameService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -39,7 +46,8 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"{e} - {e.InnerException}");
+
+                _logger.LogError(e, "Error in StartGuessingGame");
                 return BadRequest();
             }
         }
