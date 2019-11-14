@@ -10,6 +10,7 @@ using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Library;
 using CoreCodedChatbot.Library.Interfaces.Services;
 using CoreCodedChatbot.Library.Services;
+using CoreCodedChatbot.Logging;
 using CoreCodedChatbot.Secrets;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,6 +50,7 @@ namespace CoreCodedChatbot.Api
 
             services
                 .AddDbContextFactory()
+                .AddChatbotNLog(secretService)
                 .AddTwitchServices(configService, secretService)
                 .AddLibraryServices();
 
@@ -93,6 +95,8 @@ namespace CoreCodedChatbot.Api
             {
                 context.Database.Migrate();
             }
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             if (env.IsDevelopment())
             {

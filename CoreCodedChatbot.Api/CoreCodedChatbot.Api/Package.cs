@@ -2,6 +2,12 @@
 using CoreCodedChatbot.Library.Models.Data;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Common;
+using NLog.Config;
+using NLog.Layouts;
+using NLog.Targets;
+using NLog.Web;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;

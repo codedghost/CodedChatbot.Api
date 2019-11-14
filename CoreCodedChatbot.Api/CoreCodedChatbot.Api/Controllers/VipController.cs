@@ -4,6 +4,7 @@ using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -12,10 +13,12 @@ namespace CoreCodedChatbot.Api.Controllers
     public class VipController : Controller
     {
         private IVipService _vipService;
+        private readonly ILogger<VipController> _logger;
 
-        public VipController(IVipService vipService)
+        public VipController(IVipService vipService, ILogger<VipController> logger)
         {
             _vipService = vipService;
+            _logger = logger;
         }
 
         [HttpPost]
