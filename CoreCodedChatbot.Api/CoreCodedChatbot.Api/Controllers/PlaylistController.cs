@@ -2,9 +2,11 @@
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.Library.Interfaces.Services;
+using CoreCodedChatbot.Library.Models.View;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Logging;
 using NLog;
 
@@ -86,7 +88,6 @@ namespace CoreCodedChatbot.Api.Controllers
 
         public IActionResult IsPlaylistOpen()
         {
-            _logger.LogWarning($"Test Logging in PlaylistController");
             return Json(_playlistService.GetPlaylistState());
         }
 
@@ -169,10 +170,199 @@ namespace CoreCodedChatbot.Api.Controllers
                 _playlistService.ClearRockRequests();
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError(e, "Error in ClearRequests");
                 return BadRequest();
             }
+        }
+
+        [HttpGet]
+        public IActionResult GetAllSongs()
+        {
+            try
+            {
+                return new JsonResult(_playlistService.GetAllSongs());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetAllSongs");
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetRequestById(int songId)
+        {
+            try
+            {
+                var request = _playlistService.GetRequestById(songId);
+
+                var responseModel = new GetRequestByIdResponse
+                {
+                    Request = request
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetRequestById", songId);
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult ArchiveRequestById(int songId)
+        {
+            try
+            {
+                var result = _playlistService.ArchiveRequestById(songId);
+
+                return new JsonResult(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in ArchiveRequestById", songId);
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult ArchiveCurrentRequest(int songId)
+        {
+            try
+            {
+                _playlistService.ArchiveCurrentRequest(songId);
+
+                return new JsonResult(true);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in ArchiveCurrentRequest", songId);
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
+        {
+            try
+            {
+                var requestSongViewModel = new RequestSongViewModel
+                {
+                    Title = addWebSongRequest.Title,
+                    Artist = addWebSongRequest.Artist,
+                    SelectedInstrument = addWebSongRequest.SelectedInstrument,
+                    IsVip = addWebSongRequest.IsVip,
+                    IsSuperVip = addWebSongRequest.IsSuperVip
+                };
+
+                var result = _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username);
+
+                var responseModel = new AddRequestResponse
+                {
+                    Result = result,
+                    PlaylistPosition = 0
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in AddWebRequest", addWebSongRequest);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetMaxUserRequests()
+        {
+            try
+            {
+                var result = _playlistService.GetMaxUserRequests();
+
+                var responseModel = new MaxUserRequestsResponse
+                {
+                    MaxRequests = result
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetMaxUserRequests");
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EditWebRequest([FromBody] EditWebRequestRequestModel editWebRequestRequestModel)
+        {
+            try
+            {
+                var requestSongViewModel = new RequestSongViewModel
+                {
+                    SongRequestId = editWebRequestRequestModel.SongRequestId,
+                    Title = editWebRequestRequestModel.Title,
+                    Artist = editWebRequestRequestModel.Artist,
+                    SelectedInstrument = editWebRequestRequestModel.SelectedInstrument
+                };
+
+                var result = _playlistService.EditWebRequest(requestSongViewModel, editWebRequestRequestModel.Username, editWebRequestRequestModel.IsMod);
+
+                // Need a new EditWebRequestResponse model to hold the edit result enum
+                var responseModel = new EditWebRequestResponse
+                {
+                    EditResult = result
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in EditWebRequest", editWebRequestRequestModel);
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult PromoteWebRequest([FromBody] PromoteWebRequestRequestModel promoteWebRequestRequestModel)
+        {
+            try
+            {
+                var result = _playlistService.PromoteWebRequest(promoteWebRequestRequestModel.SongRequestId,
+                    promoteWebRequestRequestModel.Username);
+
+                var responseModel = new PromoteWebRequestResponseModel
+                {
+                    Result = result
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in PromoteWebRequest", promoteWebRequestRequestModel);
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddRequestToDrive([FromBody] AddSongToDriveRequest addSongToDriveRequest)
+        {
+            try
+            {
+                var result = _playlistService.AddSongToDrive(addSongToDriveRequest.SongRequestId);
+
+                if (result) return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in AddRequestToDrive", addSongToDriveRequest);
+            }
+
+            return BadRequest();
         }
     }
 }
