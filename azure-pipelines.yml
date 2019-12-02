@@ -33,7 +33,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: true
-    arguments: '--output $(build.artifactstagingdirectory)'
+    arguments: '--output $(build.artifactstagingdirectory) -r linux-x64'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: ApiAppDrop'
   inputs:
