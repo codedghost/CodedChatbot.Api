@@ -10,3 +10,5 @@
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/netcoreapp3.0
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/appsettings.Local.json
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api.sln.DotSettings.user
+/.vs
+/CoreCodedChatbot.Api/CoreCodedChatbot.Api/CoreCodedChatbot.Api.csproj.user
