@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Interfaces.Queries;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
+using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,11 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             var workItem = await _getWorkItemByIdQuery.Get(id);
 
-            return Json(workItem);
+            var response = new GetWorkItemByIdResponse
+            {
+                DevOpsWorkItem = workItem
+            };
+            return Json(response);
         }
 
         [HttpGet]
