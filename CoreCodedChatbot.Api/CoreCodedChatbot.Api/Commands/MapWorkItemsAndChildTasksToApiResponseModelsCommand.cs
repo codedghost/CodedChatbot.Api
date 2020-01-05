@@ -25,6 +25,7 @@ namespace CoreCodedChatbot.Api.Commands
                 case "Product Backlog Item":
                     return new DevOpsProductBacklogItem
                     {
+                        Id = parentWorkItem.Id ?? 0,
                         Title = parentWorkItem.Title(),
                         State = parentWorkItem.State(),
                         AssignedTo = parentWorkItem.AssignedTo(),
@@ -35,6 +36,7 @@ namespace CoreCodedChatbot.Api.Commands
                 case "Bug":
                     return new DevOpsBug
                     {
+                        Id = parentWorkItem.Id ?? 0,
                         Title = parentWorkItem.Title(),
                         State = parentWorkItem.State(),
                         AssignedTo = parentWorkItem.AssignedTo(),
