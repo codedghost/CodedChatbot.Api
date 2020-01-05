@@ -43,12 +43,14 @@ namespace CoreCodedChatbot.Api
         {
             services.AddTransient<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
             services.AddTransient<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
+            services.AddTransient<IRaiseBugQuery, RaiseBugQuery>();
 
             return services;
         }
 
         public static IServiceCollection AddApiCommands(this IServiceCollection services)
         {
+            services.AddTransient<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
             services.AddTransient<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
             services.AddTransient<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
             services.AddTransient<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
