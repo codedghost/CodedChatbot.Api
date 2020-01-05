@@ -1,31 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Library;
-using CoreCodedChatbot.Library.Interfaces.Services;
-using CoreCodedChatbot.Library.Services;
 using CoreCodedChatbot.Logging;
 using CoreCodedChatbot.Secrets;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using TwitchLib.Api;
-using TwitchLib.Client;
-using TwitchLib.Client.Models;
+using Newtonsoft.Json;
 
 namespace CoreCodedChatbot.Api
 {
@@ -52,7 +40,11 @@ namespace CoreCodedChatbot.Api
                 .AddDbContextFactory()
                 .AddChatbotNLog(secretService)
                 .AddTwitchServices(configService, secretService)
-                .AddLibraryServices();
+                .AddLibraryServices()
+                .AddApiServices()
+                .AddApiQueries()
+                .AddApiCommands()
+                .AddApiRepositories();
 
             services.AddRouting();
 
@@ -85,7 +77,8 @@ namespace CoreCodedChatbot.Api
                 });
             });
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(x =>
+                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,7 +91,7 @@ namespace CoreCodedChatbot.Api
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.IsEnvironment("Local"))
             {
                 app.UseDeveloperExceptionPage();
             }

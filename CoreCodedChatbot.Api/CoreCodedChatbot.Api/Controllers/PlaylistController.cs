@@ -6,9 +6,7 @@ using CoreCodedChatbot.Library.Models.View;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Logging;
-using NLog;
 
 namespace CoreCodedChatbot.Api.Controllers
 {

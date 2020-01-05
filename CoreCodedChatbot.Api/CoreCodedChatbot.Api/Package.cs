@@ -1,13 +1,12 @@
-﻿using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Library.Models.Data;
+﻿using CoreCodedChatbot.Api.Commands;
+using CoreCodedChatbot.Api.Interfaces.Commands;
+using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.Api.Queries;
+using CoreCodedChatbot.Api.Services;
+using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using NLog.Common;
-using NLog.Config;
-using NLog.Layouts;
-using NLog.Targets;
-using NLog.Web;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
@@ -29,6 +28,36 @@ namespace CoreCodedChatbot.Api
 
             services.AddSingleton(api);
             services.AddSingleton(client);
+
+            return services;
+        }
+
+        public static IServiceCollection AddApiServices(this IServiceCollection services)
+        {
+            services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddApiQueries(this IServiceCollection services)
+        {
+            services.AddTransient<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
+            services.AddTransient<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddApiCommands(this IServiceCollection services)
+        {
+            services.AddTransient<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
+            services.AddTransient<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
+            services.AddTransient<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddApiRepositories(this IServiceCollection services)
+        {
 
             return services;
         }
