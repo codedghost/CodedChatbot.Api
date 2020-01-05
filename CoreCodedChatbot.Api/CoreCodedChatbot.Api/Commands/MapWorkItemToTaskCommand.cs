@@ -14,6 +14,7 @@ namespace CoreCodedChatbot.Api.Commands
 
             return new DevOpsTask
             {
+                Id = childWorkItem.Id ?? 0,
                 Title = childWorkItem.Title(),
                 Description = childWorkItem.Description(),
                 AssignedTo = childWorkItem.AssignedTo(),

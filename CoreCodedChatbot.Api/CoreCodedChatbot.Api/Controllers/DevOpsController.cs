@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +14,19 @@ namespace CoreCodedChatbot.Api.Controllers
     {
         private readonly IGetAllCurrentWorkItemsQuery _getAllCurrentWorkItemsQuery;
         private readonly IGetWorkItemByIdQuery _getWorkItemByIdQuery;
+        private readonly IRaiseBugQuery _raiseBugQuery;
         private readonly ILogger<DevOpsController> _logger;
 
         public DevOpsController(
             IGetAllCurrentWorkItemsQuery getAllCurrentWorkItemsQuery,
             IGetWorkItemByIdQuery getWorkItemByIdQuery,
+            IRaiseBugQuery raiseBugQuery,
             ILogger<DevOpsController> logger
             )
         {
             _getAllCurrentWorkItemsQuery = getAllCurrentWorkItemsQuery;
             _getWorkItemByIdQuery = getWorkItemByIdQuery;
+            _raiseBugQuery = raiseBugQuery;
 
             _logger = logger;
         }
@@ -41,6 +45,24 @@ namespace CoreCodedChatbot.Api.Controllers
             var workItems = await _getAllCurrentWorkItemsQuery.Get();
 
             return Json(workItems);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> RaiseBug([FromBody] RaiseBugRequest raiseBugRequest)
+        {
+            if (raiseBugRequest == null ||
+                string.IsNullOrWhiteSpace(raiseBugRequest.TwitchUsername) ||
+                raiseBugRequest.BugInfo == null ||
+                string.IsNullOrWhiteSpace(raiseBugRequest.BugInfo.Title))
+            {
+                _logger.LogError("RaiseBugRequest received with an invalid request", raiseBugRequest);
+
+                return BadRequest();
+            }
+
+            var success = await _raiseBugQuery.Raise(raiseBugRequest.TwitchUsername, raiseBugRequest.BugInfo);
+
+            return Json(success);
         }
     }
 }

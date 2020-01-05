@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreCodedChatbot.Api.Interfaces.Commands;
 using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.Logging;
@@ -10,22 +12,26 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace CoreCodedChatbot.Api.Services
 {
     public class AzureDevOpsService : IAzureDevOpsService
     {
         private readonly IConfigService _configService;
+        private readonly ICreateJsonPatchDocumentFromBugRequestCommand _createJsonPatchDocumentFromBugRequestCommand;
         private readonly ILogger<AzureDevOpsService> _logger;
         private readonly WorkItemTrackingHttpClient _workItemTrackingClient;
 
         public AzureDevOpsService(
             ISecretService secretService,
             IConfigService configService,
+            ICreateJsonPatchDocumentFromBugRequestCommand createJsonPatchDocumentFromBugRequestCommand,
             ILogger<AzureDevOpsService> logger
         )
         {
             _configService = configService;
+            _createJsonPatchDocumentFromBugRequestCommand = createJsonPatchDocumentFromBugRequestCommand;
             _logger = logger;
             var vssConnection = new VssConnection(
                 new Uri(secretService.GetSecret<string>("DevOpsChatbotCollectionUrl")),
@@ -105,6 +111,24 @@ namespace CoreCodedChatbot.Api.Services
         {
             var workItem = await _workItemTrackingClient.GetWorkItemAsync(id);
             return workItem;
+        }
+
+        public async Task<bool> RaiseBugInBacklog(string twitchUsername, DevOpsBug bugInfo)
+        {
+            try
+            {
+                var jsonPatch = _createJsonPatchDocumentFromBugRequestCommand.Create(twitchUsername, bugInfo);
+
+                await _workItemTrackingClient.CreateWorkItemAsync(jsonPatch, _configService.Get<string>("DevOpsProjectName"), "Bug");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,
+                    $"Could not raise bug: {twitchUsername}, {bugInfo.Title}, {bugInfo.ReproSteps}, {bugInfo.AcceptanceCriteria}, {bugInfo.SystemInfo}");
+                return false;
+            }
         }
     }
 }
