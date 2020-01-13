@@ -1,11 +1,14 @@
 ﻿using System.Threading.Tasks;
+using CoreCodedChatbot.Api.Extensions;
 using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.Api.Queries;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -14,18 +17,21 @@ namespace CoreCodedChatbot.Api.Controllers
     public class DevOpsController : Controller
     {
         private readonly IGetAllCurrentWorkItemsQuery _getAllCurrentWorkItemsQuery;
+        private readonly IGetAllBacklogWorkItemsQuery _getAllBacklogWorkItemsQuery;
         private readonly IGetWorkItemByIdQuery _getWorkItemByIdQuery;
         private readonly IRaiseBugQuery _raiseBugQuery;
         private readonly ILogger<DevOpsController> _logger;
 
         public DevOpsController(
             IGetAllCurrentWorkItemsQuery getAllCurrentWorkItemsQuery,
+            IGetAllBacklogWorkItemsQuery getAllBacklogWorkItemsQuery,
             IGetWorkItemByIdQuery getWorkItemByIdQuery,
             IRaiseBugQuery raiseBugQuery,
             ILogger<DevOpsController> logger
             )
         {
             _getAllCurrentWorkItemsQuery = getAllCurrentWorkItemsQuery;
+            _getAllBacklogWorkItemsQuery = getAllBacklogWorkItemsQuery;
             _getWorkItemByIdQuery = getWorkItemByIdQuery;
             _raiseBugQuery = raiseBugQuery;
 
@@ -41,7 +47,7 @@ namespace CoreCodedChatbot.Api.Controllers
             {
                 DevOpsWorkItem = workItem
             };
-            return Json(response);
+            return Json(response, GetJsonSerializerSettings.Get());
         }
 
         [HttpGet]
@@ -49,7 +55,15 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             var workItems = await _getAllCurrentWorkItemsQuery.Get();
 
-            return Json(workItems);
+            return Json(workItems, GetJsonSerializerSettings.Get());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBacklogWorkItems()
+        {
+            var workItems = await _getAllBacklogWorkItemsQuery.Get();
+
+            return Json(workItems, GetJsonSerializerSettings.Get());
         }
 
         [HttpPut]
@@ -67,7 +81,7 @@ namespace CoreCodedChatbot.Api.Controllers
 
             var success = await _raiseBugQuery.Raise(raiseBugRequest.TwitchUsername, raiseBugRequest.BugInfo);
 
-            return Json(success);
+            return Json(success, GetJsonSerializerSettings.Get());
         }
     }
 }

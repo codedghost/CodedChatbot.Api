@@ -41,19 +41,21 @@ namespace CoreCodedChatbot.Api
 
         public static IServiceCollection AddApiQueries(this IServiceCollection services)
         {
-            services.AddTransient<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
-            services.AddTransient<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
-            services.AddTransient<IRaiseBugQuery, RaiseBugQuery>();
+            services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
+            services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
+            services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
+            services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
+            services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
 
             return services;
         }
 
         public static IServiceCollection AddApiCommands(this IServiceCollection services)
         {
-            services.AddTransient<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
-            services.AddTransient<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
-            services.AddTransient<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
-            services.AddTransient<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
+            services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
+            services.AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
+            services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
+            services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
 
             return services;
         }

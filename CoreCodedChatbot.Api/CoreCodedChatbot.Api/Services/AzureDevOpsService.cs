@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Interfaces.Commands;
 using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.Api.Queries;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
@@ -20,6 +21,7 @@ namespace CoreCodedChatbot.Api.Services
     {
         private readonly IConfigService _configService;
         private readonly ICreateJsonPatchDocumentFromBugRequestCommand _createJsonPatchDocumentFromBugRequestCommand;
+        private readonly IGetDevOpsWorkItemIdsFromQueryId _getDevOpsWorkItemIdsFromQueryId;
         private readonly ILogger<AzureDevOpsService> _logger;
         private readonly WorkItemTrackingHttpClient _workItemTrackingClient;
 
@@ -27,11 +29,13 @@ namespace CoreCodedChatbot.Api.Services
             ISecretService secretService,
             IConfigService configService,
             ICreateJsonPatchDocumentFromBugRequestCommand createJsonPatchDocumentFromBugRequestCommand,
+            IGetDevOpsWorkItemIdsFromQueryId getDevOpsWorkItemIdsFromQueryId,
             ILogger<AzureDevOpsService> logger
         )
         {
             _configService = configService;
             _createJsonPatchDocumentFromBugRequestCommand = createJsonPatchDocumentFromBugRequestCommand;
+            _getDevOpsWorkItemIdsFromQueryId = getDevOpsWorkItemIdsFromQueryId;
             _logger = logger;
             var vssConnection = new VssConnection(
                 new Uri(secretService.GetSecret<string>("DevOpsChatbotCollectionUrl")),
@@ -44,22 +48,11 @@ namespace CoreCodedChatbot.Api.Services
         {
             var currentIterationPbisQueryId = Guid.Parse(_configService.Get<string>("DevOpsCurrentPBIsQueryId"));
 
-            List<int> pbiIds;
+            var pbiIds =
+                await _getDevOpsWorkItemIdsFromQueryId.Get(_workItemTrackingClient, currentIterationPbisQueryId);
 
-            try
-            {
-                var pbiQueryResult = await _workItemTrackingClient.QueryByIdAsync(currentIterationPbisQueryId);
-
-                if (pbiQueryResult == null || !pbiQueryResult.WorkItems.Any())
-                    return new List<WorkItem>();
-
-                pbiIds = pbiQueryResult.WorkItems.Select(wi => wi.Id).ToList();
-            }
-            catch (VssServiceException e)
-            {
-                _logger.LogError(e, $"Could not load the Current Iteration PBI Query: {currentIterationPbisQueryId}");
-                return null;
-            }
+            if (pbiIds == null || !pbiIds.Any())
+                return new List<WorkItem>();
 
             try
             {
@@ -69,8 +62,31 @@ namespace CoreCodedChatbot.Api.Services
             }
             catch (VssServiceException e)
             {
-                _logger.LogError(e, "Could not get the PBIs found by the Query");
-                return null;
+                _logger.LogError(e, "Could not get the PBIs found by the Current Iteration Query");
+                return new List<WorkItem>();
+            }
+        }
+
+        public async Task<List<WorkItem>> GetBacklogWorkItems()
+        {
+            var backlogItemsQueryId = Guid.Parse(_configService.Get<string>("DevOpsBacklogPBIsQueryId"));
+
+            var itemIds = await _getDevOpsWorkItemIdsFromQueryId.Get(_workItemTrackingClient, backlogItemsQueryId);
+
+            if (itemIds == null || !itemIds.Any())
+                return new List<WorkItem>();
+
+            try
+            {
+                var workItems =
+                    await _workItemTrackingClient.GetWorkItemsAsync(itemIds, expand: WorkItemExpand.Relations);
+
+                return workItems ?? new List<WorkItem>();
+            }
+            catch (VssServiceException e)
+            {
+                _logger.LogError(e, "Could not get the PBIs found by the Backlog Query");
+                return new List<WorkItem>();
             }
         }
 
