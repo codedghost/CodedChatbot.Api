@@ -1,8 +1,10 @@
 ﻿using CoreCodedChatbot.Api.Commands;
 using CoreCodedChatbot.Api.Interfaces.Commands;
 using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.Api.Interfaces.Repositories;
 using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.Api.Queries;
+using CoreCodedChatbot.Api.Repositories;
 using CoreCodedChatbot.Api.Services;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
@@ -46,6 +48,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
             services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
             services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
+            services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
 
             return services;
         }
@@ -62,6 +65,8 @@ namespace CoreCodedChatbot.Api
 
         public static IServiceCollection AddApiRepositories(this IServiceCollection services)
         {
+            services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
+            services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
 
             return services;
         }

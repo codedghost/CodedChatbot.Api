@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Interfaces.Commands;
+using CoreCodedChatbot.Api.Interfaces.Queries;
 using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 

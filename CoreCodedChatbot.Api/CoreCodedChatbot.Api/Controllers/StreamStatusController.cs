@@ -1,7 +1,8 @@
 ﻿using System;
+using CoreCodedChatbot.Api.Commands;
+using CoreCodedChatbot.Api.Interfaces.Queries;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using CoreCodedChatbot.ApiContract.ResponseModels.StreamStatus;
-using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,22 +14,25 @@ namespace CoreCodedChatbot.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StreamStatusController : Controller
     {
-        private readonly IStreamStatusService _streamStatusService;
+        private readonly IGetStreamStatusQuery _getStreamStatusQuery;
+        private readonly ISaveStreamStatusCommand _saveStreamStatusCommand;
         private readonly ILogger<StreamStatusController> _logger;
 
         public StreamStatusController(
-            IStreamStatusService streamStatusService,
+            IGetStreamStatusQuery getStreamStatusQuery,
+            ISaveStreamStatusCommand saveStreamStatusCommand,
             ILogger<StreamStatusController> logger
             )
         {
-            _streamStatusService = streamStatusService;
+            _getStreamStatusQuery = getStreamStatusQuery;
+            _saveStreamStatusCommand = saveStreamStatusCommand;
             _logger = logger;
         }
 
         [HttpGet]
         public IActionResult GetStreamStatus(string broadcasterUsername)
         {
-            var isStreamOnline = _streamStatusService.GetStreamStatus(broadcasterUsername);
+            var isStreamOnline = _getStreamStatusQuery.Get(broadcasterUsername);
 
             return new JsonResult(new GetStreamStatusResponse
             {
@@ -41,7 +45,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                if (_streamStatusService.SaveStreamStatus(streamStatusRequest))
+                if (_saveStreamStatusCommand.Save(streamStatusRequest))
                     return Ok();
             }
             catch (Exception e)

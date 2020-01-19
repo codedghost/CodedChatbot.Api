@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 
-namespace CoreCodedChatbot.Api.Queries
+namespace CoreCodedChatbot.Api.Interfaces.Queries
 {
     public interface IGetAllBacklogWorkItemsQuery
     {
