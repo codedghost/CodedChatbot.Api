@@ -59,6 +59,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
             services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
+            services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
             return services;
         }
