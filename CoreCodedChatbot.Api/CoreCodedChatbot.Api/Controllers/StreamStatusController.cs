@@ -1,5 +1,5 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Commands;
+using CoreCodedChatbot.Api.Interfaces.Commands;
 using CoreCodedChatbot.Api.Interfaces.Queries;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using CoreCodedChatbot.ApiContract.ResponseModels.StreamStatus;

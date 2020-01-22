@@ -37,6 +37,7 @@ namespace CoreCodedChatbot.Api
         public static IServiceCollection AddApiServices(this IServiceCollection services)
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
+            services.AddSingleton<ISignalRService, SignalRService>();
 
             return services;
         }
