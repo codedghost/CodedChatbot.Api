@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreCodedChatbot.Api.Interfaces.Commands;
-using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.Api.Interfaces.Commands.AzureDevOps;
+using CoreCodedChatbot.Api.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.Api.Interfaces.Services;
-using CoreCodedChatbot.Api.Queries;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
@@ -14,7 +13,6 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
-using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace CoreCodedChatbot.Api.Services
 {

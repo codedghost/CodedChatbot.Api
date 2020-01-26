@@ -1,14 +1,12 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Extensions;
-using CoreCodedChatbot.Api.Interfaces.Queries;
-using CoreCodedChatbot.Api.Queries;
+using CoreCodedChatbot.Api.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace CoreCodedChatbot.Api.Controllers
 {

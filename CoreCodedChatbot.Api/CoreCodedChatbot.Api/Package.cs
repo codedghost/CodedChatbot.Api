@@ -1,10 +1,24 @@
-﻿using CoreCodedChatbot.Api.Commands;
-using CoreCodedChatbot.Api.Interfaces.Commands;
-using CoreCodedChatbot.Api.Interfaces.Queries;
-using CoreCodedChatbot.Api.Interfaces.Repositories;
+﻿using CoreCodedChatbot.Api.Commands.AzureDevOps;
+using CoreCodedChatbot.Api.Commands.GuessingGame;
+using CoreCodedChatbot.Api.Commands.StreamStatus;
+using CoreCodedChatbot.Api.Interfaces.Commands.AzureDevOps;
+using CoreCodedChatbot.Api.Interfaces.Commands.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Commands.StreamStatus;
+using CoreCodedChatbot.Api.Interfaces.Queries.AzureDevOps;
+using CoreCodedChatbot.Api.Interfaces.Queries.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Queries.StreamStatus;
+using CoreCodedChatbot.Api.Interfaces.Repositories.Bytes;
+using CoreCodedChatbot.Api.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Repositories.Settings;
+using CoreCodedChatbot.Api.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.Api.Interfaces.Services;
-using CoreCodedChatbot.Api.Queries;
-using CoreCodedChatbot.Api.Repositories;
+using CoreCodedChatbot.Api.Queries.AzureDevOps;
+using CoreCodedChatbot.Api.Queries.GuessingGame;
+using CoreCodedChatbot.Api.Queries.StreamStatus;
+using CoreCodedChatbot.Api.Repositories.Bytes;
+using CoreCodedChatbot.Api.Repositories.GuessingGame;
+using CoreCodedChatbot.Api.Repositories.Settings;
+using CoreCodedChatbot.Api.Repositories.StreamStatus;
 using CoreCodedChatbot.Api.Services;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
@@ -38,17 +52,25 @@ namespace CoreCodedChatbot.Api
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<ISignalRService, SignalRService>();
+            services.AddSingleton<IGuessingGameService, GuessingGameService>();
 
             return services;
         }
 
         public static IServiceCollection AddApiQueries(this IServiceCollection services)
         {
+            // DevOps
             services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
             services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
             services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
             services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
             services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
+
+            // Guessing Game
+            services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
+            services.AddSingleton<IGetPotentialWinnersQuery, GetPotentialWinnersQuery>();
+
+            // Stream Status
             services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
 
             return services;
@@ -56,10 +78,19 @@ namespace CoreCodedChatbot.Api
 
         public static IServiceCollection AddApiCommands(this IServiceCollection services)
         {
+            // DevOps
             services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
             services.AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
             services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
+
+            // Guessing Game
+            services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
+            services.AddSingleton<IGiveGuessingGameWinnersBytesCommand, GiveGuessingGameWinnersBytesCommand>();
+            services.AddSingleton<ISetGuessingGameStateCommand, SetGuessingGameStateCommand>();
+            services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
+
+            // Stream Status
             services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
             return services;
@@ -67,6 +98,24 @@ namespace CoreCodedChatbot.Api
 
         public static IServiceCollection AddApiRepositories(this IServiceCollection services)
         {
+            // Bytes
+            services.AddSingleton<IGiveUsersBytesRepository, GiveUsersBytesRepository>();
+
+            // Guessing Game
+            services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();
+            services.AddSingleton<ICompleteGuessingGameRepository, CompleteGuessingGameRepository>();
+            services.AddSingleton<IGetCurrentGuessingGameRepository, GetCurrentGuessingGameRepository>();
+            services.AddSingleton<IGetGuessingGameStateQuery, GetGuessingGameStateQuery>();
+            services.AddSingleton<IGetRunningGuessingGameIdRepository, GetRunningGuessingGameIdRepository>();
+            services.AddSingleton<IGetSongPercentageGuessesRepository, GetSongPercentageGuessesRepository>();
+            services.AddSingleton<IOpenGuessingGameRepository, OpenGuessingGameRepository>();
+            services.AddSingleton<ISubmitOrUpdateGuessRepository, SubmitOrUpdateGuessRepository>();
+
+            // Settings
+            services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
+            services.AddSingleton<ISetOrCreateSettingRepository, SetOrCreateSettingRepository>();
+            
+            // Stream Status
             services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
             services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
 
