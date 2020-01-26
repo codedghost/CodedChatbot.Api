@@ -45,7 +45,6 @@ namespace CoreCodedChatbot.Api.Services
             ISubmitOrUpdateGuessCommand submitOrUpdateGuessCommand,
             IGetGuessingGameStateQuery getGuessingGameStateQuery,
             ISetGuessingGameStateCommand setGuessingGameStateCommand
-
         )
         {
             _chatbotContextFactory = chatbotContextFactory;

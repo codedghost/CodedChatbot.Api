@@ -1,10 +1,10 @@
 ﻿using System;
 using CoreCodedChatbot.ApiContract.RequestModels.GuessingGame;
-using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using IGuessingGameService = CoreCodedChatbot.Api.Interfaces.Services.IGuessingGameService;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -12,7 +12,7 @@ namespace CoreCodedChatbot.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GuessingGameController : Controller
     {
-        private IGuessingGameService _guessingGameService;
+        private readonly IGuessingGameService _guessingGameService;
         private readonly ILogger<GuessingGameController> _logger;
 
         private object timerLock = new object();
@@ -65,7 +65,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult SubmitGuess([FromBody] SubmitGuessRequest submitGuessModel)
         {
-            if (_guessingGameService.UserGuess(submitGuessModel.Username, submitGuessModel.Guess))
+            if (_guessingGameService.SubmitOrUpdateGuess(submitGuessModel.Username, submitGuessModel.Guess))
                 return Ok();
 
             return BadRequest();
