@@ -47,7 +47,17 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult EditQuote([FromBody] EditQuoteRequest editRequest)
         {
-            return Ok();
+            try
+            {
+                _quoteService.EditQuote(editRequest.QuoteId, editRequest.QuoteText, editRequest.Username);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error when editing quote", editRequest);
+                return BadRequest();
+            }
         }
 
         [HttpPost]
