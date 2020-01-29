@@ -1,6 +1,6 @@
 ﻿using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 
-namespace CoreCodedChatbot.Api.Commands
+namespace CoreCodedChatbot.Api.Interfaces.Commands
 {
     public interface ISaveStreamStatusCommand
     {

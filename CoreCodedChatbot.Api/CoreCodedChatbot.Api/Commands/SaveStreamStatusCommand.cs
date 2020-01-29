@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Repositories;
+﻿using CoreCodedChatbot.Api.Interfaces.Commands;
+using CoreCodedChatbot.Api.Interfaces.Repositories;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 
 namespace CoreCodedChatbot.Api.Commands

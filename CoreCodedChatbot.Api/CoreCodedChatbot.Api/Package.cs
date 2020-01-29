@@ -37,6 +37,7 @@ namespace CoreCodedChatbot.Api
         public static IServiceCollection AddApiServices(this IServiceCollection services)
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
+            services.AddSingleton<IQuoteService, QuoteService>();
 
             return services;
         }
@@ -61,6 +62,8 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
             services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
+            services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
+
             return services;
         }
 
@@ -68,6 +71,7 @@ namespace CoreCodedChatbot.Api
         {
             services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
             services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
+            services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
 
             return services;
         }
