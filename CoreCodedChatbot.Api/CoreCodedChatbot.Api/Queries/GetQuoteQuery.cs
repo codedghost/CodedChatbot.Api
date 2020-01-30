@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Queries;
+﻿using System;
+using CoreCodedChatbot.Api.Interfaces.Queries;
 using CoreCodedChatbot.Api.Interfaces.Repositories;
 using CoreCodedChatbot.Api.Intermediates;
 
@@ -18,6 +19,8 @@ namespace CoreCodedChatbot.Api.Queries
         public QuoteIntermediate GetQuote(int quoteId)
         {
             var quote = _getQuoteRepository.GetQuote(quoteId);
+
+            if (!quote.Enabled) throw new UnauthorizedAccessException("Quote has been removed and should not be accessed");
 
             return new QuoteIntermediate
             {
