@@ -49,7 +49,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                _quoteService.EditQuote(editRequest.QuoteId, editRequest.QuoteText, editRequest.Username);
+                _quoteService.EditQuote(editRequest.QuoteId, editRequest.QuoteText, editRequest.Username, editRequest.IsMod);
 
                 return Ok();
             }
@@ -63,13 +63,37 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult RemoveQuote([FromBody] RemoveQuoteRequest removeRequest)
         {
-            return Ok();
+            try
+            {
+                _quoteService.RemoveQuote(removeRequest.QuoteId, removeRequest.Username, removeRequest.IsMod);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error when removing quote", removeRequest);
+                return BadRequest();
+            }
         }
 
         [HttpGet]
         public IActionResult GetQuote(int? quoteId)
         {
-            return Ok();
+            try
+            {
+                var quote = _quoteService.GetQuote(quoteId);
+
+                return Json(new GetQuoteResponse
+                {
+                    QuoteText = quote.QuoteText,
+                    QuoteId = quote.QuoteId
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error when retrieving quote", quoteId);
+                return BadRequest();
+            }
         }
     }
 }

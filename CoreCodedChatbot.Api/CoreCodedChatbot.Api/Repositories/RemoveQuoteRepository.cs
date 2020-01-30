@@ -5,36 +5,32 @@ using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.Api.Repositories
 {
-    public class EditQuoteRepository : IEditQuoteRepository
+    public class RemoveQuoteRepository : IRemoveQuoteRepository
     {
         private readonly IChatbotContextFactory _chatbotContextFactory;
 
-        public EditQuoteRepository(
+        public RemoveQuoteRepository(
             IChatbotContextFactory chatbotContextFactory
             )
         {
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public void EditQuote(int quoteId, string quoteText, string username, bool isMod)
+        public void RemoveQuote(int quoteId, string username, bool isMod)
         {
             using (var context = _chatbotContextFactory.Create())
             {
                 var quote = context.Quotes.Find(quoteId);
 
-                if (quote == null) throw new KeyNotFoundException($"Quote not found with QuoteId: {quoteId}");
+                if (quote == null) throw new KeyNotFoundException($"Could not retrieve a Quote with ID: {quoteId}");
 
-                if (!isMod && !string.Equals(quote.CreatedBy, username, StringComparison.InvariantCultureIgnoreCase))
+                if (!isMod && string.Equals(quote.CreatedBy, username, StringComparison.InvariantCultureIgnoreCase))
                     throw new UnauthorizedAccessException(
                         $"This user cannot edit this quote as it does not belong to them. Owner: {quote.CreatedBy}, Editor: {username}");
 
-                if (!quote.Enabled)
-                    throw new UnauthorizedAccessException("This quote is disabled and therefore cannot be changed");
-
-                quote.QuoteText = quoteText;
-
-                quote.LastEdited = DateTime.Now;
+                quote.Enabled = false;
                 quote.LastEditedBy = username;
+                quote.LastEdited = DateTime.Now;
 
                 context.SaveChanges();
             }

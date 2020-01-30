@@ -14,9 +14,9 @@ namespace CoreCodedChatbot.Api.Commands
             _editQuoteRepository = editQuoteRepository;
         }
 
-        public void EditQuote(int quoteId, string quoteText, string username)
+        public void EditQuote(int quoteId, string quoteText, string username, bool isMod)
         {
-            _editQuoteRepository.EditQuote(quoteId, quoteText, username);
+            _editQuoteRepository.EditQuote(quoteId, quoteText, username, isMod);
         }
     }
 }
