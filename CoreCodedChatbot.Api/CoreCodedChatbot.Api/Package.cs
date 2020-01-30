@@ -38,6 +38,8 @@ namespace CoreCodedChatbot.Api
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
 
+            services.AddSingleton<IQuoteService, QuoteService>();
+
             return services;
         }
 
@@ -50,6 +52,9 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
             services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
 
+            services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
+            services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
+
             return services;
         }
 
@@ -61,6 +66,10 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
             services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
+            services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
+            services.AddSingleton<IEditQuoteCommand, EditQuoteCommand>();
+            services.AddSingleton<IRemoveQuoteCommand, RemoveQuoteCommand>();
+
             return services;
         }
 
@@ -68,6 +77,12 @@ namespace CoreCodedChatbot.Api
         {
             services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
             services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
+
+            services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
+            services.AddSingleton<IEditQuoteRepository, EditQuoteRepository>();
+            services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
+            services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
+            services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
 
             return services;
         }
