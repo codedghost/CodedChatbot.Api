@@ -59,6 +59,8 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
             services.AddSingleton<IVipService, VipService>();
 
+            services.AddSingleton<IQuoteService, QuoteService>();
+
             return services;
         }
 
@@ -77,6 +79,9 @@ namespace CoreCodedChatbot.Api
 
             // Stream Status
             services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
+
+            services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
+            services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
 
             return services;
         }
@@ -97,6 +102,11 @@ namespace CoreCodedChatbot.Api
 
             // Stream Status
             services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
+
+            // Quote
+            services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
+            services.AddSingleton<IEditQuoteCommand, EditQuoteCommand>();
+            services.AddSingleton<IRemoveQuoteCommand, RemoveQuoteCommand>();
 
             // Vip
             services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
@@ -126,6 +136,13 @@ namespace CoreCodedChatbot.Api
             // Stream Status
             services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
             services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
+
+            // Quote
+            services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
+            services.AddSingleton<IEditQuoteRepository, EditQuoteRepository>();
+            services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
+            services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
+            services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
 
             // Vip
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
