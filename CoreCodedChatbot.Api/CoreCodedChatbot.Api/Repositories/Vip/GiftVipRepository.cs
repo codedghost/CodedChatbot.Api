@@ -1,5 +1,6 @@
 ﻿using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.Api.Repositories.Vip
 {
@@ -14,15 +15,19 @@ namespace CoreCodedChatbot.Api.Repositories.Vip
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public void GiftVip(string donorUsername, string receivingUsername)
+        public void GiftVip(string donorUsername, string receivingUsername, int vipsToGift)
         {
             using (var context = _chatbotContextFactory.Create())
             {
                 var donorUser = context.Users.Find(donorUsername);
-                var receivingUser = context.Users.Find(receivingUsername);
+                var receivingUser = context.Users.Find(receivingUsername) ??
+                                    new User
+                                    {
+                                        Username = receivingUsername
+                                    };
 
-                donorUser.SentGiftVipRequests++;
-                receivingUser.ReceivedGiftVipRequests++;
+                donorUser.SentGiftVipRequests += vipsToGift;
+                receivingUser.ReceivedGiftVipRequests += vipsToGift;
 
                 context.SaveChanges();
             }

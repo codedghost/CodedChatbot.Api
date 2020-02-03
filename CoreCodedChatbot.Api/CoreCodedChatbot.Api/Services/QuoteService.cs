@@ -1,5 +1,5 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Commands;
-using CoreCodedChatbot.Api.Interfaces.Queries;
+﻿using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
+using CoreCodedChatbot.Api.Interfaces.Queries.Quote;
 using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.Api.Intermediates;
 

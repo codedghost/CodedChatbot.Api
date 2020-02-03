@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.Api.Interfaces.Commands.Vip;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
+using CoreCodedChatbot.Api.Intermediates;
 
 namespace CoreCodedChatbot.Api.Commands.Vip
 {
@@ -13,12 +14,12 @@ namespace CoreCodedChatbot.Api.Commands.Vip
             _refundVipsRepository = refundVipsRepository;
         }
 
-        public void Refund(string username)
+        public void Refund(VipRefund username)
         {
-            _refundVipsRepository.RefundVips(new List<string> {username});
+            _refundVipsRepository.RefundVips(new List<VipRefund> {username});
         }
 
-        public void Refund(List<string> usernames)
+        public void Refund(List<VipRefund> usernames)
         {
             _refundVipsRepository.RefundVips(usernames);
         }

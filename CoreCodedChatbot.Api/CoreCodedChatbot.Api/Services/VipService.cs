@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
+using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
 using CoreCodedChatbot.Api.Interfaces.Commands.Vip;
+using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
+using CoreCodedChatbot.Api.Intermediates;
 using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Library.Interfaces.Services;
-using CoreCodedChatbot.Library.Models.Data;
 using Microsoft.Extensions.Logging;
 using IVipService = CoreCodedChatbot.Api.Interfaces.Services.IVipService;
 
@@ -12,32 +11,51 @@ namespace CoreCodedChatbot.Api.Services
 {
     public class VipService : IVipService
     {
+        private readonly IGiftVipCommand _giftVipCommand;
         private readonly IRefundVipCommand _refundVipCommand;
+        private readonly IUserHasVipsQuery _userHasVipsQuery;
+        private readonly IUseVipCommand _useVipCommand;
+        private readonly IUseSuperVipCommand _useSuperVipCommand;
+        private readonly IModGiveVipCommand _modGiveVipCommand;
+        private readonly IConfigService _configService;
         private readonly ILogger<IVipService> _logger;
 
         public VipService(
+            IGiftVipCommand giftVipCommand,
             IRefundVipCommand refundVipCommand,
+            IUserHasVipsQuery userHasVipsQuery,
+            IUseVipCommand useVipCommand,
+            IUseSuperVipCommand useSuperVipCommand,
+            IModGiveVipCommand modGiveVipCommand,
+            IConfigService configService,
             ILogger<IVipService> logger)
         {
+            _giftVipCommand = giftVipCommand;
             _refundVipCommand = refundVipCommand;
+            _userHasVipsQuery = userHasVipsQuery;
+            _useVipCommand = useVipCommand;
+            _useSuperVipCommand = useSuperVipCommand;
+            _modGiveVipCommand = modGiveVipCommand;
+            _configService = configService;
             _logger = logger;
         }
 
         public bool GiftVip(string donorUsername, string receiverUsername)
         {
-            var donorUser = GetUser(donorUsername);
-            var receiverUser = GetUser(receiverUsername);
+            var success = _giftVipCommand.GiftVip(donorUsername, receiverUsername, 1);
 
-            if (donorUser == null || receiverUser == null) return false;
-
-            return GiftVip(donorUser, receiverUser);
+            return success;
         }
 
         public bool RefundVip(string username, bool deferSave = false)
         {
             try
             {
-                _refundVipCommand.Refund(username);
+                _refundVipCommand.Refund(new VipRefund
+                {
+                    Username = username,
+                    VipsToRefund = 1
+                });
 
                 return true;
             }
@@ -52,16 +70,11 @@ namespace CoreCodedChatbot.Api.Services
         {
             try
             {
-                using (var context = _chatbotContextFactory.Create())
+                _refundVipCommand.Refund(new VipRefund
                 {
-                    var user = context.Users.SingleOrDefault(u => u.Username == username);
-
-                    if (user == null) return false;
-
-                    user.ModGivenVipRequests += _configService.Get<int>("SuperVipCost");
-
-                    if (!deferSave) context.SaveChanges();
-                }
+                    Username = username,
+                    VipsToRefund = _configService.Get<int>("SuperVipCost")
+                });
 
                 return true;
             }
@@ -76,9 +89,9 @@ namespace CoreCodedChatbot.Api.Services
         {
             try
             {
-                var user = GetUser(username);
+                var userHasVip = _userHasVipsQuery.UserHasVips(username, 1);
 
-                return user != null && new VipRequests(_configService, user).TotalRemaining > 0;
+                return userHasVip;
             }
             catch (Exception e)
             {
@@ -93,13 +106,7 @@ namespace CoreCodedChatbot.Api.Services
             {
                 if (!HasVip(username)) return false;
 
-                using (var context = _chatbotContextFactory.Create())
-                {
-                    var user = context.Users.Find(username);
-
-                    user.UsedVipRequests++;
-                    context.SaveChanges();
-                }
+                _useVipCommand.UseVip(username, 1);
             }
             catch (Exception e)
             {
@@ -114,9 +121,9 @@ namespace CoreCodedChatbot.Api.Services
         {
             try
             {
-                var user = GetUser(username);
+                var userHasVips = _userHasVipsQuery.UserHasVips(username, _configService.Get<int>("SuperVipCost"));
 
-                return user != null && new VipRequests(_configService, user).TotalRemaining > _configService.Get<int>("SuperVipCost");
+                return userHasVips;
             }
             catch (Exception e)
             {
@@ -131,13 +138,7 @@ namespace CoreCodedChatbot.Api.Services
             {
                 if (!HasSuperVip(username)) return false;
 
-                using (var context = _chatbotContextFactory.Create())
-                {
-                    var user = context.Users.Find(username);
-
-                    user.UsedSuperVipRequests++;
-                    context.SaveChanges();
-                }
+                _useSuperVipCommand.UseSuperVip(username);
             }
             catch (Exception e)
             {
@@ -152,13 +153,7 @@ namespace CoreCodedChatbot.Api.Services
         {
             try
             {
-                using (var context = _chatbotContextFactory.Create())
-                {
-                    var user = GetUser(username);
-
-                    user.ModGivenVipRequests += numberOfVips;
-                    context.SaveChanges();
-                }
+                _modGiveVipCommand.ModGiveVip(username, numberOfVips);
             }
             catch (Exception e)
             {
@@ -167,75 +162,6 @@ namespace CoreCodedChatbot.Api.Services
             }
 
             return true;
-        }
-
-        private bool GiftVip(User donor, User receiver)
-        {
-            try
-            {
-                if (!HasVip(donor.Username)) return false;
-
-                using (var context = _chatbotContextFactory.Create())
-                {
-                    var donorUser = context.Users.Find(donor.Username);
-                    var receiverUser = context.Users.Find(receiver.Username);
-
-
-
-                    donorUser.SentGiftVipRequests++;
-                    receiverUser.ReceivedGiftVipRequests++;
-
-                    context.SaveChanges();
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Error when Gifting a Vip. DonorUsername: {donor.Username}, ReceiverUsername: {receiver.Username}");
-                return false;
-            }
-
-            return true;
-        }
-
-        private User GetUser(string username, bool createUser = true)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.Users.Find(username.ToLower());
-
-                if (user == null && createUser)
-                    user = this.AddUser(context, username, false);
-
-                return user;
-            }
-        }
-
-        private User AddUser(IChatbotContext context, string username, bool deferSave)
-        {
-            var userModel = new User
-            {
-                Username = username.ToLower(),
-                UsedVipRequests = 0,
-                ModGivenVipRequests = 0,
-                FollowVipRequest = 0,
-                SubVipRequests = 0,
-                DonationOrBitsVipRequests = 0,
-                TokenBytes = 0,
-                ReceivedGiftVipRequests = 0,
-                SentGiftVipRequests = 0
-            };
-
-            try
-            {
-                context.Users.Add(userModel);
-                if (!deferSave) context.SaveChanges();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return userModel;
         }
     }
 }

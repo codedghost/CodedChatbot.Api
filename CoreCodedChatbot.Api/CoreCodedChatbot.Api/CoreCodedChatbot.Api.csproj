@@ -38,8 +38,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\Queries\Vip\" />
-  </ItemGroup>
-
 </Project>

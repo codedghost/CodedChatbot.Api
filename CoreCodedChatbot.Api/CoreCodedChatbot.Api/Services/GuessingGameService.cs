@@ -4,12 +4,9 @@ using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.Api.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.Api.Interfaces.Repositories.GuessingGame;
-using CoreCodedChatbot.Api.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Database.Context.Models;
-using CoreCodedChatbot.Library.Models.Data;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Client;
 

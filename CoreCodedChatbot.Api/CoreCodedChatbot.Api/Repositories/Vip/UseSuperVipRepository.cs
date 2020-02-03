@@ -1,33 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
-using CoreCodedChatbot.Api.Intermediates;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.Api.Repositories.Vip
 {
-    public class RefundVipsRepository : IRefundVipsRepository
+    public class UseSuperVipRepository : IUseSuperVipRepository
     {
         private readonly IChatbotContextFactory _chatbotContextFactory;
 
-        public RefundVipsRepository(
+        public UseSuperVipRepository(
             IChatbotContextFactory chatbotContextFactory
             )
         {
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public void RefundVips(IEnumerable<VipRefund> refunds)
+        public void UseSuperVip(string username, int vipsToUse, int superVipsToRegister)
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                foreach (var refund in refunds)
-                {
-                    var user = context.Users.Find(refund.Username);
+                var user = context.Users.Find(username);
 
-                    if (user == null) continue;
+                if (user == null) throw new UnauthorizedAccessException("User does not exist");
 
-                    user.ModGivenVipRequests += refund.VipsToRefund;
-                }
+                user.UsedSuperVipRequests += superVipsToRegister;
+                user.UsedVipRequests += vipsToUse;
 
                 context.SaveChanges();
             }

@@ -1,25 +1,33 @@
 ﻿using CoreCodedChatbot.Api.Commands.AzureDevOps;
 using CoreCodedChatbot.Api.Commands.GuessingGame;
+using CoreCodedChatbot.Api.Commands.Quote;
 using CoreCodedChatbot.Api.Commands.StreamStatus;
 using CoreCodedChatbot.Api.Commands.Vip;
 using CoreCodedChatbot.Api.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.Api.Interfaces.Commands.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
 using CoreCodedChatbot.Api.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.Api.Interfaces.Commands.Vip;
 using CoreCodedChatbot.Api.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.Api.Interfaces.Queries.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Queries.Quote;
 using CoreCodedChatbot.Api.Interfaces.Queries.StreamStatus;
+using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.Api.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.Api.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.Api.Queries.AzureDevOps;
 using CoreCodedChatbot.Api.Queries.GuessingGame;
+using CoreCodedChatbot.Api.Queries.Quote;
 using CoreCodedChatbot.Api.Queries.StreamStatus;
+using CoreCodedChatbot.Api.Queries.Vip;
 using CoreCodedChatbot.Api.Repositories.Bytes;
 using CoreCodedChatbot.Api.Repositories.GuessingGame;
+using CoreCodedChatbot.Api.Repositories.Quote;
 using CoreCodedChatbot.Api.Repositories.Settings;
 using CoreCodedChatbot.Api.Repositories.StreamStatus;
 using CoreCodedChatbot.Api.Repositories.Vip;
@@ -30,6 +38,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
+using IModGiveVipRepository = CoreCodedChatbot.Api.Interfaces.Repositories.Vip.IModGiveVipRepository;
 
 namespace CoreCodedChatbot.Api
 {
@@ -80,8 +89,12 @@ namespace CoreCodedChatbot.Api
             // Stream Status
             services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
 
+            // Quote
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
             services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
+
+            // Vip
+            services.AddSingleton<IUserHasVipsQuery, UserHasVipsQuery>();
 
             return services;
         }
@@ -110,6 +123,10 @@ namespace CoreCodedChatbot.Api
 
             // Vip
             services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
+            services.AddSingleton<IGiftVipCommand, GiftVipCommand>();
+            services.AddSingleton<IUseVipCommand, UseVipCommand>();
+            services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
+            services.AddSingleton<IModGiveVipCommand, ModGiveVipCommand>();
 
             return services;
         }
@@ -147,6 +164,10 @@ namespace CoreCodedChatbot.Api
             // Vip
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
             services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
+            services.AddSingleton<IUserHasVipsRepository, UserHasVipsRepository>();
+            services.AddSingleton<IUseVipRepository, UseVipRepository>();
+            services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
+            services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
 
             return services;
         }

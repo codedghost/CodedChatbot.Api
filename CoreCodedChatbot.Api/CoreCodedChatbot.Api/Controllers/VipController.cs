@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using IVipService = CoreCodedChatbot.Api.Interfaces.Services.IVipService;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -13,11 +14,12 @@ namespace CoreCodedChatbot.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class VipController : Controller
     {
-        private IVipService _vipService;
+        private readonly IVipService _vipService;
         private readonly IPlaylistService _playlistService;
         private readonly ILogger<VipController> _logger;
 
-        public VipController(IVipService vipService, 
+        public VipController(
+            IVipService vipService,
             IPlaylistService playlistService,
             ILogger<VipController> logger)
         {

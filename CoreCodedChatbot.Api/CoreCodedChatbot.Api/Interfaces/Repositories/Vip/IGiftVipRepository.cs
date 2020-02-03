@@ -2,6 +2,6 @@
 {
     public interface IGiftVipRepository
     {
-        void GiftVip(string donorUsername, string receivingUsername);
+        void GiftVip(string donorUsername, string receivingUsername, int vipsToGift);
     }
 }
