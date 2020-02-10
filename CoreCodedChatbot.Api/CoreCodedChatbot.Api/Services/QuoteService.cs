@@ -1,7 +1,7 @@
 ﻿using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
 using CoreCodedChatbot.Api.Interfaces.Queries.Quote;
 using CoreCodedChatbot.Api.Interfaces.Services;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 
 namespace CoreCodedChatbot.Api.Services
 {

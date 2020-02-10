@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.Api.Repositories.Vip

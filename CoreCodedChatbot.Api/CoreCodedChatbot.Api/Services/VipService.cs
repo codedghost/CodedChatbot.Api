@@ -2,7 +2,7 @@
 using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
 using CoreCodedChatbot.Api.Interfaces.Commands.Vip;
 using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
 using IVipService = CoreCodedChatbot.Api.Interfaces.Services.IVipService;
@@ -13,7 +13,7 @@ namespace CoreCodedChatbot.Api.Services
     {
         private readonly IGiftVipCommand _giftVipCommand;
         private readonly IRefundVipCommand _refundVipCommand;
-        private readonly IUserHasVipsQuery _userHasVipsQuery;
+        private readonly ICheckUserHasVipsQuery _checkUserHasVipsQuery;
         private readonly IUseVipCommand _useVipCommand;
         private readonly IUseSuperVipCommand _useSuperVipCommand;
         private readonly IModGiveVipCommand _modGiveVipCommand;
@@ -23,7 +23,7 @@ namespace CoreCodedChatbot.Api.Services
         public VipService(
             IGiftVipCommand giftVipCommand,
             IRefundVipCommand refundVipCommand,
-            IUserHasVipsQuery userHasVipsQuery,
+            ICheckUserHasVipsQuery checkUserHasVipsQuery,
             IUseVipCommand useVipCommand,
             IUseSuperVipCommand useSuperVipCommand,
             IModGiveVipCommand modGiveVipCommand,
@@ -32,7 +32,7 @@ namespace CoreCodedChatbot.Api.Services
         {
             _giftVipCommand = giftVipCommand;
             _refundVipCommand = refundVipCommand;
-            _userHasVipsQuery = userHasVipsQuery;
+            _checkUserHasVipsQuery = checkUserHasVipsQuery;
             _useVipCommand = useVipCommand;
             _useSuperVipCommand = useSuperVipCommand;
             _modGiveVipCommand = modGiveVipCommand;
@@ -89,7 +89,7 @@ namespace CoreCodedChatbot.Api.Services
         {
             try
             {
-                var userHasVip = _userHasVipsQuery.UserHasVips(username, 1);
+                var userHasVip = _checkUserHasVipsQuery.CheckUserHasVips(username, 1);
 
                 return userHasVip;
             }
@@ -121,7 +121,7 @@ namespace CoreCodedChatbot.Api.Services
         {
             try
             {
-                var userHasVips = _userHasVipsQuery.UserHasVips(username, _configService.Get<int>("SuperVipCost"));
+                var userHasVips = _checkUserHasVipsQuery.CheckUserHasVips(username, _configService.Get<int>("SuperVipCost"));
 
                 return userHasVips;
             }

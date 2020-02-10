@@ -1,20 +1,24 @@
 ﻿using CoreCodedChatbot.Api.Commands.AzureDevOps;
 using CoreCodedChatbot.Api.Commands.GuessingGame;
+using CoreCodedChatbot.Api.Commands.Playlist;
 using CoreCodedChatbot.Api.Commands.Quote;
 using CoreCodedChatbot.Api.Commands.StreamStatus;
 using CoreCodedChatbot.Api.Commands.Vip;
 using CoreCodedChatbot.Api.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.Api.Interfaces.Commands.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
 using CoreCodedChatbot.Api.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.Api.Interfaces.Commands.Vip;
 using CoreCodedChatbot.Api.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.Api.Interfaces.Queries.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Queries.Quote;
 using CoreCodedChatbot.Api.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.Api.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.Api.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.Api.Interfaces.Repositories.StreamStatus;
@@ -22,11 +26,13 @@ using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.Api.Queries.AzureDevOps;
 using CoreCodedChatbot.Api.Queries.GuessingGame;
+using CoreCodedChatbot.Api.Queries.Playlist;
 using CoreCodedChatbot.Api.Queries.Quote;
 using CoreCodedChatbot.Api.Queries.StreamStatus;
 using CoreCodedChatbot.Api.Queries.Vip;
 using CoreCodedChatbot.Api.Repositories.Bytes;
 using CoreCodedChatbot.Api.Repositories.GuessingGame;
+using CoreCodedChatbot.Api.Repositories.Playlist;
 using CoreCodedChatbot.Api.Repositories.Quote;
 using CoreCodedChatbot.Api.Repositories.Settings;
 using CoreCodedChatbot.Api.Repositories.StreamStatus;
@@ -86,15 +92,22 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
             services.AddSingleton<IGetPotentialWinnersQuery, GetPotentialWinnersQuery>();
 
-            // Stream Status
-            services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
+            // Playlist
+            services.AddSingleton<ICheckUserHasMaxRegularsInQueueQuery, CheckUserHasMaxRegularsInQueueQuery>();
+            services.AddSingleton<IGetPlaylistStateQuery, GetPlaylistStateQuery>();
+            services.AddSingleton<IGetSongRequestByIdQuery, GetSongRequestByIdQuery>();
+            services.AddSingleton<IGetUsersCurrentRequestCountsQuery, GetUsersCurrentRequestCountsQuery>();
+            services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
 
             // Quote
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
             services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
 
+            // Stream Status
+            services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
+
             // Vip
-            services.AddSingleton<IUserHasVipsQuery, UserHasVipsQuery>();
+            services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();
 
             return services;
         }
@@ -113,13 +126,19 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<ISetGuessingGameStateCommand, SetGuessingGameStateCommand>();
             services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
 
-            // Stream Status
-            services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
+            // Playlist
+            services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();
+            services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
+            services.AddSingleton<IArchiveRequestCommand, ArchiveRequestCommand>();
+            services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
             services.AddSingleton<IEditQuoteCommand, EditQuoteCommand>();
             services.AddSingleton<IRemoveQuoteCommand, RemoveQuoteCommand>();
+
+            // Stream Status
+            services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
             // Vip
             services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
@@ -146,13 +165,18 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IOpenGuessingGameRepository, OpenGuessingGameRepository>();
             services.AddSingleton<ISubmitOrUpdateGuessRepository, SubmitOrUpdateGuessRepository>();
 
-            // Settings
-            services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
-            services.AddSingleton<ISetOrCreateSettingRepository, SetOrCreateSettingRepository>();
-            
-            // Stream Status
-            services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
-            services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
+            // Playlist
+            services.AddSingleton<IAddRequestRepository, AddRequestRepository>();
+            services.AddSingleton<IGetIsUserInChatRepository, GetIsUserInChatRepository>();
+            services.AddSingleton<IGetPlaylistStateRepository, GetPlaylistStateRepository>();
+            services.AddSingleton<IGetSongRequestByIdRepository, GetSongRequestByIdRepository>();
+            services.AddSingleton<IGetUsersBytesCountRepository, GetUsersBytesCountRepository>();
+            services.AddSingleton<IGetUsersCurrentRegularRequestCountRepository, GetUsersCurrentRegularRequestCountRepository>();
+            services.AddSingleton<IGetUsersCurrentRequestCountRepository, GetUsersCurrentRequestCountRepository>();
+            services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
+            services.AddSingleton<IArchiveRequestRepository, ArchiveRequestRepository>();
+            services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
+            services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
@@ -161,13 +185,24 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
             services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
 
+            // Settings
+            services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
+            services.AddSingleton<ISetOrCreateSettingRepository, SetOrCreateSettingRepository>();
+
+            // Stream Status
+            services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
+            services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
+
             // Vip
+            services.AddSingleton<IGetUsersCurrentSuperVipRequestCountRepository, GetUsersCurrentSuperVipRequestCountRepository>();
+            services.AddSingleton<IGetUsersCurrentVipRequestCountRepository, GetUsersCurrentVipRequestCountRepository>();
+            services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
             services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
-            services.AddSingleton<IUserHasVipsRepository, UserHasVipsRepository>();
             services.AddSingleton<IUseVipRepository, UseVipRepository>();
             services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
             services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
+            services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
 
             return services;
         }

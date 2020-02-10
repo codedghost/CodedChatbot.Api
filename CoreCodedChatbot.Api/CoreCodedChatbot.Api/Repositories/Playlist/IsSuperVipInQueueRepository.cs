@@ -1,31 +1,27 @@
-﻿using CoreCodedChatbot.Api.Extensions;
+﻿using System.Linq;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.Api.Repositories.Vip
+namespace CoreCodedChatbot.Api.Repositories.Playlist
 {
-    public class UserHasVipsRepository : IUserHasVipsRepository
+    public class IsSuperVipInQueueRepository : IIsSuperVipInQueueRepository
     {
         private readonly IChatbotContextFactory _chatbotContextFactory;
 
-        public UserHasVipsRepository(
+        public IsSuperVipInQueueRepository(
             IChatbotContextFactory chatbotContextFactory
         )
         {
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public bool HasVips(string username, int vips)
+        public bool IsSuperVipInQueue()
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var user = context.Users.Find(username);
+                var superVip = context.SongRequests.Where(sr => !sr.Played && sr.SuperVipRequestTime != null);
 
-                if (user == null) return false;
-
-                var userVips = user.UsableVips();
-
-                return userVips >= vips;
+                return superVip.Any();
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿using CoreCodedChatbot.Api.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.Api.Interfaces.Repositories.GuessingGame;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 
 namespace CoreCodedChatbot.Api.Queries.GuessingGame
 {

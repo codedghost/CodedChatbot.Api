@@ -2,7 +2,7 @@
 using System.Linq;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.Api.Intermediates
+namespace CoreCodedChatbot.Api.Models.Intermediates
 {
     public class GuessingGameWinner
     {

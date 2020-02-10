@@ -1,4 +1,5 @@
 ﻿using CoreCodedChatbot.Api.Interfaces.Commands.Quote;
+using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
 
 namespace CoreCodedChatbot.Api.Commands.Vip
@@ -6,20 +7,20 @@ namespace CoreCodedChatbot.Api.Commands.Vip
     public class GiftVipCommand : IGiftVipCommand
     {
         private readonly IGiftVipRepository _giftVipRepository;
-        private readonly IUserHasVipsRepository _userHasVipsRepository;
+        private readonly ICheckUserHasVipsQuery _checkUserHasVipsQuery;
 
         public GiftVipCommand(
             IGiftVipRepository giftVipRepository,
-            IUserHasVipsRepository userHasVipsRepository
+            ICheckUserHasVipsQuery checkUserHasVipsQuery
             )
         {
             _giftVipRepository = giftVipRepository;
-            _userHasVipsRepository = userHasVipsRepository;
+            _checkUserHasVipsQuery = checkUserHasVipsQuery;
         }
 
         public bool GiftVip(string donorUsername, string receivingUsername, int vipsToGift)
         {
-            if (_userHasVipsRepository.HasVips(donorUsername, vipsToGift))
+            if (_checkUserHasVipsQuery.CheckUserHasVips(donorUsername, vipsToGift))
             {
                 _giftVipRepository.GiftVip(donorUsername, receivingUsername, vipsToGift);
             }

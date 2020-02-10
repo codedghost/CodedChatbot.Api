@@ -1,4 +1,4 @@
-﻿namespace CoreCodedChatbot.Api.Intermediates
+﻿namespace CoreCodedChatbot.Api.Models.Intermediates
 {
     public class QuoteIntermediate
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using CoreCodedChatbot.Api.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Bytes;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 
 namespace CoreCodedChatbot.Api.Commands.GuessingGame
 {

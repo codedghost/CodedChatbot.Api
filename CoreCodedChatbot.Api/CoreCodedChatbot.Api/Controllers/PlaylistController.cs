@@ -1,7 +1,7 @@
 ﻿using System;
+using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
-using CoreCodedChatbot.Library.Interfaces.Services;
 using CoreCodedChatbot.Library.Models.View;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +17,10 @@ namespace CoreCodedChatbot.Api.Controllers
         private readonly IPlaylistService _playlistService;
         private readonly ILogger<PlaylistController> _logger;
 
-        public PlaylistController(IPlaylistService playlistService, ILogger<PlaylistController> logger)
+        public PlaylistController(
+            IPlaylistService playlistService,
+            ILogger<PlaylistController> logger
+            )
         {
             _playlistService = playlistService;
             _logger = logger;
@@ -131,6 +134,37 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
+        public IActionResult AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
+        {
+            try
+            {
+                var requestSongViewModel = new AddWebSongRequest
+                {
+                    Title = addWebSongRequest.Title,
+                    Artist = addWebSongRequest.Artist,
+                    SelectedInstrument = addWebSongRequest.SelectedInstrument,
+                    IsVip = addWebSongRequest.IsVip,
+                    IsSuperVip = addWebSongRequest.IsSuperVip
+                };
+
+                var result = _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username);
+
+                var responseModel = new AddRequestResponse
+                {
+                    Result = result,
+                    PlaylistPosition = 0
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in AddWebRequest", addWebSongRequest);
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
         public IActionResult AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
         {
             var addSuperVipResult = _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText);
@@ -238,37 +272,6 @@ namespace CoreCodedChatbot.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "Error in ArchiveCurrentRequest", songId);
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
-        {
-            try
-            {
-                var requestSongViewModel = new RequestSongViewModel
-                {
-                    Title = addWebSongRequest.Title,
-                    Artist = addWebSongRequest.Artist,
-                    SelectedInstrument = addWebSongRequest.SelectedInstrument,
-                    IsVip = addWebSongRequest.IsVip,
-                    IsSuperVip = addWebSongRequest.IsSuperVip
-                };
-
-                var result = _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username);
-
-                var responseModel = new AddRequestResponse
-                {
-                    Result = result,
-                    PlaylistPosition = 0
-                };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in AddWebRequest", addWebSongRequest);
                 return BadRequest();
             }
         }

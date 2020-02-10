@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 
 namespace CoreCodedChatbot.Api.Interfaces.Queries.GuessingGame
 {

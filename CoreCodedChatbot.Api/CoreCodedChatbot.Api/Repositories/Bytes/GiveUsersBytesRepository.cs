@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Bytes;
-using CoreCodedChatbot.Api.Intermediates;
+using CoreCodedChatbot.Api.Models.Intermediates;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;

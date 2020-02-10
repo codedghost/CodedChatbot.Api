@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.488" />
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.498" />
     <PackageReference Include="CoreCodedChatbot.Config" Version="1.0.345" />
     <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.486" />
     <PackageReference Include="CoreCodedChatbot.Library" Version="1.0.439" />
