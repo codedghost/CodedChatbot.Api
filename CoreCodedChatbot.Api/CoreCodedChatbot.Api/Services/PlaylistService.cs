@@ -269,5 +269,10 @@ namespace CoreCodedChatbot.Api.Services
 
             return isInQueue;
         }
+
+        public PlaylistItem GetCurrentSongRequest()
+        {
+            return _currentRequest;
+        }
     }
 }

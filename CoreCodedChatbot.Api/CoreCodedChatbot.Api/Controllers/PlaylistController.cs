@@ -365,5 +365,32 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpGet]
+        public IActionResult GetCurrentSongRequest()
+        {
+            try
+            {
+                var songRequest = _playlistService.GetCurrentSongRequest();
+
+                if (songRequest == null) return BadRequest();
+
+                var responseModel = new GetCurrentSongRequestResponse
+                {
+                    SongArtist = songRequest.FormattedRequest.SongArtist,
+                    SongName = songRequest.FormattedRequest.SongName,
+                    RequesterUsername = songRequest.songRequester,
+                    InstrumentName = songRequest.FormattedRequest.InstrumentName
+                };
+
+                return new JsonResult(responseModel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetCurrentSongRequest");
+            }
+
+            return BadRequest();
+        }
     }
 }
