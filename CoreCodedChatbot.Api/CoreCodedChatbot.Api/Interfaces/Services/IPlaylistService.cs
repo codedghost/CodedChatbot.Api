@@ -38,5 +38,6 @@ namespace CoreCodedChatbot.Api.Interfaces.Services
         int GetMaxUserRequests();
         string EditSuperVipRequest(string username, string songText);
         bool RemoveSuperRequest(string username);
+        bool IsSuperVipRequestInQueue();
     }
 }

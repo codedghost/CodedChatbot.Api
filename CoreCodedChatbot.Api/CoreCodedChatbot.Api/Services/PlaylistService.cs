@@ -21,6 +21,7 @@ namespace CoreCodedChatbot.Api.Services
         private readonly IArchiveRequestCommand _archiveRequestCommand;
         private readonly IRemoveAndRefundAllRequestsCommand _removeAndRefundAllRequestsCommand;
         private readonly IGetCurrentRequestsQuery _getCurrentRequestsQuery;
+        private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
 
         private PlaylistItem _currentRequest;
 
@@ -31,7 +32,8 @@ namespace CoreCodedChatbot.Api.Services
             IPromoteUsersRegularRequestCommand promoteUsersRegularRequestCommand,
             IArchiveRequestCommand archiveRequestCommand,
             IRemoveAndRefundAllRequestsCommand removeAndRefundAllRequestsCommand,
-            IGetCurrentRequestsQuery getCurrentRequestsQuery
+            IGetCurrentRequestsQuery getCurrentRequestsQuery,
+            IIsSuperVipInQueueQuery isSuperVipInQueueQuery
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -41,6 +43,7 @@ namespace CoreCodedChatbot.Api.Services
             _archiveRequestCommand = archiveRequestCommand;
             _removeAndRefundAllRequestsCommand = removeAndRefundAllRequestsCommand;
             _getCurrentRequestsQuery = getCurrentRequestsQuery;
+            _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
         }
 
         public PlaylistItem GetRequestById(int songId)
@@ -258,6 +261,13 @@ namespace CoreCodedChatbot.Api.Services
         public bool RemoveSuperRequest(string username)
         {
             throw new System.NotImplementedException();
+        }
+
+        public bool IsSuperVipRequestInQueue()
+        {
+            var isInQueue = _isSuperVipInQueueQuery.IsSuperVipInQueue();
+
+            return isInQueue;
         }
     }
 }

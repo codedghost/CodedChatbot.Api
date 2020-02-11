@@ -1,7 +1,8 @@
 ﻿using System;
+using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Vip;
+using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Vip;
-using CoreCodedChatbot.Library.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -105,7 +106,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                var isSuperVipInQueue = _playlistService.IsSuperRequestInQueue();
+                var isSuperVipInQueue = _playlistService.IsSuperVipRequestInQueue();
 
                 var responseModel = new IsSuperVipInQueueResponse
                 {
@@ -117,6 +118,27 @@ namespace CoreCodedChatbot.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "Error in IsSuperVipInQueue");
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetGiftedVips(string username)
+        {
+            try
+            {
+                var giftedVips = _vipService.GetUsersGiftedVips(username);
+
+                var response = new GetGiftedVipsResponse
+                {
+                    GiftedVips = giftedVips
+                };
+
+                return new JsonResult(response);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error in GetGiftedVips for user: {username}");
                 return BadRequest();
             }
         }

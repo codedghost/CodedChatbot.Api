@@ -108,6 +108,7 @@ namespace CoreCodedChatbot.Api
 
             // Vip
             services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();
+            services.AddSingleton<IGetUsersGiftedVipsQuery, GetUsersGiftedVipsQuery>();
 
             return services;
         }
@@ -197,6 +198,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGetUsersCurrentSuperVipRequestCountRepository, GetUsersCurrentSuperVipRequestCountRepository>();
             services.AddSingleton<IGetUsersCurrentVipRequestCountRepository, GetUsersCurrentVipRequestCountRepository>();
             services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
+            services.AddSingleton<IGetUsersGiftedVipsRepository, GetUsersGiftedVipsRepository>();
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
             services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
             services.AddSingleton<IUseVipRepository, UseVipRepository>();
