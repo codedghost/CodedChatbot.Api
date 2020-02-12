@@ -1,25 +1,27 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
+﻿using System;
+using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Playlist;
+using CoreCodedChatbot.Api.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 
 namespace CoreCodedChatbot.Api.Queries.Playlist
 {
     public class GetPlaylistStateQuery : IGetPlaylistStateQuery
     {
-        private readonly IGetPlaylistStateRepository _getPlaylistStateRepository;
+        private readonly IGetSettingRepository _getSettingRepository;
 
         public GetPlaylistStateQuery(
-            IGetPlaylistStateRepository getPlaylistStateRepository
+            IGetSettingRepository getSettingRepository
             )
         {
-            _getPlaylistStateRepository = getPlaylistStateRepository;
+            _getSettingRepository = getSettingRepository;
         }
 
         public PlaylistState GetPlaylistState()
         {
-            var state = _getPlaylistStateRepository.GetPlaylistState();
+            var state = _getSettingRepository.Get<string>("PlaylistStatus");
 
-            return state;
+            return string.IsNullOrWhiteSpace(state) ? PlaylistState.VeryClosed : Enum.Parse<PlaylistState>(state);
         }
     }
 }

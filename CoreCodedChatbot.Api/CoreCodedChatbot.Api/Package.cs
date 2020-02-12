@@ -134,6 +134,8 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
             services.AddSingleton<IArchiveRequestCommand, ArchiveRequestCommand>();
             services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
+            services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
+            services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
@@ -171,7 +173,6 @@ namespace CoreCodedChatbot.Api
             // Playlist
             services.AddSingleton<IAddRequestRepository, AddRequestRepository>();
             services.AddSingleton<IGetIsUserInChatRepository, GetIsUserInChatRepository>();
-            services.AddSingleton<IGetPlaylistStateRepository, GetPlaylistStateRepository>();
             services.AddSingleton<IGetSongRequestByIdRepository, GetSongRequestByIdRepository>();
             services.AddSingleton<IGetUsersBytesCountRepository, GetUsersBytesCountRepository>();
             services.AddSingleton<IGetUsersCurrentRegularRequestCountRepository, GetUsersCurrentRegularRequestCountRepository>();
@@ -181,6 +182,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
             services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
             services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
+            services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();

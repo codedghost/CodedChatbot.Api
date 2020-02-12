@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoreCodedChatbot.Api.Commands.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Services;
@@ -24,6 +25,7 @@ namespace CoreCodedChatbot.Api.Services
         private readonly IGetCurrentRequestsQuery _getCurrentRequestsQuery;
         private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
         private readonly IGetUsersFormattedRequestsQuery _getUsersFormattedRequestsQuery;
+        private readonly IUpdatePlaylistStateCommand _updatePlaylistStateCommand;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -37,7 +39,8 @@ namespace CoreCodedChatbot.Api.Services
             IRemoveAndRefundAllRequestsCommand removeAndRefundAllRequestsCommand,
             IGetCurrentRequestsQuery getCurrentRequestsQuery,
             IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
-            IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery
+            IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery,
+            IUpdatePlaylistStateCommand updatePlaylistStateCommand
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -49,6 +52,7 @@ namespace CoreCodedChatbot.Api.Services
             _getCurrentRequestsQuery = getCurrentRequestsQuery;
             _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
             _getUsersFormattedRequestsQuery = getUsersFormattedRequestsQuery;
+            _updatePlaylistStateCommand = updatePlaylistStateCommand;
 
             _rand = new Random();
         }
@@ -259,25 +263,20 @@ namespace CoreCodedChatbot.Api.Services
 
         public bool OpenPlaylist()
         {
-            throw new System.NotImplementedException();
+            return _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Open);
         }
 
         public bool ClosePlaylist()
         {
-            throw new System.NotImplementedException();
+            return _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Closed);
         }
 
         public bool VeryClosePlaylist()
         {
-            throw new System.NotImplementedException();
+            return _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.VeryClosed);
         }
 
         public int GetMaxUserRequests()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool IsSuperRequestInQueue()
         {
             throw new System.NotImplementedException();
         }
