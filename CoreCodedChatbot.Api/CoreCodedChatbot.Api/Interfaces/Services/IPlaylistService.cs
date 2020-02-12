@@ -18,7 +18,6 @@ namespace CoreCodedChatbot.Api.Interfaces.Services
         void UpdateFullPlaylist(bool updateCurrent = false);
         void ArchiveCurrentRequest(int songId = 0);
         string GetUserRequests(string username);
-        List<string> GetUserRelevantRequests(string username);
         GetAllSongsResponse GetAllSongs();
         void ClearRockRequests();
         bool RemoveRockRequests(string username, string commandText, bool isMod);

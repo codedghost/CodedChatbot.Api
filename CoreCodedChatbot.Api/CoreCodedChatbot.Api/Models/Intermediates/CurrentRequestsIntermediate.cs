@@ -4,6 +4,7 @@ namespace CoreCodedChatbot.Api.Models.Intermediates
 {
     public class CurrentRequestsIntermediate
     {
-        public List<BasicSongRequest> SongRequests { get; set; }
+        public List<BasicSongRequest> VipRequests { get; set; }
+        public List<BasicSongRequest> RegularRequests { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
-using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
+﻿using CoreCodedChatbot.Api.Interfaces.Queries.Vip;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Vip;
 
 namespace CoreCodedChatbot.Api.Queries.Vip

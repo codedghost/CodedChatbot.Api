@@ -1,5 +1,4 @@
 ﻿using CoreCodedChatbot.Api.Models.Intermediates;
-using CoreCodedChatbot.ApiContract.Enums.Playlist;
 
 namespace CoreCodedChatbot.Api.Interfaces.Commands.Playlist
 {

@@ -8,7 +8,7 @@
         public bool IsUserInChat { get; set; }
         public bool IsVip { get; set; }
         public bool IsSuperVip { get; set; }
-        public bool isEvenIndex { get; set; }
+        public bool IsEvenIndex { get; set; }
         public bool IsInDrive { get; set; }
     }
 }

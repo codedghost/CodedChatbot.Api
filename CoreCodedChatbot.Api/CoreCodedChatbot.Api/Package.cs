@@ -98,6 +98,8 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IGetSongRequestByIdQuery, GetSongRequestByIdQuery>();
             services.AddSingleton<IGetUsersCurrentRequestCountsQuery, GetUsersCurrentRequestCountsQuery>();
             services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
+            services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
+            services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
 
             // Quote
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
@@ -178,6 +180,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IArchiveRequestRepository, ArchiveRequestRepository>();
             services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
             services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
+            services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();

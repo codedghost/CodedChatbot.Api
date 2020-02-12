@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CoreCodedChatbot.Api.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
@@ -22,8 +23,10 @@ namespace CoreCodedChatbot.Api.Services
         private readonly IRemoveAndRefundAllRequestsCommand _removeAndRefundAllRequestsCommand;
         private readonly IGetCurrentRequestsQuery _getCurrentRequestsQuery;
         private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
+        private readonly IGetUsersFormattedRequestsQuery _getUsersFormattedRequestsQuery;
 
         private PlaylistItem _currentRequest;
+        private Random _rand;
 
         public PlaylistService(
             IGetSongRequestByIdQuery getSongRequestByIdQuery,
@@ -33,7 +36,8 @@ namespace CoreCodedChatbot.Api.Services
             IArchiveRequestCommand archiveRequestCommand,
             IRemoveAndRefundAllRequestsCommand removeAndRefundAllRequestsCommand,
             IGetCurrentRequestsQuery getCurrentRequestsQuery,
-            IIsSuperVipInQueueQuery isSuperVipInQueueQuery
+            IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
+            IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -44,6 +48,9 @@ namespace CoreCodedChatbot.Api.Services
             _removeAndRefundAllRequestsCommand = removeAndRefundAllRequestsCommand;
             _getCurrentRequestsQuery = getCurrentRequestsQuery;
             _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
+            _getUsersFormattedRequestsQuery = getUsersFormattedRequestsQuery;
+
+            _rand = new Random();
         }
 
         public PlaylistItem GetRequestById(int songId)
@@ -175,8 +182,32 @@ namespace CoreCodedChatbot.Api.Services
         {
             var currentRequests = _getCurrentRequestsQuery.GetCurrentRequests();
 
-            var vipRequests = currentRequests.SongRequests.Where(sr => sr.IsVip || sr.IsSuperVip)
-                .OrderBy(sr => sr.S)
+            var regularRequests = currentRequests.RegularRequests.ToArray();
+            var vipRequests = currentRequests.VipRequests.ToArray();
+
+            // Ensure if the playlist is populated then a request is made current
+            if (_currentRequest == null)
+            {
+                if (currentRequests.VipRequests.Any())
+                {
+                    _currentRequest = currentRequests.VipRequests.First();
+
+                    vipRequests = vipRequests.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
+                }
+                else if (currentRequests.RegularRequests.Any())
+                {
+                    _currentRequest =
+                        regularRequests[_rand.Next(0, currentRequests.RegularRequests.Count)];
+                    regularRequests = regularRequests.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
+                }
+            }
+
+            return new GetAllSongsResponse
+            {
+                CurrentSong = _currentRequest,
+                RegularList = regularRequests,
+                VipList = vipRequests
+            };
         }
 
         public bool ArchiveRequestById(int songId)
@@ -191,6 +222,8 @@ namespace CoreCodedChatbot.Api.Services
         public void ClearRockRequests()
         {
             _removeAndRefundAllRequestsCommand.RemoveAndRefundAllRequests();
+
+            // TODO SignalR Update
         }
 
         public bool RemoveRockRequests(string username, string commandText, bool isMod)
@@ -198,19 +231,15 @@ namespace CoreCodedChatbot.Api.Services
             throw new System.NotImplementedException();
         }
 
-        public void UpdateFullPlaylist(bool updateCurrent = false)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public string GetUserRequests(string username)
         {
-            throw new System.NotImplementedException();
-        }
+            var formattedRequests = _getUsersFormattedRequestsQuery.GetUsersFormattedRequests(username);
 
-        public List<string> GetUserRelevantRequests(string username)
-        {
-            throw new System.NotImplementedException();
+            var requestString = formattedRequests.Any()
+                ? string.Join(", ", formattedRequests)
+                : "Looks like you don't have any requests right now. Get some in there! !howtorequest";
+
+            return requestString;
         }
 
         public bool EditRequest(string username, string commandText, bool isMod, out string songRequestText, out bool syntaxError)
@@ -259,6 +288,11 @@ namespace CoreCodedChatbot.Api.Services
         }
 
         public bool RemoveSuperRequest(string username)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateFullPlaylist(bool updateCurrent = false)
         {
             throw new System.NotImplementedException();
         }

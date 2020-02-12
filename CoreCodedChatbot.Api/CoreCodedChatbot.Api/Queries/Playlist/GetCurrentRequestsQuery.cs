@@ -1,6 +1,9 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CoreCodedChatbot.Api.Extensions;
+using CoreCodedChatbot.Api.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.Api.Interfaces.Repositories.Playlist;
-using CoreCodedChatbot.Api.Models.Intermediates;
+using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 
 namespace CoreCodedChatbot.Api.Queries.Playlist
 {
@@ -15,9 +18,14 @@ namespace CoreCodedChatbot.Api.Queries.Playlist
             _getCurrentRequestsRepository = getCurrentRequestsRepository;
         }
 
-        public CurrentRequestsIntermediate GetCurrentRequests()
+        public (List<PlaylistItem> RegularRequests, List<PlaylistItem> VipRequests) GetCurrentRequests()
         {
-            return _getCurrentRequestsRepository.GetCurrentRequests();
+            var currentRequests = _getCurrentRequestsRepository.GetCurrentRequests();
+
+            var regularRequests = currentRequests.RegularRequests.Select(r => r.CreatePlaylistItem()).ToList();
+            var vipRequests = currentRequests.RegularRequests.Select(r => r.CreatePlaylistItem()).ToList();
+
+            return (regularRequests, vipRequests);
         }
     }
 }

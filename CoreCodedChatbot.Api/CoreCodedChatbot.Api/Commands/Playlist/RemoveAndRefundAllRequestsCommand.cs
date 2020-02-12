@@ -31,7 +31,7 @@ namespace CoreCodedChatbot.Api.Commands.Playlist
         {
             var currentRequests = _getCurrentRequestsRepository.GetCurrentRequests();
 
-            var refundVips = currentRequests.SongRequests.Where(sr => sr.IsSuperVip || sr.IsVip).Select(sr =>
+            var refundVips = currentRequests.VipRequests.Where(sr => sr.IsSuperVip || sr.IsVip).Select(sr =>
                 new VipRefund
                 {
                     Username = sr.Username,
@@ -40,7 +40,7 @@ namespace CoreCodedChatbot.Api.Commands.Playlist
 
             _refundVipCommand.Refund(refundVips);
 
-            _clearRequestsRepository.ClearRequests(currentRequests.SongRequests);
+            _clearRequestsRepository.ClearRequests(currentRequests.VipRequests);
         }
     }
 }
