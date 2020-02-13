@@ -26,6 +26,7 @@ namespace CoreCodedChatbot.Api.Services
         private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
         private readonly IGetUsersFormattedRequestsQuery _getUsersFormattedRequestsQuery;
         private readonly IUpdatePlaylistStateCommand _updatePlaylistStateCommand;
+        private readonly IAddSongToDriveCommand _addSongToDriveCommand;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -40,7 +41,8 @@ namespace CoreCodedChatbot.Api.Services
             IGetCurrentRequestsQuery getCurrentRequestsQuery,
             IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
             IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery,
-            IUpdatePlaylistStateCommand updatePlaylistStateCommand
+            IUpdatePlaylistStateCommand updatePlaylistStateCommand,
+            IAddSongToDriveCommand addSongToDriveCommand
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -53,6 +55,7 @@ namespace CoreCodedChatbot.Api.Services
             _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
             _getUsersFormattedRequestsQuery = getUsersFormattedRequestsQuery;
             _updatePlaylistStateCommand = updatePlaylistStateCommand;
+            _addSongToDriveCommand = addSongToDriveCommand;
 
             _rand = new Random();
         }
@@ -258,7 +261,7 @@ namespace CoreCodedChatbot.Api.Services
 
         public bool AddSongToDrive(int songId)
         {
-            throw new System.NotImplementedException();
+            return _addSongToDriveCommand.AddSongToDrive(songId);
         }
 
         public bool OpenPlaylist()
