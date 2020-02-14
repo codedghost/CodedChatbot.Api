@@ -13,3 +13,5 @@
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api.sln.DotSettings
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/CoreCodedChatbot.Api.csproj.user
 /.vs
+/CoreCodedChatbot.Api/CoreCodedChatbot.ApiTests/obj
+/CoreCodedChatbot.Api/CoreCodedChatbot.ApiTests/bin/Debug/netcoreapp3.1
