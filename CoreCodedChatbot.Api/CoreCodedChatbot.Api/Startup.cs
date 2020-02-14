@@ -41,10 +41,7 @@ namespace CoreCodedChatbot.Api
                 .AddChatbotNLog(secretService)
                 .AddTwitchServices(configService, secretService)
                 .AddLibraryServices()
-                .AddApiServices()
-                .AddApiQueries()
-                .AddApiCommands()
-                .AddApiRepositories();
+                .AddApplicationServices();
 
             services.AddRouting();
 

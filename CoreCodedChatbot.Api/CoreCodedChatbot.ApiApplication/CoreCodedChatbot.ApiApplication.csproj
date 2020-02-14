@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.503" />
+    <PackageReference Include="CoreCodedChatbot.Config" Version="1.0.345" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.486" />
+    <PackageReference Include="CoreCodedChatbot.Library" Version="1.0.501" />
+    <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.346" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+</Project>

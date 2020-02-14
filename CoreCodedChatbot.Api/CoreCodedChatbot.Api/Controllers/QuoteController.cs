@@ -1,5 +1,5 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Quotes;
 using CoreCodedChatbot.ApiContract.ResponseModels.Quotes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

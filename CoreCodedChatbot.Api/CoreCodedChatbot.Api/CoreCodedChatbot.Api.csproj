@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CoreCodedChatbot.ApiApplication\CoreCodedChatbot.ApiApplication.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

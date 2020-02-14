@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using IGuessingGameService = CoreCodedChatbot.Api.Interfaces.Services.IGuessingGameService;
+using IGuessingGameService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IGuessingGameService;
 
 namespace CoreCodedChatbot.Api.Controllers
 {

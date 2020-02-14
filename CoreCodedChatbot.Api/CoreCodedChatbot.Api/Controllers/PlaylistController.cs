@@ -1,5 +1,5 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.Library.Models.View;

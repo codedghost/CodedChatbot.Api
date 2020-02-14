@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using CoreCodedChatbot.Api.Extensions;
-using CoreCodedChatbot.Api.Interfaces.Queries.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Extensions;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

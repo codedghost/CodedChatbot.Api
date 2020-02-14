@@ -1,5 +1,5 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Vip;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Vip;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using IVipService = CoreCodedChatbot.Api.Interfaces.Services.IVipService;
+using IVipService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IVipService;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
