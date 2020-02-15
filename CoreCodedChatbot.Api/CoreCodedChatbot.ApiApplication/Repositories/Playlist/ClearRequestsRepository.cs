@@ -19,6 +19,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 
         public void ClearRequests(List<BasicSongRequest> requestsToRemove)
         {
+            if (requestsToRemove == null) return;
+
             using (var context = _chatbotContextFactory.Create())
             {
                 var songRequests =

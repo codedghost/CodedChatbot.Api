@@ -33,7 +33,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             return new PromoteRequestIntermediate
             {
                 PromoteRequestResult =
-                    newSongIndex == 0 ? PromoteRequestResult.UnSuccessful : PromoteRequestResult.Successful,
+                    newSongIndex > 0 ? PromoteRequestResult.Successful : PromoteRequestResult.UnSuccessful,
                 PlaylistIndex = newSongIndex
             };
         }

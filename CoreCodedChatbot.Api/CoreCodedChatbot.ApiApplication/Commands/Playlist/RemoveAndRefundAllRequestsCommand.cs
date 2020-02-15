@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
@@ -31,15 +32,21 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
         {
             var currentRequests = _getCurrentRequestsRepository.GetCurrentRequests();
 
-            var refundVips = currentRequests.VipRequests.Where(sr => sr.IsSuperVip || sr.IsVip).Select(sr =>
+            if (currentRequests == null)
+                return;
+
+            var refundVips = currentRequests?.VipRequests?.Where(sr => sr.IsSuperVip || sr.IsVip).Select(sr =>
                 new VipRefund
                 {
                     Username = sr.Username,
-                    VipsToRefund = sr.IsVip ? 1 : sr.IsSuperVip ? _configService.Get<int>("SuperVipCost") : 0
-                }).ToList();
+                    VipsToRefund = sr.IsSuperVip ? _configService.Get<int>("SuperVipCost") :
+                        sr.IsVip ? 1 :
+                            0
+                }).ToList() ?? new List<VipRefund>();
 
             _refundVipCommand.Refund(refundVips);
 
+            _clearRequestsRepository.ClearRequests(currentRequests.RegularRequests);
             _clearRequestsRepository.ClearRequests(currentRequests.VipRequests);
         }
     }
