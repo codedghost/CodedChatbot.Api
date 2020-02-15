@@ -115,6 +115,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
             services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
             services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
+            services.AddSingleton<IEditSuperVipCommand, EditSuperVipCommand>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
@@ -162,6 +163,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
             services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
             services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
+            services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();

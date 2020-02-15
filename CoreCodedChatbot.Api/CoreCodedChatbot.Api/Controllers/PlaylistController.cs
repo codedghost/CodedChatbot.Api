@@ -167,25 +167,40 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
         {
-            var addSuperVipResult = _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText);
-
-            return new JsonResult(new AddRequestResponse
+            try
             {
-                Result = addSuperVipResult
-            });
+                var addSuperVipResult =
+                    _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText);
+
+                return new JsonResult(new AddRequestResponse
+                {
+                    Result = addSuperVipResult
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in AddSuperRequest", requestModel);
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         public IActionResult EditSuperVipRequest([FromBody] EditSuperVipRequest requestModel)
         {
-            var editSuperVipResult =
-                _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText);
-
-            return new JsonResult(new EditRequestResponse
+            try
             {
-                SongRequestText = editSuperVipResult,
-                SyntaxError = string.IsNullOrWhiteSpace(editSuperVipResult)
-            });
+                var editSuperVipResult =
+                    _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText);
+
+                if (editSuperVipResult)
+                    return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in EditSuperVipRequest", requestModel);
+            }
+
+            return BadRequest();
         }
 
         [HttpPost]

@@ -26,6 +26,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IUpdatePlaylistStateCommand _updatePlaylistStateCommand;
         private readonly IAddSongToDriveCommand _addSongToDriveCommand;
         private readonly IGetMaxRegularRequestCountQuery _getMaxRegularRequestCountQuery;
+        private readonly IEditSuperVipCommand _editSuperVipCommand;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -42,7 +43,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery,
             IUpdatePlaylistStateCommand updatePlaylistStateCommand,
             IAddSongToDriveCommand addSongToDriveCommand,
-            IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery
+            IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery,
+            IEditSuperVipCommand editSuperVipCommand
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -57,6 +59,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _updatePlaylistStateCommand = updatePlaylistStateCommand;
             _addSongToDriveCommand = addSongToDriveCommand;
             _getMaxRegularRequestCountQuery = getMaxRegularRequestCountQuery;
+            _editSuperVipCommand = editSuperVipCommand;
 
             _rand = new Random();
         }
@@ -92,31 +95,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
 
             return (result.AddRequestResult, result.SongIndex);
-        }
-
-        public AddRequestResult AddSuperVipRequest(string username, string commandText)
-        {
-            var result = _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip);
-
-
-            if (_currentRequest == null)
-            {
-                _currentRequest = new PlaylistItem
-                {
-                    songRequestId = result.SongRequestId,
-                    songRequestText = commandText,
-                    songRequester = username,
-                    isEvenIndex = false,
-                    isInChat = true,
-                    isVip = true,
-                    isSuperVip = true,
-                    isInDrive = false
-                };
-            }
-
-            //TODO SignalR Update
-
-            return result.AddRequestResult;
         }
 
         public AddRequestResult AddWebRequest(AddWebSongRequest requestSongViewModel, string username)
@@ -324,9 +302,38 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return result;
         }
 
-        public string EditSuperVipRequest(string username, string songText)
+        public AddRequestResult AddSuperVipRequest(string username, string commandText)
         {
-            throw new System.NotImplementedException();
+            var result = _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip);
+
+
+            if (_currentRequest == null)
+            {
+                _currentRequest = new PlaylistItem
+                {
+                    songRequestId = result.SongRequestId,
+                    songRequestText = commandText,
+                    songRequester = username,
+                    isEvenIndex = false,
+                    isInChat = true,
+                    isVip = true,
+                    isSuperVip = true,
+                    isInDrive = false
+                };
+            }
+
+            //TODO SignalR Update
+
+            return result.AddRequestResult;
+        }
+
+        public bool EditSuperVipRequest(string username, string songText)
+        {
+            var songId = _editSuperVipCommand.Edit(username, songText);
+
+            // TODO SignalR Update - Use returned SongId to target update (may need more info)
+
+            return songId > 0;
         }
 
         public bool RemoveSuperRequest(string username)

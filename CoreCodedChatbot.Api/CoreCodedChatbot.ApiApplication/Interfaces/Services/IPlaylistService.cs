@@ -34,7 +34,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         bool ArchiveRequestById(int songId);
         bool VeryClosePlaylist();
         int GetMaxUserRequests();
-        string EditSuperVipRequest(string username, string songText);
+        bool EditSuperVipRequest(string username, string songText);
         bool RemoveSuperRequest(string username);
         bool IsSuperVipRequestInQueue();
         PlaylistItem GetCurrentSongRequest();
