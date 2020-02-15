@@ -1,6 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
@@ -13,30 +12,15 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
     public class AddSongRequestCommand : IAddSongRequestCommand
     {
         private readonly IGetPlaylistStateQuery _getPlaylistStateQuery;
-        private readonly ICheckUserHasMaxRegularsInQueueQuery _checkUserHasMaxRegularsInQueueQuery;
-        private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
-        private readonly ICheckUserHasVipsQuery _checkUserHasVipsQuery;
-        private readonly IAddRequestRepository _addRequestRepository;
-        private readonly IVipService _vipService;
-        private readonly IConfigService _configService;
+        private readonly IProcessSongRequestCommand _processSongRequestCommand;
 
         public AddSongRequestCommand(
             IGetPlaylistStateQuery getPlaylistStateQuery,
-            ICheckUserHasMaxRegularsInQueueQuery checkUserHasMaxRegularsInQueueQuery,
-            IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
-            ICheckUserHasVipsQuery checkUserHasVipsQuery,
-            IAddRequestRepository addRequestRepository,
-            IVipService vipService,
-            IConfigService configService
+            IProcessSongRequestCommand processSongRequestCommand
             )
         {
             _getPlaylistStateQuery = getPlaylistStateQuery;
-            _checkUserHasMaxRegularsInQueueQuery = checkUserHasMaxRegularsInQueueQuery;
-            _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
-            _checkUserHasVipsQuery = checkUserHasVipsQuery;
-            _addRequestRepository = addRequestRepository;
-            _vipService = vipService;
-            _configService = configService;
+            _processSongRequestCommand = processSongRequestCommand;
         }
 
         public AddSongResult AddSongRequest(string username, string requestText, SongRequestType songRequestType)
@@ -47,83 +31,38 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     AddRequestResult = AddRequestResult.NoRequestEntered
                 };
 
+            if (string.IsNullOrWhiteSpace(username) || songRequestType == SongRequestType.Any)
+                return new AddSongResult
+                {
+                    AddRequestResult = AddRequestResult.UnSuccessful
+                };
+
             var playlistState = _getPlaylistStateQuery.GetPlaylistState();
 
             switch (playlistState)
             {
                 case PlaylistState.VeryClosed:
-                    return new AddSongResult
+                    if (songRequestType != SongRequestType.SuperVip)
                     {
-                        AddRequestResult = AddRequestResult.PlaylistVeryClosed
-                    };
-                case PlaylistState.Closed:
-                    switch (songRequestType)
-                    {
-                        case SongRequestType.Regular:
-                            return new AddSongResult
-                            {
-                                AddRequestResult = AddRequestResult.PlaylistClosed
-                            };
+                        return new AddSongResult
+                        {
+                            AddRequestResult = AddRequestResult.PlaylistVeryClosed
+                        };
                     }
+
+                    break;
+                case PlaylistState.Closed:
+                    if (songRequestType == SongRequestType.Regular)
+                    {
+                        return new AddSongResult
+                        {
+                            AddRequestResult = AddRequestResult.PlaylistClosed
+                        };
+                    }
+
                     break;
             }
-            return ProcessAddingSongRequest(username, requestText, songRequestType);
-        }
-
-        private AddSongResult ProcessAddingSongRequest(string username, string requestText,
-            SongRequestType songRequestType)
-        {
-            switch (songRequestType)
-            {
-                case SongRequestType.SuperVip:
-                    return ProcessSuperVip(username, requestText);
-                case SongRequestType.Vip:
-                    return ProcessVip(username, requestText);
-                default:
-                    return ProcessRegular(username, requestText);
-            }
-        }
-
-        private AddSongResult ProcessRegular(string username, string requestText)
-        {
-            var maxRegulars = _configService.Get<int>("MaxRegularSongsPerUser");
-
-            if (_checkUserHasMaxRegularsInQueueQuery.UserHasMaxRegularsInQueue(username))
-                return new AddSongResult
-                {
-                    AddRequestResult = AddRequestResult.MaximumRegularRequests,
-                    MaximumRegularRequests = maxRegulars
-                };
-
-            return _addRequestRepository.AddRequest(requestText, username, false, false);
-        }
-
-        private AddSongResult ProcessVip(string username, string requestText)
-        {
-            if (!_vipService.UseVip(username))
-                return new AddSongResult
-                {
-                    AddRequestResult = AddRequestResult.NotEnoughVips
-                };
-
-            return _addRequestRepository.AddRequest(requestText, username, true, false);
-        }
-
-        private AddSongResult ProcessSuperVip(string username, string requestText)
-        {
-            if (_isSuperVipInQueueQuery.IsSuperVipInQueue())
-                return new AddSongResult
-                {
-                    AddRequestResult = AddRequestResult.OnlyOneSuper
-                };
-
-            if (!_vipService.UseSuperVip(username))
-                return new AddSongResult
-                {
-                    AddRequestResult = AddRequestResult.NotEnoughVips
-                };
-
-            return _addRequestRepository.AddRequest(requestText, username, false, true);
+            return _processSongRequestCommand.ProcessAddingSongRequest(username, requestText, songRequestType);
         }
     }
 }

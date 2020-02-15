@@ -20,6 +20,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             {
                 var user = context.Users.Find(username);
 
+                if (user == null) return 0;
+
                 var vipsReceived = user.DonationOrBitsVipRequests +
                                    user.FollowVipRequest +
                                    user.ModGivenVipRequests +

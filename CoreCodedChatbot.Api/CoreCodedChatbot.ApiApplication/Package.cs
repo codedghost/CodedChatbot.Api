@@ -1,5 +1,4 @@
-﻿using System;
-using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
+﻿using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Quote;
@@ -116,6 +115,10 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
             services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
             services.AddSingleton<IEditSuperVipCommand, EditSuperVipCommand>();
+            services.AddSingleton<IProcessRegularSongRequestCommand, ProcessRegularSongRequestCommand>();
+            services.AddSingleton<IProcessVipSongRequestCommand, ProcessVipSongRequestCommand>();
+            services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
+            services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();

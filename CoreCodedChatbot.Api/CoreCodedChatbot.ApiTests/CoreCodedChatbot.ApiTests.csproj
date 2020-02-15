@@ -17,11 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
     <Folder Include="Extensions\" />
     <Folder Include="Repositories\" />
     <Folder Include="Queries\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreCodedChatbot.ApiApplication\CoreCodedChatbot.ApiApplication.csproj" />
   </ItemGroup>
 
 </Project>

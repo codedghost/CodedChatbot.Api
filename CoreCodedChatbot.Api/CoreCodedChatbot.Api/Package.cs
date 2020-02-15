@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
-using IModGiveVipRepository = CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip.IModGiveVipRepository;
 
 namespace CoreCodedChatbot.Api
 {

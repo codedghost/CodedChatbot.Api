@@ -16,7 +16,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 
         public bool AddSongToDrive(int songRequestId)
         {
-            return _addSongToDriveRepository.AddSongToDrive(songRequestId);
+            return songRequestId > 0 && _addSongToDriveRepository.AddSongToDrive(songRequestId);
         }
     }
 }
