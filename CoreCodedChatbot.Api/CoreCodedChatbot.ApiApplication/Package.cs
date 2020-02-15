@@ -78,6 +78,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
             services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
             services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
+            services.AddSingleton<IGetMaxRegularRequestCountQuery, GetMaxRegularRequestCountQuery>();
 
             // Quote
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();

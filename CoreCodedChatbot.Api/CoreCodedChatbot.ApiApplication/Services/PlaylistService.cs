@@ -25,6 +25,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetUsersFormattedRequestsQuery _getUsersFormattedRequestsQuery;
         private readonly IUpdatePlaylistStateCommand _updatePlaylistStateCommand;
         private readonly IAddSongToDriveCommand _addSongToDriveCommand;
+        private readonly IGetMaxRegularRequestCountQuery _getMaxRegularRequestCountQuery;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -40,7 +41,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
             IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery,
             IUpdatePlaylistStateCommand updatePlaylistStateCommand,
-            IAddSongToDriveCommand addSongToDriveCommand
+            IAddSongToDriveCommand addSongToDriveCommand,
+            IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -54,6 +56,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getUsersFormattedRequestsQuery = getUsersFormattedRequestsQuery;
             _updatePlaylistStateCommand = updatePlaylistStateCommand;
             _addSongToDriveCommand = addSongToDriveCommand;
+            _getMaxRegularRequestCountQuery = getMaxRegularRequestCountQuery;
 
             _rand = new Random();
         }
@@ -280,27 +283,45 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public bool AddSongToDrive(int songId)
         {
-            return _addSongToDriveCommand.AddSongToDrive(songId);
+            var result = _addSongToDriveCommand.AddSongToDrive(songId);
+
+            // TODO SignalR update
+
+            return result;
         }
 
         public bool OpenPlaylist()
         {
-            return _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Open);
+            var result = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Open);
+
+            // TODO SignalR update
+
+            return result;
         }
 
         public bool ClosePlaylist()
         {
-            return _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Closed);
+            var updatePlaylistState = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Closed);
+
+            // TODO SignalR update
+
+            return updatePlaylistState;
         }
 
         public bool VeryClosePlaylist()
         {
-            return _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.VeryClosed);
+            var updatePlaylistState = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.VeryClosed);
+
+            // TODO SignalR update
+
+            return updatePlaylistState;
         }
 
         public int GetMaxUserRequests()
         {
-            throw new System.NotImplementedException();
+            var result = _getMaxRegularRequestCountQuery.Get();
+
+            return result;
         }
 
         public string EditSuperVipRequest(string username, string songText)
