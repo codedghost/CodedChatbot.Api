@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using AutoFixture.NUnit3;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using Moq;
 using NUnit.Framework;
@@ -20,14 +21,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _subject = new EditSuperVipCommand(_editSuperVipRequestRepository.Object);
         }
 
-        [Test]
-        public void EnsureThat_RepositoryIsCalled()
+        [Test, AutoData]
+        public void EnsureThat_RepositoryIsCalled(string username, string newText, int songId)
         {
-            var username = It.IsAny<string>();
-            var newText = It.IsAny<string>();
-
-            var songId = It.IsAny<int>();
-
             _editSuperVipRequestRepository.Setup(e => e.Edit(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(songId);
 

@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Quote;
+﻿using AutoFixture.NUnit3;
+using CoreCodedChatbot.ApiApplication.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using Moq;
 using NUnit.Framework;
@@ -21,12 +22,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Quote
             _subject = new AddQuoteCommand(_addQuoteRepository.Object);
         }
 
-        [Test]
-        public void SuccessWhen_RepositoryIsCalled()
+        [Test, AutoData]
+        public void SuccessWhen_RepositoryIsCalled(string username, string text)
         {
-            var username = It.IsAny<string>();
-            var text = It.IsAny<string>();
-
             _subject.AddQuote(username, text);
 
             _addQuoteRepository.Verify(a => a.AddQuote(username, text));

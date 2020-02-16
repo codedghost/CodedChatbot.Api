@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Quote;
+﻿using AutoFixture.NUnit3;
+using CoreCodedChatbot.ApiApplication.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using Moq;
 using NUnit.Framework;
@@ -20,13 +21,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Quote
             _subject = new RemoveQuoteCommand(_removeQuoteRepository.Object);
         }
 
-        [Test]
-        public void SuccessWhen_RepositoryCalled()
+        [Test, AutoData]
+        public void SuccessWhen_RepositoryCalled(int quoteId, string username, bool isMod)
         {
-            var quoteId = It.IsAny<int>();
-            var username = It.IsAny<string>();
-            var isMod = It.IsAny<bool>();
-
             _subject.RemoveQuote(quoteId, username, isMod);
 
             _removeQuoteRepository.Verify(e => e.RemoveQuote(quoteId, username, isMod));

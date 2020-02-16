@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
+﻿using AutoFixture.NUnit3;
+using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using Moq;
@@ -25,14 +26,13 @@ namespace CoreCodedChatbot.ApiTests.Commands.StreamStatus
             _subject = new SaveStreamStatusCommand(_saveStreamStatusRepository.Object);
         }
 
-        [Test]
-        public void SuccessWhen_ValueIsReturned_RepositoryCalled()
+        [Test, AutoData]
+        public void SuccessWhen_ValueIsReturned_RepositoryCalled(
+            PutStreamStatusRequest request)
         {
-            var putRequest = It.IsAny<PutStreamStatusRequest>();
+            var result = _subject.Save(request);
 
-            var result = _subject.Save(putRequest);
-
-            _saveStreamStatusRepository.Verify(s => s.Save(putRequest), Times.Once);
+            _saveStreamStatusRepository.Verify(s => s.Save(request), Times.Once);
 
             Assert.AreEqual(_successValue, result);
         }

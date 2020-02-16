@@ -19,6 +19,8 @@ namespace CoreCodedChatbot.ApiApplication.Commands.GuessingGame
 
         public void Give(List<GuessingGameWinner> winners)
         {
+            if (winners == null) return;
+
             var bytesModel = winners.Select(w =>
                 new GiveBytesToUserModel
                 {

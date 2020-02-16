@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using AutoFixture.NUnit3;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using Moq;
 using NUnit.Framework;
@@ -20,11 +21,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _subject = new ArchiveRequestCommand(_archiveRequestRepository.Object);
         }
 
-        [Test]
-        public void EnsureRepositoryIsCalled()
+        [Test, AutoData]
+        public void EnsureRepositoryIsCalled(int requestId)
         {
-            var requestId = It.IsAny<int>();
-
             _subject.ArchiveRequest(requestId);
 
             _archiveRequestRepository.Verify(a => a.ArchiveRequest(requestId), Times.Once);

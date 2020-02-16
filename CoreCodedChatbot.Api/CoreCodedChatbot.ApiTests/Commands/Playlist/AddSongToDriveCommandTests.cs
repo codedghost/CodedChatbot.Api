@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using AutoFixture.NUnit3;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using Moq;
@@ -33,11 +34,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             Assert.AreEqual(expectedResult, result);
         }
 
-        [TestCase]
-        public void EnsureThat_AddSongToDriveRepositoryIsCalled_WhenValidSongId()
+        [Test, AutoData]
+        public void EnsureThat_AddSongToDriveRepositoryIsCalled_WhenValidSongId(int songRequestId)
         {
-            var songRequestId = 50;
-
             _subject.AddSongToDrive(songRequestId);
 
             _addSongToDriveRepository.Verify(a => a.AddSongToDrive(songRequestId), Times.Once);
