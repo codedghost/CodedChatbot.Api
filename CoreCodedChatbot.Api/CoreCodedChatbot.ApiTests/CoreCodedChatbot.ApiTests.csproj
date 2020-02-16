@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Commands\GuessingGame\" />
     <Folder Include="Extensions\" />
     <Folder Include="Repositories\" />
     <Folder Include="Queries\" />
