@@ -167,6 +167,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
             services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
             services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
+            services.AddSingleton<IRemoveSuperRequestRepository, RemoveSuperRequestRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
