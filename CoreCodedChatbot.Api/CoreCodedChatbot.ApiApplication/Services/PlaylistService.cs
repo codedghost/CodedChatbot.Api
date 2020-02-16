@@ -2,6 +2,7 @@
 using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
@@ -27,6 +28,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IAddSongToDriveCommand _addSongToDriveCommand;
         private readonly IGetMaxRegularRequestCountQuery _getMaxRegularRequestCountQuery;
         private readonly IEditSuperVipCommand _editSuperVipCommand;
+        private readonly IRemoveSuperVipCommand _removeSuperVipCommand;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -44,7 +46,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IUpdatePlaylistStateCommand updatePlaylistStateCommand,
             IAddSongToDriveCommand addSongToDriveCommand,
             IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery,
-            IEditSuperVipCommand editSuperVipCommand
+            IEditSuperVipCommand editSuperVipCommand,
+            IRemoveSuperVipCommand removeSuperVipCommand
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -60,6 +63,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _addSongToDriveCommand = addSongToDriveCommand;
             _getMaxRegularRequestCountQuery = getMaxRegularRequestCountQuery;
             _editSuperVipCommand = editSuperVipCommand;
+            _removeSuperVipCommand = removeSuperVipCommand;
 
             _rand = new Random();
         }
@@ -338,7 +342,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public bool RemoveSuperRequest(string username)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrWhiteSpace(username)) return false;
+
+            _removeSuperVipCommand.Remove(username);
+
+            return true;
         }
 
         public void UpdateFullPlaylist(bool updateCurrent = false)

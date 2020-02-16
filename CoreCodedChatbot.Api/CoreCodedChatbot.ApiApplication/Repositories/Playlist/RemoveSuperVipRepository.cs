@@ -5,12 +5,12 @@ using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 {
-    public class RemoveSuperRequestRepository : IRemoveSuperRequestRepository
+    public class RemoveSuperVipRepository : IRemoveSuperVipRepository
     {
         private readonly IChatbotContextFactory _chatbotContextFactory;
         private readonly IConfigService _configService;
 
-        public RemoveSuperRequestRepository(
+        public RemoveSuperVipRepository(
             IChatbotContextFactory chatbotContextFactory,
             IConfigService configService
         )

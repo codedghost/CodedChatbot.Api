@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
 {
     [TestFixture]
-    public class RemoveSuperRequestRepositoryTests
+    public class RemoveSuperVipRepositoryTests
     {
         private Mock<IChatbotContextFactory> _chatbotContextFactory;
         private Mock<IChatbotContext> _context;
@@ -24,7 +24,7 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
 
         private int _superVipCost = 50;
 
-        private RemoveSuperRequestRepository _subject;
+        private RemoveSuperVipRepository _subject;
 
         [SetUp]
         public void Setup()
@@ -65,7 +65,7 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _context.Setup(s => s.Users).Returns(_users.Object);
 
             _chatbotContextFactory.Setup(s => s.Create()).Returns(_context.Object);
-            _subject = new RemoveSuperRequestRepository(_chatbotContextFactory.Object, _configService.Object);
+            _subject = new RemoveSuperVipRepository(_chatbotContextFactory.Object, _configService.Object);
         }
 
         [Test, AutoData]
