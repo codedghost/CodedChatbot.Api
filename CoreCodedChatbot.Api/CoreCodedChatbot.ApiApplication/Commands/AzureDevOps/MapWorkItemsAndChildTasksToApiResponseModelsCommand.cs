@@ -31,7 +31,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
                         AssignedTo = parentWorkItem.AssignedTo(),
                         AcceptanceCriteria = parentWorkItem.AcceptanceCriteria(),
                         Description = parentWorkItem.Description(),
-                        Tasks = childWorkItems.Select(_mapWorkItemToTaskCommand.Map).Where(t => t != null).ToList()
+                        Tasks = childWorkItems?.Select(_mapWorkItemToTaskCommand.Map).Where(t => t != null).ToList() ?? new List<DevOpsTask>()
                     };
                 case "Bug":
                     return new DevOpsBug
@@ -43,7 +43,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
                         AcceptanceCriteria = parentWorkItem.AcceptanceCriteria(),
                         ReproSteps = parentWorkItem.ReproSteps(),
                         SystemInfo = parentWorkItem.SystemInfo(),
-                        Tasks = childWorkItems.Select(_mapWorkItemToTaskCommand.Map).Where(t => t != null).ToList()
+                        Tasks = childWorkItems?.Select(_mapWorkItemToTaskCommand.Map).Where(t => t != null).ToList() ?? new List<DevOpsTask>()
                     };
                 default:
                     return null;

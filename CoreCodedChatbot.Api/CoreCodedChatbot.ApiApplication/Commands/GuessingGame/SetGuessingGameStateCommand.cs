@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Constants;
+﻿using System.Globalization;
+using CoreCodedChatbot.ApiApplication.Constants;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 
@@ -17,7 +18,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.GuessingGame
 
         public void Set(bool value)
         {
-            _setOrCreateSettingRepository.Set(SettingsKeys.GuessingGameStateSettingKey, value ? "true" : "false");
+            _setOrCreateSettingRepository.Set(SettingsKeys.GuessingGameStateSettingKey, value.ToString().ToLower());
         }
     }
 }

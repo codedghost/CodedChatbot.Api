@@ -5,9 +5,8 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
-namespace CoreCodedChatbot.ApiTests
+namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame
 {
     [TestFixture]
     public class GiveGuessingGameWinnersBytesCommandTests

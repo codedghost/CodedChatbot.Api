@@ -4,7 +4,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests
+namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame
 {
     [TestFixture]
     public class CompleteGuessingGameCommandTests
