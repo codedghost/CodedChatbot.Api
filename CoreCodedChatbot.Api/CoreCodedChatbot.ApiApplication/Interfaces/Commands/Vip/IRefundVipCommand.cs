@@ -5,7 +5,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
 {
     public interface IRefundVipCommand
     {
-        void Refund(VipRefund username);
-        void Refund(List<VipRefund> usernames);
+        void Refund(VipRefund vipRefund);
+        void Refund(List<VipRefund> vipRefunds);
     }
 }

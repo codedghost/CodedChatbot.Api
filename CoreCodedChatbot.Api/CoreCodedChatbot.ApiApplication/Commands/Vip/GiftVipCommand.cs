@@ -20,12 +20,11 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Vip
 
         public bool GiftVip(string donorUsername, string receivingUsername, int vipsToGift)
         {
-            if (_checkUserHasVipsQuery.CheckUserHasVips(donorUsername, vipsToGift))
-            {
-                _giftVipRepository.GiftVip(donorUsername, receivingUsername, vipsToGift);
-            }
+            if (!_checkUserHasVipsQuery.CheckUserHasVips(donorUsername, vipsToGift)) return false;
 
-            return false;
+            _giftVipRepository.GiftVip(donorUsername, receivingUsername, vipsToGift);
+            return true;
+
         }
     }
 }

@@ -14,14 +14,14 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Vip
             _refundVipsRepository = refundVipsRepository;
         }
 
-        public void Refund(VipRefund username)
+        public void Refund(VipRefund vipRefund)
         {
-            _refundVipsRepository.RefundVips(new List<VipRefund> {username});
+            _refundVipsRepository.RefundVips(new List<VipRefund> {vipRefund});
         }
 
-        public void Refund(List<VipRefund> usernames)
+        public void Refund(List<VipRefund> vipRefunds)
         {
-            _refundVipsRepository.RefundVips(usernames);
+            _refundVipsRepository.RefundVips(vipRefunds);
         }
     }
 }
