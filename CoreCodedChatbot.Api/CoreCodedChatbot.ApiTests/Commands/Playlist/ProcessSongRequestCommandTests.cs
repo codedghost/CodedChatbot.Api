@@ -6,7 +6,6 @@ using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 {

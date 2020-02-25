@@ -1,6 +1,5 @@
 ﻿using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using Moq;
 using NUnit.Framework;
@@ -42,8 +41,8 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _addSongToDriveRepository.Verify(a => a.AddSongToDrive(songRequestId), Times.Once);
         }
 
-        [TestCase(0, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId")]
-        [TestCase(-1, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId")]
+        [TestCase(0, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId_0")]
+        [TestCase(-1, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId_-1")]
         public void InvalidSongTest(int songRequestId)
         {
             _subject.AddSongToDrive(songRequestId);

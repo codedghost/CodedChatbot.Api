@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Extensions;

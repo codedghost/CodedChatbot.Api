@@ -2,7 +2,6 @@
 using AutoFixture;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using Moq;
 using NUnit.Framework;

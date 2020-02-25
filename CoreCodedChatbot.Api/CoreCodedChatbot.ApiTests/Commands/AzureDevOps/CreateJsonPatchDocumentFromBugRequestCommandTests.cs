@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
-using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using NUnit.Framework;
 
 namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps
@@ -35,18 +35,18 @@ namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps
 
             var jsonPatch = _subject.Create(twitchUsername, bug);
 
-            Assert.IsTrue(
-                (string) jsonPatch.SingleOrDefault(j => j.Path == $"/fields/{AzureDevOpsFields.Title}")?.Value ==
-                $"{twitchUsername} - {bug.Title}");
-            Assert.IsTrue(
+            Assert.IsTrue(string.Equals(
+                (string) jsonPatch.SingleOrDefault(j => j.Path == $"/fields/{AzureDevOpsFields.Title}")?.Value,
+                $"{twitchUsername} - {bug.Title}", StringComparison.InvariantCulture));
+            Assert.IsTrue(string.Equals(
                 (string) jsonPatch.SingleOrDefault(j => j.Path == $"/fields/{AzureDevOpsFields.AcceptanceCriteria}")
-                    ?.Value == bug.AcceptanceCriteria);
-            Assert.IsTrue(
+                    ?.Value, bug.AcceptanceCriteria, StringComparison.InvariantCulture));
+            Assert.IsTrue(string.Equals(
                 (string)jsonPatch.SingleOrDefault(j => j.Path == $"/fields/{AzureDevOpsFields.ReproSteps}")
-                    ?.Value == bug.ReproSteps);
-            Assert.IsTrue(
-                (string)jsonPatch.SingleOrDefault(j => j.Path == $"/fields/{AzureDevOpsFields.SystemInfo}")
-                    ?.Value == bug.SystemInfo);
+                    ?.Value, bug.ReproSteps, StringComparison.InvariantCulture));
+            Assert.IsTrue(string.Equals(
+                (string) jsonPatch.SingleOrDefault(j => j.Path == $"/fields/{AzureDevOpsFields.SystemInfo}")
+                    ?.Value, bug.SystemInfo, StringComparison.InvariantCulture));
         }
     }
 }

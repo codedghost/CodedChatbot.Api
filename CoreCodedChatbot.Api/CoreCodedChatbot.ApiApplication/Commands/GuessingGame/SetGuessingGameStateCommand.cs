@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using CoreCodedChatbot.ApiApplication.Constants;
+﻿using CoreCodedChatbot.ApiApplication.Constants;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 

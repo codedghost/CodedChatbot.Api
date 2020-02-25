@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 using CoreCodedChatbot.Config;
@@ -19,10 +18,7 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
         private Mock<IChatbotContext> _context;
         private Mock<IConfigService> _configService;
 
-        private Mock<DbSet<SongRequest>> _songRequests;
-        private Mock<DbSet<User>> _users;
-
-        private int _superVipCost = 50;
+        private readonly int _superVipCost = 50;
 
         private RemoveSuperVipRepository _subject;
 
@@ -34,35 +30,12 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
 
             _configService = new Mock<IConfigService>();
             _configService.Setup(s => s.Get<int>("SuperVipCost")).Returns(_superVipCost);
-
-            _songRequests = new Mock<DbSet<SongRequest>>();
-            _users = new Mock<DbSet<User>>();
         }
 
-        private void SetUsers(List<User> users)
+        private void SetupSubject(Mock<DbSet<SongRequest>> songRequests, Mock<DbSet<User>> users)
         {
-            _users.As<IQueryable<User>>().Setup(s => s.Provider).Returns(users.AsQueryable().Provider);
-            _users.As<IQueryable<User>>().Setup(s => s.Expression).Returns(users.AsQueryable().Expression);
-            _users.As<IQueryable<User>>().Setup(s => s.ElementType).Returns(users.AsQueryable().ElementType);
-            _users.As<IQueryable<User>>().Setup(s => s.GetEnumerator()).Returns(users.AsQueryable().GetEnumerator());
-            _users.Setup(s => s.Find(It.IsAny<string>()))
-                .Returns((object[] value) => users.SingleOrDefault(u => u.Username == (string)value[0]));
-        }
-
-        private void SetSongRequests(List<SongRequest> songRequests)
-        {
-            _songRequests.As<IQueryable<SongRequest>>().Setup(s => s.Provider).Returns(songRequests.AsQueryable().Provider);
-            _songRequests.As<IQueryable<SongRequest>>().Setup(s => s.Expression).Returns(songRequests.AsQueryable().Expression);
-            _songRequests.As<IQueryable<SongRequest>>().Setup(s => s.ElementType).Returns(songRequests.AsQueryable().ElementType);
-            _songRequests.As<IQueryable<SongRequest>>().Setup(s => s.GetEnumerator()).Returns(songRequests.AsQueryable().GetEnumerator());
-            _songRequests.Setup(s => s.Find(It.IsAny<int>())).Returns((object[] value) =>
-                songRequests.SingleOrDefault(sr => sr.SongRequestId == (int)value[0]));
-        }
-
-        private void SetupSubject()
-        {
-            _context.Setup(s => s.SongRequests).Returns(_songRequests.Object);
-            _context.Setup(s => s.Users).Returns(_users.Object);
+            _context.Setup(s => s.SongRequests).Returns(songRequests.Object);
+            _context.Setup(s => s.Users).Returns(users.Object);
 
             _chatbotContextFactory.Setup(s => s.Create()).Returns(_context.Object);
             _subject = new RemoveSuperVipRepository(_chatbotContextFactory.Object, _configService.Object);
@@ -73,9 +46,10 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
         {
             var username = "TestUsername";
 
-            SetUsers(users);
-            SetSongRequests(requests);
-            SetupSubject();
+            var dbSongRequests= MockChatbotContextSetup.SetUpDbSetMock(requests);
+            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+
+            SetupSubject(dbSongRequests, dbUsers);
 
             _subject.Remove(username);
 
@@ -90,12 +64,10 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             userRequest.RequestUsername = user.Username;
             userRequest.Played = true;
 
-            users.Add(user);
-            requests.Add(userRequest);
+            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
 
-            SetUsers(users);
-            SetSongRequests(requests);
-            SetupSubject();
+            SetupSubject(dbSongRequests, dbUsers);
 
             _subject.Remove(user.Username);
 
@@ -122,9 +94,10 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             requests.Add(userRegularRequest);
             users.Add(user);
 
-            SetUsers(users);
-            SetSongRequests(requests);
-            SetupSubject();
+            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+
+            SetupSubject(dbSongRequests, dbUsers);
 
             _subject.Remove(user.Username);
 
@@ -143,9 +116,9 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
 
             requests.Add(songRequest);
 
-            SetUsers(users);
-            SetSongRequests(requests);
-            SetupSubject();
+            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+            SetupSubject(dbSongRequests, dbUsers);
 
             _subject.Remove(user.Username);
 
@@ -167,9 +140,9 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             users.Add(user);
             requests.Add(userRequest);
 
-            SetUsers(users);
-            SetSongRequests(requests);
-            SetupSubject();
+            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+            SetupSubject(dbSongRequests, dbUsers);
 
             _subject.Remove(user.Username);
 
