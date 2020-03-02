@@ -1,6 +1,8 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+﻿using System;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Config;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
@@ -9,14 +11,23 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly HubConnection _connection;
 
         public SignalRService(
-            IConfigService configService
+            IConfigService configService,
+            ILogger<SignalRService> logger
             )
         {
-            _connection = new HubConnectionBuilder()
-                .WithUrl($"{configService.Get<string>("WebPlaylistUrl")}/SongList")
-                .Build();
+            try
+            {
+                _connection = new HubConnectionBuilder()
+                    .WithUrl($"{configService.Get<string>("WebPlaylistUrl")}/SongList")
+                    .Build();
 
-            _connection.StartAsync().Wait();
+                _connection.StartAsync().Wait();
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Error when creating SignalR Connection", e);
+                _connection = null;
+            }
         }
 
         public HubConnection GetCurrentConnection()
