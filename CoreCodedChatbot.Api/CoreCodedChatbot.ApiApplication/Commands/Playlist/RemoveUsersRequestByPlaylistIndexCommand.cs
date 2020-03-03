@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.Config;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 {
@@ -8,14 +11,20 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
     {
         private readonly IGetUsersRequestsRepository _getUsersRequestsRepository;
         private readonly IArchiveRequestCommand _archiveRequestCommand;
+        private readonly IRefundVipCommand _refundVipCommand;
+        private readonly IConfigService _configService;
 
         public RemoveUsersRequestByPlaylistIndexCommand(
             IGetUsersRequestsRepository getUsersRequestsRepository,
-            IArchiveRequestCommand archiveRequestCommand
+            IArchiveRequestCommand archiveRequestCommand,
+            IRefundVipCommand refundVipCommand,
+            IConfigService configService
             )
         {
             _getUsersRequestsRepository = getUsersRequestsRepository;
             _archiveRequestCommand = archiveRequestCommand;
+            _refundVipCommand = refundVipCommand;
+            _configService = configService;
         }
 
         public bool Remove(string username, int playlistPosition)
@@ -27,6 +36,15 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             var request = usersRequests.SingleOrDefault(r => r.PlaylistPosition == playlistPosition);
 
             if (request == null) return false;
+
+            if (request.IsVip || !request.IsSuperVip)
+            {
+                _refundVipCommand.Refund(new VipRefund
+                {
+                    Username = username,
+                    VipsToRefund = request.IsSuperVip ? _configService.Get<int>("SuperVipCost") : 1
+                });
+            }
 
             _archiveRequestCommand.ArchiveRequest(request.SongRequestId);
 
