@@ -120,6 +120,8 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
             services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
             services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
+            services.AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
+            services.AddSingleton<IArchiveUsersSingleRequest, ArchiveUsersSingleRequest>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();

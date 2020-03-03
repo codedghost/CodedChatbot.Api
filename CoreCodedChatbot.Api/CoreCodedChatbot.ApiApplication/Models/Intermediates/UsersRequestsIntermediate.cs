@@ -6,5 +6,6 @@
         public string SongRequestsText { get; set; }
         public int PlaylistPosition { get; set; }
         public bool IsVip { get; set; }
+        public bool IsSuperVip { get; set; }
     }
 }

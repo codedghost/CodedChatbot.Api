@@ -29,6 +29,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetMaxRegularRequestCountQuery _getMaxRegularRequestCountQuery;
         private readonly IEditSuperVipCommand _editSuperVipCommand;
         private readonly IRemoveSuperVipCommand _removeSuperVipCommand;
+        private readonly IGetUsersCurrentRequestCountsQuery _getUsersCurrentRequestCountsQuery;
+        private readonly IRemoveUsersRequestByPlaylistIndexCommand _removeUsersRequestByPlaylistIndexCommand;
+        private readonly IArchiveUsersSingleRequest _archiveUsersSingleRequest;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -47,7 +50,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IAddSongToDriveCommand addSongToDriveCommand,
             IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery,
             IEditSuperVipCommand editSuperVipCommand,
-            IRemoveSuperVipCommand removeSuperVipCommand
+            IRemoveSuperVipCommand removeSuperVipCommand,
+            IGetUsersCurrentRequestCountsQuery getUsersCurrentRequestCountsQuery,
+            IRemoveUsersRequestByPlaylistIndexCommand removeUsersRequestByPlaylistIndexCommand,
+            IArchiveUsersSingleRequest archiveUsersSingleRequest
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -64,6 +70,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getMaxRegularRequestCountQuery = getMaxRegularRequestCountQuery;
             _editSuperVipCommand = editSuperVipCommand;
             _removeSuperVipCommand = removeSuperVipCommand;
+            _getUsersCurrentRequestCountsQuery = getUsersCurrentRequestCountsQuery;
+            _removeUsersRequestByPlaylistIndexCommand = removeUsersRequestByPlaylistIndexCommand;
+            _archiveUsersSingleRequest = archiveUsersSingleRequest;
 
             _rand = new Random();
         }
@@ -218,28 +227,42 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public bool RemoveRockRequests(string username, string commandText, bool isMod)
         {
-            // If the request is the current song then we should not remove it.
+            bool success = false;
 
             // If the command text doesn't parse, we should attempt to remove a regular request
             if (!int.TryParse(commandText.Trim(), out var playlistIndex))
             {
                 // remove regular request if it exists
-                
+                if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                    SongRequestType.Regular) == 1)
+                {
+                    success = _archiveUsersSingleRequest.ArchiveAndRefundVips(username, SongRequestType.Regular, _currentRequest.songRequestId);
+                }
+
                 // if true return, otherwise attempt to remove and refund a single vip
+                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
+                {
+                    success = _archiveUsersSingleRequest.ArchiveAndRefundVips(username, SongRequestType.Vip, _currentRequest.songRequestId);
+                }
+
+                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                    SongRequestType.SuperVip) == 1)
+                {
+                    success = _archiveUsersSingleRequest.ArchiveAndRefundVips(username, SongRequestType.SuperVip, _currentRequest.songRequestId);
+                }
 
                 // TODO SignalR Update
 
-                // return result after SignalR update
+                return success;
             }
 
             // Remove VIP request using provided playlistIndex.
             // Query can use existing GetUsersRequestsRepository to get the song request id
+            success = _removeUsersRequestByPlaylistIndexCommand.Remove(username, playlistIndex);
 
             // TODO SignalR Update
 
-            // return result
-
-            return false;
+            return success;
         }
 
         public string GetUserRequests(string username)
@@ -260,6 +283,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public EditRequestResult EditWebRequest(RequestSongViewModel editRequestModel, string username, bool isMod)
         {
+            
             throw new System.NotImplementedException();
         }
 
@@ -351,6 +375,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public void UpdateFullPlaylist(bool updateCurrent = false)
         {
+            // TODO: WHEN SIGNALR IS IMPLEMENTED PROPERLY THIS WON'T BE NEEDED
+
             throw new System.NotImplementedException();
         }
 

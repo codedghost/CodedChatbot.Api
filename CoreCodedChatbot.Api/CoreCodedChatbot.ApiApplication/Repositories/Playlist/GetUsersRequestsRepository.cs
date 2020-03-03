@@ -31,7 +31,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
                             SongRequestId = sr.SongRequestId,
                             SongRequestsText = sr.RequestText,
                             PlaylistPosition = index + 1,
-                            IsVip = sr.VipRequestTime != null || sr.SuperVipRequestTime != null
+                            IsVip = sr.VipRequestTime != null || sr.SuperVipRequestTime != null,
+                            IsSuperVip = sr.SuperVipRequestTime != null
                         });
 
                 return userRequests.ToList();
