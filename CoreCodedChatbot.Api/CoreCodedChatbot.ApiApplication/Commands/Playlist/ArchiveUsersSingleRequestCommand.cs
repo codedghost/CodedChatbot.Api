@@ -8,14 +8,14 @@ using CoreCodedChatbot.Config;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 {
-    public class ArchiveUsersSingleRequest : IArchiveUsersSingleRequest
+    public class ArchiveUsersSingleRequestCommand : IArchiveUsersSingleRequestCommand
     {
         private readonly IGetUsersRequestsRepository _getUsersRequestsRepository;
         private readonly IArchiveRequestCommand _archiveRequestCommand;
         private readonly IRefundVipCommand _refundVipCommand;
         private readonly IConfigService _configService;
 
-        public ArchiveUsersSingleRequest(
+        public ArchiveUsersSingleRequestCommand(
             IGetUsersRequestsRepository getUsersRequestsRepository,
             IArchiveRequestCommand archiveRequestCommand,
             IRefundVipCommand refundVipCommand,

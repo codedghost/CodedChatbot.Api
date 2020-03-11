@@ -78,6 +78,8 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
             services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
             services.AddSingleton<IGetMaxRegularRequestCountQuery, GetMaxRegularRequestCountQuery>();
+            services.AddSingleton<IGetSingleSongRequestIdQuery, GetSingleSongRequestIdQuery>();
+            services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
 
             // Quote
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
@@ -121,7 +123,8 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
             services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
             services.AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
-            services.AddSingleton<IArchiveUsersSingleRequest, ArchiveUsersSingleRequest>();
+            services.AddSingleton<IArchiveUsersSingleRequestCommand, ArchiveUsersSingleRequestCommand>();
+            services.AddSingleton<IEditRequestCommand, EditRequestCommand>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
@@ -171,6 +174,8 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
             services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
             services.AddSingleton<IRemoveSuperVipRepository, RemoveSuperVipRepository>();
+            services.AddSingleton<IGetSingleSongRequestIdRepository, GetSingleSongRequestIdRepository>();
+            services.AddSingleton<IEditRequestRepository, EditRequestRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();

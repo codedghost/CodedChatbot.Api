@@ -24,7 +24,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         bool EditRequest(string username, string commandText, bool isMod, out string songRequestText,
             out bool syntaxError);
 
-        EditRequestResult EditWebRequest(RequestSongViewModel editRequestModel, string username, bool isMod);
+        EditRequestResult EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel);
         PromoteRequestResult PromoteWebRequest(int songId, string username);
 
         bool AddSongToDrive(int songId);

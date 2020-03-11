@@ -317,15 +317,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                var requestSongViewModel = new RequestSongViewModel
-                {
-                    SongRequestId = editWebRequestRequestModel.SongRequestId,
-                    Title = editWebRequestRequestModel.Title,
-                    Artist = editWebRequestRequestModel.Artist,
-                    SelectedInstrument = editWebRequestRequestModel.SelectedInstrument
-                };
-
-                var result = _playlistService.EditWebRequest(requestSongViewModel, editWebRequestRequestModel.Username, editWebRequestRequestModel.IsMod);
+                var result = _playlistService.EditWebRequest(editWebRequestRequestModel);
 
                 // Need a new EditWebRequestResponse model to hold the edit result enum
                 var responseModel = new EditWebRequestResponse

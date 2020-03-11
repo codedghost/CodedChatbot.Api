@@ -31,7 +31,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IRemoveSuperVipCommand _removeSuperVipCommand;
         private readonly IGetUsersCurrentRequestCountsQuery _getUsersCurrentRequestCountsQuery;
         private readonly IRemoveUsersRequestByPlaylistIndexCommand _removeUsersRequestByPlaylistIndexCommand;
-        private readonly IArchiveUsersSingleRequest _archiveUsersSingleRequest;
+        private readonly IArchiveUsersSingleRequestCommand _archiveUsersSingleRequestCommand;
+        private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
+        private readonly IGetUsersRequestAtPlaylistIndexQuery _getUsersRequestAtPlaylistIndexQuery;
+        private readonly IEditRequestCommand _editRequestCommand;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -53,7 +56,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IRemoveSuperVipCommand removeSuperVipCommand,
             IGetUsersCurrentRequestCountsQuery getUsersCurrentRequestCountsQuery,
             IRemoveUsersRequestByPlaylistIndexCommand removeUsersRequestByPlaylistIndexCommand,
-            IArchiveUsersSingleRequest archiveUsersSingleRequest
+            IArchiveUsersSingleRequestCommand archiveUsersSingleRequestCommand,
+            IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository,
+            IGetUsersRequestAtPlaylistIndexQuery getUsersRequestAtPlaylistIndexQuery,
+            IEditRequestCommand editRequestCommand
             )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -72,7 +78,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _removeSuperVipCommand = removeSuperVipCommand;
             _getUsersCurrentRequestCountsQuery = getUsersCurrentRequestCountsQuery;
             _removeUsersRequestByPlaylistIndexCommand = removeUsersRequestByPlaylistIndexCommand;
-            _archiveUsersSingleRequest = archiveUsersSingleRequest;
+            _archiveUsersSingleRequestCommand = archiveUsersSingleRequestCommand;
+            _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
+            _getUsersRequestAtPlaylistIndexQuery = getUsersRequestAtPlaylistIndexQuery;
+            _editRequestCommand = editRequestCommand;
 
             _rand = new Random();
         }
@@ -236,19 +245,19 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
                     SongRequestType.Regular) == 1)
                 {
-                    success = _archiveUsersSingleRequest.ArchiveAndRefundVips(username, SongRequestType.Regular, _currentRequest.songRequestId);
+                    success = _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.Regular, _currentRequest.songRequestId);
                 }
 
                 // if true return, otherwise attempt to remove and refund a single vip
                 else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
                 {
-                    success = _archiveUsersSingleRequest.ArchiveAndRefundVips(username, SongRequestType.Vip, _currentRequest.songRequestId);
+                    success = _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.Vip, _currentRequest.songRequestId);
                 }
 
                 else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
                     SongRequestType.SuperVip) == 1)
                 {
-                    success = _archiveUsersSingleRequest.ArchiveAndRefundVips(username, SongRequestType.SuperVip, _currentRequest.songRequestId);
+                    success = _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.SuperVip, _currentRequest.songRequestId);
                 }
 
                 // TODO SignalR Update
@@ -278,13 +287,133 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public bool EditRequest(string username, string commandText, bool isMod, out string songRequestText, out bool syntaxError)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrWhiteSpace(commandText))
+            {
+                songRequestText = string.Empty;
+                syntaxError = true;
+                return false;
+            }
+
+            var commandTextTerms = commandText.Trim().Split(" ");
+
+            SongRequestType editRequestType;
+            EditRequestResult result;
+
+            // If the command text doesn't parse, we should attempt to remove a regular request
+            if (!int.TryParse(commandTextTerms[0].Trim(), out var playlistIndex))
+            {
+                songRequestText = string.Join(' ',
+                    commandTextTerms.TakeLast(commandTextTerms.Length - 1));
+
+                // remove regular request if it exists
+                if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                    SongRequestType.Regular) == 1)
+                {
+                    editRequestType = SongRequestType.Regular;
+                }
+                // if true return, otherwise attempt to remove and refund a single vip
+                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
+                {
+                    editRequestType = SongRequestType.Vip;
+                }
+
+                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                    SongRequestType.SuperVip) == 1)
+                {
+                    editRequestType = SongRequestType.SuperVip;
+                }
+                else
+                {
+                    songRequestText = string.Empty;
+                    syntaxError = true;
+                    return false;
+                }
+
+                var formattedRequest =
+                    FormattedRequest.GetFormattedRequest(songRequestText);
+
+                var songRequestId = _getSingleSongRequestIdRepository.Get(username, editRequestType);
+
+                result = EditWebRequest(new EditWebRequestRequestModel
+                {
+                    SongRequestId = songRequestId,
+                    Title = formattedRequest.SongName,
+                    Artist = formattedRequest.SongArtist,
+                    SelectedInstrument = formattedRequest.InstrumentName,
+                    IsVip = editRequestType == SongRequestType.Vip,
+                    IsSuperVip = editRequestType == SongRequestType.SuperVip,
+                    Username = username,
+                    IsMod = isMod
+                });
+            }
+            else
+            {
+                songRequestText = commandText;
+
+                // Edit request at position playlistIndex
+                var songRequest = _getUsersRequestAtPlaylistIndexQuery.Get(username, playlistIndex,
+                    _currentRequest.isSuperVip || _currentRequest.isVip);
+
+                if (songRequest == null)
+                {
+                    syntaxError = true;
+                    songRequestText = string.Empty;
+                    return false;
+                }
+
+                var formattedRequest =
+                    FormattedRequest.GetFormattedRequest(commandText);
+
+                result = EditWebRequest(new EditWebRequestRequestModel
+                {
+                    SongRequestId = songRequest.SongRequestId,
+                    Title = formattedRequest.SongName,
+                    Artist = formattedRequest.SongArtist,
+                    SelectedInstrument = formattedRequest.InstrumentName,
+                    IsVip = songRequest.IsVip,
+                    IsSuperVip = songRequest.IsSuperVip,
+                    Username = username,
+                    IsMod = isMod
+                });
+            }
+
+            switch (result)
+            {
+                case EditRequestResult.NoRequestEntered:
+                case EditRequestResult.NotYourRequest:
+                case EditRequestResult.RequestAlreadyRemoved:
+                    syntaxError = true;
+                    break;
+                default:
+                    syntaxError = false;
+                    break;
+            }
+
+            // TODO SignalR Update
+
+            return result == EditRequestResult.Success;
         }
 
-        public EditRequestResult EditWebRequest(RequestSongViewModel editRequestModel, string username, bool isMod)
+        public EditRequestResult EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel)
         {
-            
-            throw new System.NotImplementedException();
+            if (editWebRequestRequestModel == null) return EditRequestResult.NoRequestEntered;
+
+            try
+            {
+                _editRequestCommand.Edit(editWebRequestRequestModel);
+
+                // TODO SignalR Update
+
+                return EditRequestResult.Success;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return EditRequestResult.NotYourRequest;
+            }
+            catch (Exception)
+            {
+                return EditRequestResult.UnSuccessful;
+            }
         }
 
         public bool AddSongToDrive(int songId)
@@ -333,7 +462,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public AddRequestResult AddSuperVipRequest(string username, string commandText)
         {
             var result = _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip);
-
 
             if (_currentRequest == null)
             {
