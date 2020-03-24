@@ -49,7 +49,6 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
-            services.AddSingleton<IRocksmithChartSourceService, RocksmithChartSourceService>();
             services.AddSingleton<IVipService, VipService>();
 
             services.AddSingleton<IQuoteService, QuoteService>();
