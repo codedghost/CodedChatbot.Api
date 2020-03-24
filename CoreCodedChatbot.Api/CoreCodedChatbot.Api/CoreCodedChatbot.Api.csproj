@@ -12,9 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.461" />
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.488" />
     <PackageReference Include="CoreCodedChatbot.Config" Version="1.0.345" />
-    <PackageReference Include="CoreCodedChatbot.Library" Version="1.0.439" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.486" />
+    <PackageReference Include="CoreCodedChatbot.Library" Version="1.0.501" />
     <PackageReference Include="CoreCodedChatbot.Logging" Version="1.0.401" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.346" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
