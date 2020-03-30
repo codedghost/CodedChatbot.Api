@@ -27,12 +27,9 @@ namespace CoreCodedChatbot.Api
             return services;
         }
 
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, ISecretService secretService)
         {
-            services.AddApiServices()
-                .AddApiCommands()
-                .AddApiQueries()
-                .AddApiRepositories();
+            services.SetupApiApplication(secretService);
 
             return services;
         }

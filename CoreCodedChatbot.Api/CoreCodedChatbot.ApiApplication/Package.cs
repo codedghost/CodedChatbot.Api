@@ -1,4 +1,7 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
+﻿using System;
+using System.Net.Http.Headers;
+using System.Text;
+using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Quote;
@@ -24,6 +27,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
@@ -38,19 +42,52 @@ using CoreCodedChatbot.ApiApplication.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Services;
+using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
+using SolrNet;
 
 namespace CoreCodedChatbot.ApiApplication
 {
     public static class Package
     {
+        public static IServiceCollection SetupApiApplication(this IServiceCollection services, ISecretService secretService)
+        {
+            services
+                .AddSolrServices(secretService)
+                .AddApiServices()
+                .AddApiCommands()
+                .AddApiQueries()
+                .AddApiRepositories();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSolrServices(this IServiceCollection services, ISecretService secretService)
+        {
+            var solrUser = secretService.GetSecret<string>("SolrUsername");
+            var solrPass = secretService.GetSecret<string>("SolrPassword");
+
+            var credentials = Encoding.ASCII.GetBytes($"{solrUser}:{solrPass}");
+
+            var credentialsBase64 = Convert.ToBase64String(credentials);
+
+            services.AddSolrNet<SongSearch>("http://codedghost.com:8983/solr/SongSearch", options =>
+                {
+                    options.HttpClient.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Basic", credentialsBase64);
+                });
+
+            return services;
+        }
+
         public static IServiceCollection AddApiServices(this IServiceCollection services)
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
             services.AddSingleton<IVipService, VipService>();
-
+            services.AddSingleton<IPlaylistService, PlaylistService>();
+            services.AddSingleton<ISolrService, SolrService>();
             services.AddSingleton<IQuoteService, QuoteService>();
 
             return services;
