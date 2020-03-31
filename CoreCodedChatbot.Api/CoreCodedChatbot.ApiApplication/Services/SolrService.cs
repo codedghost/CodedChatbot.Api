@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Constants;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using SolrNet;
 using SolrNet.Commands.Parameters;
@@ -10,6 +11,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
     public interface ISolrService
     {
         Task<List<SongSearch>> Search(string artist, string songName);
+        Task<List<SongSearch>> Search(string input);
     }
 
     public class SolrService : ISolrService
@@ -21,16 +23,46 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _songSearchOperations = songSearchOperations;
         }
 
+        public async Task<List<SongSearch>> Search(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+
+            var terms = GetStringFuzzySearchTerms(input);
+
+            AbstractSolrQuery query = null;
+
+            foreach (var term in terms)
+            {
+                if (query == null)
+                {
+                    query = new SolrQueryByField(SearchConstants.SongName, term) {Quoted = false};
+                }
+                else
+                {
+                    query = query || new SolrQueryByField(SearchConstants.SongName, term) { Quoted = false };
+                }
+
+                query = query || new SolrQueryByField(SearchConstants.ArtistName, term) { Quoted = false };
+            }
+
+            var result = await _songSearchOperations.QueryAsync(query);
+
+            var resultList = result.ToList();
+
+            return resultList;
+        }
+
         public async Task<List<SongSearch>> Search(string artist, string songName)
         {
             if (string.IsNullOrWhiteSpace(artist) && string.IsNullOrWhiteSpace(songName))
                 return null;
 
             var songTerms = GetStringFuzzySearchTerms(songName);
-            var artistTerms= GetStringFuzzySearchTerms(artist);
+             var artistTerms= GetStringFuzzySearchTerms(artist);
 
-            var songQuery = new SolrQueryInList("SongName", songTerms) {Quoted = false};
-            var artistQuery = new SolrQueryInList("SongArtist", artistTerms) {Quoted = false};
+            var songQuery = new SolrQueryInList(SearchConstants.SongName, songTerms) {Quoted = false};
+            var artistQuery = new SolrQueryInList(SearchConstants.ArtistName, artistTerms) {Quoted = false};
             AbstractSolrQuery query;
 
             if (songTerms != null && artistTerms != null)

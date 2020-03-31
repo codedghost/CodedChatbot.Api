@@ -23,5 +23,12 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return new JsonResult(result);
         }
+
+        public async Task<IActionResult> BadSearch(string terms)
+        {
+            var result = await _solrService.Search(terms);
+
+            return new JsonResult(result);
+        }
     }
 }
