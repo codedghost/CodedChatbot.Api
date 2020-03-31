@@ -39,6 +39,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
 
             services.AddSingleton<IQuoteService, QuoteService>();
+            services.AddSingleton<ISearchService, SearchService>();
 
             return services;
         }
@@ -70,6 +71,8 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IEditQuoteCommand, EditQuoteCommand>();
             services.AddSingleton<IRemoveQuoteCommand, RemoveQuoteCommand>();
 
+            services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
+
             return services;
         }
 
@@ -83,6 +86,7 @@ namespace CoreCodedChatbot.Api
             services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
             services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
             services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
+            services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();
 
             return services;
         }
