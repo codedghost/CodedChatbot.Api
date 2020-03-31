@@ -12,5 +12,6 @@ namespace CoreCodedChatbot.Api.Interfaces.Services
         Task<List<WorkItem>> GetChildWorkItemsByPbi(WorkItem pbi);
         Task<bool> RaiseBugInBacklog(string twitchUsername, DevOpsBug bugInfo);
         Task<List<WorkItem>> GetBacklogWorkItems();
+        void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest);
     }
 }

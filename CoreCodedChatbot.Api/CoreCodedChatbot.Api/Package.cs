@@ -62,6 +62,7 @@ namespace CoreCodedChatbot.Api
         public static IServiceCollection AddApiCommands(this IServiceCollection services)
         {
             services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
+            services.AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand, CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
             services.AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
             services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();

@@ -11,5 +11,6 @@
         public const string ReproSteps = "Microsoft.VSTS.TCM.ReproSteps";
         public const string SystemInfo = "Microsoft.VSTS.TCM.SystemInfo";
         public const string RemainingWork = "Microsoft.VSTS.Scheduling.RemainingWork";
+        public const string Tags = "System.Tags";
     }
 }

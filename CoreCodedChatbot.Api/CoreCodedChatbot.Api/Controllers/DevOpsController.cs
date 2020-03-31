@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.Api.Extensions;
 using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.Api.Interfaces.Services;
 using CoreCodedChatbot.Api.Queries;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
+using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +23,7 @@ namespace CoreCodedChatbot.Api.Controllers
         private readonly IGetAllBacklogWorkItemsQuery _getAllBacklogWorkItemsQuery;
         private readonly IGetWorkItemByIdQuery _getWorkItemByIdQuery;
         private readonly IRaiseBugQuery _raiseBugQuery;
+        private readonly IAzureDevOpsService _azureDevOpsService;
         private readonly ILogger<DevOpsController> _logger;
 
         public DevOpsController(
@@ -27,6 +31,7 @@ namespace CoreCodedChatbot.Api.Controllers
             IGetAllBacklogWorkItemsQuery getAllBacklogWorkItemsQuery,
             IGetWorkItemByIdQuery getWorkItemByIdQuery,
             IRaiseBugQuery raiseBugQuery,
+            IAzureDevOpsService azureDevOpsService,
             ILogger<DevOpsController> logger
             )
         {
@@ -34,6 +39,7 @@ namespace CoreCodedChatbot.Api.Controllers
             _getAllBacklogWorkItemsQuery = getAllBacklogWorkItemsQuery;
             _getWorkItemByIdQuery = getWorkItemByIdQuery;
             _raiseBugQuery = raiseBugQuery;
+            _azureDevOpsService = azureDevOpsService;
 
             _logger = logger;
         }
@@ -82,6 +88,36 @@ namespace CoreCodedChatbot.Api.Controllers
             var success = await _raiseBugQuery.Raise(raiseBugRequest.TwitchUsername, raiseBugRequest.BugInfo);
 
             return Json(success, GetJsonSerializerSettings.Get());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PracticeSongRequest([FromBody] PracticeSongRequest request)
+        {
+            if (request == null ||
+                string.IsNullOrWhiteSpace(request.SongName) ||
+                string.IsNullOrWhiteSpace(request.Username)
+            )
+            {
+                _logger.LogError("PracticeSongRequest received an invalid request", request);
+
+                return BadRequest();
+            }
+
+            try
+            {
+                _azureDevOpsService.RaisePracticeSongRequest(request.Username, new DevOpsProductBacklogItem
+                {
+                    Title = request.SongName,
+                    Description = request.ExtraInformation
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error in PracticeSongRequest when raising pbi in DevOps", request);
+                return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }
