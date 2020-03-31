@@ -18,7 +18,7 @@ namespace CoreCodedChatbot.Api.Controllers
             _searchService = searchService;
         }
 
-        public IActionResult SaveSearchSynonymRequest(SaveSearchSynonymRequest request)
+        public IActionResult SaveSearchSynonymRequest([FromBody]SaveSearchSynonymRequest request)
         {
             if (_searchService.SaveSearchSynonymRequest(request))
             {
