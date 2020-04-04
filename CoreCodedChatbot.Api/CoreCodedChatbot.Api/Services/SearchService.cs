@@ -1,5 +1,5 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Repositories;
-using CoreCodedChatbot.Api.Interfaces.Services;
+﻿using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 
 namespace CoreCodedChatbot.Api.Services

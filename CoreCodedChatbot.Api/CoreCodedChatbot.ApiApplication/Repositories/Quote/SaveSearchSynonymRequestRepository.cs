@@ -1,8 +1,8 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Repositories;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.Api.Repositories
+namespace CoreCodedChatbot.ApiApplication.Repositories.Quote
 {
     public class SaveSearchSynonymRequestRepository : ISaveSearchSynonymRequestRepository
     {

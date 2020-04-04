@@ -1,7 +1,7 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Interfaces.Repositories;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 
-namespace CoreCodedChatbot.Api.Commands
+namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
 {
     public class SaveSearchSynonymRequestCommand : ISaveSearchSynonymRequestCommand
     {

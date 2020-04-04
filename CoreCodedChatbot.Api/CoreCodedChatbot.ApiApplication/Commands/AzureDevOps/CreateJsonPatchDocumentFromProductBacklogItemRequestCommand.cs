@@ -1,23 +1,29 @@
 ﻿using System.Collections.Generic;
-using CoreCodedChatbot.Api.Extensions;
+using CoreCodedChatbot.ApiApplication.Extensions;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
-namespace CoreCodedChatbot.Api.Commands
+namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
 {
     public class CreateJsonPatchDocumentFromProductBacklogItemRequestCommand : ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand
     {
-        public JsonPatchDocument Create(string twitchUsername, DevOpsProductBacklogItem pbiInfo, List<string> tags)
+        private readonly ICreateJsonPatchForWorkItemCommand _createJsonPatchForWorkItemCommand;
+
+        public CreateJsonPatchDocumentFromProductBacklogItemRequestCommand(
+            ICreateJsonPatchForWorkItemCommand createJsonPatchForWorkItemCommand
+            )
         {
-            var jsonPatchDocument = new JsonPatchDocument();
+            _createJsonPatchForWorkItemCommand = createJsonPatchForWorkItemCommand;
+        }
+
+        public JsonPatchDocument Create(string twitchUsername, DevOpsProductBacklogItem pbiInfo)
+        {
+            var jsonPatchDocument = _createJsonPatchForWorkItemCommand.Create(twitchUsername, pbiInfo);
 
             jsonPatchDocument
-                .AddTitle($"{twitchUsername} - {pbiInfo.Title}")
                 .AddDescription(pbiInfo.Description);
-
-            if (tags.Any())
-                jsonPatchDocument.AddTags(tags);
 
             return jsonPatchDocument;
         }

@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreCodedChatbot.Api.Commands;
-using CoreCodedChatbot.Api.Interfaces.Commands;
-using CoreCodedChatbot.Api.Interfaces.Queries;
-using CoreCodedChatbot.Api.Interfaces.Services;
-using CoreCodedChatbot.Api.Queries;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
@@ -156,8 +151,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest)
         {
-            var tags = new List<string> {"Song Request"};
-            var jsonPatch = _createJsonPatchDocumentFromProductBacklogItemRequestCommand.Create(twitchUsername, songRequest,tags);
+            var jsonPatch = _createJsonPatchDocumentFromProductBacklogItemRequestCommand.Create(twitchUsername, songRequest);
 
             await _workItemTrackingClient.CreateWorkItemAsync(jsonPatch,
                 _configService.Get<string>("DevOpsProjectName"), "Product Backlog Item");

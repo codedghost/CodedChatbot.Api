@@ -1,4 +1,4 @@
-﻿namespace CoreCodedChatbot.Api.Interfaces.Repositories
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote
 {
     public interface ISaveSearchSynonymRequestRepository
     {

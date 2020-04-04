@@ -7,20 +7,20 @@ namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
 {
     public class CreateJsonPatchDocumentFromBugRequestCommand : ICreateJsonPatchDocumentFromBugRequestCommand
     {
+        private readonly ICreateJsonPatchForWorkItemCommand _createJsonPatchForWorkItemCommand;
+
         public CreateJsonPatchDocumentFromBugRequestCommand(
-            
+            ICreateJsonPatchForWorkItemCommand createJsonPatchForWorkItemCommand
             )
         {
-            
+            _createJsonPatchForWorkItemCommand = createJsonPatchForWorkItemCommand;
         }
 
         public JsonPatchDocument Create(string twitchUsername, DevOpsBug bugInfo)
         {
-            var jsonPatchDocument = new JsonPatchDocument();
+            var jsonPatchDocument = _createJsonPatchForWorkItemCommand.Create(twitchUsername, bugInfo);
 
             jsonPatchDocument
-                .AddTitle($"{twitchUsername} - {bugInfo.Title}")
-                .AddAcceptanceCriteria(bugInfo.AcceptanceCriteria)
                 .AddReproSteps(bugInfo.ReproSteps)
                 .AddSystemInfo(bugInfo.SystemInfo);
 
