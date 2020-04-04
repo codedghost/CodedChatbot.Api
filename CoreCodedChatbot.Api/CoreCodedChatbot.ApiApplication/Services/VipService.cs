@@ -17,6 +17,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IUseSuperVipCommand _useSuperVipCommand;
         private readonly IModGiveVipCommand _modGiveVipCommand;
         private readonly IGetUsersGiftedVipsQuery _getUsersGiftedVipsQuery;
+        private readonly IGetUserVipCountQuery _getUserVipCountQuery;
         private readonly IConfigService _configService;
         private readonly ILogger<IVipService> _logger;
 
@@ -28,6 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IUseSuperVipCommand useSuperVipCommand,
             IModGiveVipCommand modGiveVipCommand,
             IGetUsersGiftedVipsQuery getUsersGiftedVipsQuery,
+            IGetUserVipCountQuery getUserVipCountQuery,
             IConfigService configService,
             ILogger<IVipService> logger)
         {
@@ -38,6 +40,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _useSuperVipCommand = useSuperVipCommand;
             _modGiveVipCommand = modGiveVipCommand;
             _getUsersGiftedVipsQuery = getUsersGiftedVipsQuery;
+            _getUserVipCountQuery = getUserVipCountQuery;
             _configService = configService;
             _logger = logger;
         }
@@ -169,6 +172,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public int GetUsersGiftedVips(string username)
         {
             var vips = _getUsersGiftedVipsQuery.GetUsersGiftedVips(username);
+
+            return vips;
+        }
+
+        public int GetUserVipCount(string username)
+        {
+            var vips = _getUserVipCountQuery.Get(username);
 
             return vips;
         }

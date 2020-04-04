@@ -21,6 +21,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
@@ -93,6 +94,7 @@ namespace CoreCodedChatbot.ApiApplication
             // Vip
             services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();
             services.AddSingleton<IGetUsersGiftedVipsQuery, GetUsersGiftedVipsQuery>();
+            services.AddSingleton<IGetUserVipCountQuery, GetUserVipCountQuery>();
 
             return services;
         }

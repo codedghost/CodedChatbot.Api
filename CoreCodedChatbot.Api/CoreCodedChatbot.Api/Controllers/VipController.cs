@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using IVipService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IVipService;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -141,6 +140,27 @@ namespace CoreCodedChatbot.Api.Controllers
                 _logger.LogError(e, $"Error in GetGiftedVips for user: {username}");
                 return BadRequest();
             }
+        }
+
+
+        [HttpGet]
+        public IActionResult GetUserVipCount(string username)
+        {
+            try
+            {
+                var vips = _vipService.GetUserVipCount(username);
+
+                return new JsonResult(new GetUserVipCountResponse
+                {
+                    Vips = vips
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetUserVipCount");
+            }
+
+            return BadRequest();
         }
     }
 }

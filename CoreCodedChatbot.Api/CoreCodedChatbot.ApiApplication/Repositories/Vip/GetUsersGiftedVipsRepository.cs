@@ -1,7 +1,7 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
 {
     public class GetUsersGiftedVipsRepository : IGetUsersGiftedVipsRepository
     {

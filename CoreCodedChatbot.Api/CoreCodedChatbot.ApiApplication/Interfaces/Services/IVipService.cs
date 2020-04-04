@@ -11,5 +11,6 @@
         bool UseSuperVip(string username);
         bool ModGiveVip(string username, int numberOfVips);
         int GetUsersGiftedVips(string username);
+        int GetUserVipCount(string username);
     }
 }
