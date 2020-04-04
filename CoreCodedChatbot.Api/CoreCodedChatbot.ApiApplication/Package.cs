@@ -8,6 +8,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
@@ -47,11 +48,12 @@ namespace CoreCodedChatbot.ApiApplication
         public static IServiceCollection AddApiServices(this IServiceCollection services)
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
-            services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
-            services.AddSingleton<IVipService, VipService>();
-
+            services.AddSingleton<IPlaylistService, PlaylistService>();
             services.AddSingleton<IQuoteService, QuoteService>();
+            services.AddSingleton<ISearchService, SearchService>();
+            services.AddSingleton<ISignalRService, SignalRService>();
+            services.AddSingleton<IVipService, VipService>();
 
             return services;
         }
@@ -59,11 +61,11 @@ namespace CoreCodedChatbot.ApiApplication
         public static IServiceCollection AddApiQueries(this IServiceCollection services)
         {
             // DevOps
-            services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
             services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
+            services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
+            services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
             services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
             services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
-            services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
 
             // Guessing Game
             services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
@@ -71,19 +73,19 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Playlist
             services.AddSingleton<ICheckUserHasMaxRegularsInQueueQuery, CheckUserHasMaxRegularsInQueueQuery>();
+            services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
+            services.AddSingleton<IGetMaxRegularRequestCountQuery, GetMaxRegularRequestCountQuery>();
             services.AddSingleton<IGetPlaylistStateQuery, GetPlaylistStateQuery>();
+            services.AddSingleton<IGetSingleSongRequestIdQuery, GetSingleSongRequestIdQuery>();
             services.AddSingleton<IGetSongRequestByIdQuery, GetSongRequestByIdQuery>();
             services.AddSingleton<IGetUsersCurrentRequestCountsQuery, GetUsersCurrentRequestCountsQuery>();
-            services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
-            services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
             services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
-            services.AddSingleton<IGetMaxRegularRequestCountQuery, GetMaxRegularRequestCountQuery>();
-            services.AddSingleton<IGetSingleSongRequestIdQuery, GetSingleSongRequestIdQuery>();
             services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
+            services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
 
             // Quote
-            services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
             services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
+            services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
 
             // Stream Status
             services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
@@ -99,6 +101,8 @@ namespace CoreCodedChatbot.ApiApplication
         {
             // DevOps
             services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
+            services.AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand, CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
+            services.AddSingleton<ICreateJsonPatchForWorkItemCommand, CreateJsonPatchForWorkItemCommand>();
             services.AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
             services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
@@ -111,35 +115,38 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Playlist
             services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();
-            services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
-            services.AddSingleton<IArchiveRequestCommand, ArchiveRequestCommand>();
-            services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
-            services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
             services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
-            services.AddSingleton<IEditSuperVipCommand, EditSuperVipCommand>();
-            services.AddSingleton<IProcessRegularSongRequestCommand, ProcessRegularSongRequestCommand>();
-            services.AddSingleton<IProcessVipSongRequestCommand, ProcessVipSongRequestCommand>();
-            services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
-            services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
-            services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
-            services.AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
+            services.AddSingleton<IArchiveRequestCommand, ArchiveRequestCommand>();
             services.AddSingleton<IArchiveUsersSingleRequestCommand, ArchiveUsersSingleRequestCommand>();
             services.AddSingleton<IEditRequestCommand, EditRequestCommand>();
+            services.AddSingleton<IEditSuperVipCommand, EditSuperVipCommand>();
+            services.AddSingleton<IProcessRegularSongRequestCommand, ProcessRegularSongRequestCommand>();
+            services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
+            services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
+            services.AddSingleton<IProcessVipSongRequestCommand, ProcessVipSongRequestCommand>();
+            services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
+            services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
+            services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
+            services.AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
+            services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
 
             // Quote
             services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
             services.AddSingleton<IEditQuoteCommand, EditQuoteCommand>();
             services.AddSingleton<IRemoveQuoteCommand, RemoveQuoteCommand>();
 
+            // Search
+            services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
+
             // Stream Status
             services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
             // Vip
-            services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
             services.AddSingleton<IGiftVipCommand, GiftVipCommand>();
-            services.AddSingleton<IUseVipCommand, UseVipCommand>();
-            services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
             services.AddSingleton<IModGiveVipCommand, ModGiveVipCommand>();
+            services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
+            services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
+            services.AddSingleton<IUseVipCommand, UseVipCommand>();
 
             return services;
         }
@@ -161,28 +168,32 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Playlist
             services.AddSingleton<IAddRequestRepository, AddRequestRepository>();
+            services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
+            services.AddSingleton<IArchiveRequestRepository, ArchiveRequestRepository>();
+            services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
+            services.AddSingleton<IEditRequestRepository, EditRequestRepository>();
+            services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
+            services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
             services.AddSingleton<IGetIsUserInChatRepository, GetIsUserInChatRepository>();
+            services.AddSingleton<IGetSingleSongRequestIdRepository, GetSingleSongRequestIdRepository>();
             services.AddSingleton<IGetSongRequestByIdRepository, GetSongRequestByIdRepository>();
             services.AddSingleton<IGetUsersBytesCountRepository, GetUsersBytesCountRepository>();
             services.AddSingleton<IGetUsersCurrentRegularRequestCountRepository, GetUsersCurrentRegularRequestCountRepository>();
             services.AddSingleton<IGetUsersCurrentRequestCountRepository, GetUsersCurrentRequestCountRepository>();
-            services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
-            services.AddSingleton<IArchiveRequestRepository, ArchiveRequestRepository>();
-            services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
-            services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
             services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
-            services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
-            services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
+            services.AddSingleton<IPromoteUserRequestRepository, PromoteUserRequestRepository>();
+            services.AddSingleton<IRemoveRegularRequestRepository, RemoveRegularRequestRepository>();
             services.AddSingleton<IRemoveSuperVipRepository, RemoveSuperVipRepository>();
-            services.AddSingleton<IGetSingleSongRequestIdRepository, GetSingleSongRequestIdRepository>();
-            services.AddSingleton<IEditRequestRepository, EditRequestRepository>();
 
             // Quote
             services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
             services.AddSingleton<IEditQuoteRepository, EditQuoteRepository>();
-            services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
-            services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
             services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
+            services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
+            services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
+
+            // Search
+            services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();
 
             // Settings
             services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
@@ -195,14 +206,14 @@ namespace CoreCodedChatbot.ApiApplication
             // Vip
             services.AddSingleton<IGetUsersCurrentSuperVipRequestCountRepository, GetUsersCurrentSuperVipRequestCountRepository>();
             services.AddSingleton<IGetUsersCurrentVipRequestCountRepository, GetUsersCurrentVipRequestCountRepository>();
-            services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
             services.AddSingleton<IGetUsersGiftedVipsRepository, GetUsersGiftedVipsRepository>();
-            services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
+            services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
             services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
-            services.AddSingleton<IUseVipRepository, UseVipRepository>();
-            services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
-            services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
             services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
+            services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
+            services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
+            services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
+            services.AddSingleton<IUseVipRepository, UseVipRepository>();
 
             return services;
         }

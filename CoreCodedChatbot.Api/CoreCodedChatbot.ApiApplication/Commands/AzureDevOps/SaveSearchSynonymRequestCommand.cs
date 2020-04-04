@@ -1,4 +1,5 @@
 ﻿using System;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps

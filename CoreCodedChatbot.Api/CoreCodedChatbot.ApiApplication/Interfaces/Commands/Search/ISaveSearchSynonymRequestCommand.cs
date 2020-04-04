@@ -1,4 +1,4 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search
 {
     public interface ISaveSearchSynonymRequestCommand
     {

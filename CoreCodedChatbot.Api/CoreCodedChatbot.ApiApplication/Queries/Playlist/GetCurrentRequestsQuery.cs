@@ -23,7 +23,7 @@ namespace CoreCodedChatbot.ApiApplication.Queries.Playlist
             var currentRequests = _getCurrentRequestsRepository.GetCurrentRequests();
 
             var regularRequests = currentRequests.RegularRequests.Select(r => r.CreatePlaylistItem()).ToList();
-            var vipRequests = currentRequests.RegularRequests.Select(r => r.CreatePlaylistItem()).ToList();
+            var vipRequests = currentRequests.VipRequests.Select(r => r.CreatePlaylistItem()).ToList();
 
             return (regularRequests, vipRequests);
         }

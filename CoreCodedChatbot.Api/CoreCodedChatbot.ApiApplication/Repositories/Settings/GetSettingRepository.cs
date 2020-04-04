@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
@@ -19,7 +20,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Settings
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var setting = context.Settings.Find(settingKey);
+                var setting = context.Settings.SingleOrDefault(s => s.SettingName == settingKey);
 
                 if (setting == null)
                     return default;

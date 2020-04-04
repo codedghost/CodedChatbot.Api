@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 

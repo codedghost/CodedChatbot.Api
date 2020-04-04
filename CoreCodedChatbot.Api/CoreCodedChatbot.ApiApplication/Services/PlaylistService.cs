@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
@@ -9,7 +10,10 @@ using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
-using CoreCodedChatbot.Library.Models.View;
+using CoreCodedChatbot.ApiContract.SignalRHubModels;
+using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Secrets;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
@@ -35,9 +39,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
         private readonly IGetUsersRequestAtPlaylistIndexQuery _getUsersRequestAtPlaylistIndexQuery;
         private readonly IEditRequestCommand _editRequestCommand;
+        private readonly ISecretService _secretService;
+        private readonly IConfigService _configService;
+        private readonly ISignalRService _signalRService;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
+
+        private int _currentVipRequestsPlayed = 0;
+        private int _concurrentVipSongsToPlay = 0;
 
         public PlaylistService(
             IGetSongRequestByIdQuery getSongRequestByIdQuery,
@@ -59,8 +69,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IArchiveUsersSingleRequestCommand archiveUsersSingleRequestCommand,
             IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository,
             IGetUsersRequestAtPlaylistIndexQuery getUsersRequestAtPlaylistIndexQuery,
-            IEditRequestCommand editRequestCommand
-            )
+            IEditRequestCommand editRequestCommand,
+            ISecretService secretService,
+            IConfigService configService,
+            ISignalRService signalRService
+        )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
             _getPlaylistStateQuery = getPlaylistStateQuery;
@@ -82,6 +95,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
             _getUsersRequestAtPlaylistIndexQuery = getUsersRequestAtPlaylistIndexQuery;
             _editRequestCommand = editRequestCommand;
+            _secretService = secretService;
+            _configService = configService;
+            _signalRService = signalRService;
+
+            _concurrentVipSongsToPlay = configService.Get<int>("ConcurrentVipSongsToPlay");
 
             _rand = new Random();
         }
@@ -113,6 +131,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 };
             }
 
+            UpdateFullPlaylist();
             //TODO SignalR Update
 
 
@@ -144,6 +163,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 };
             }
 
+            if (result.AddRequestResult == AddRequestResult.Success)
+                UpdateFullPlaylist();
             //TODO SignalR Update
 
             return result.AddRequestResult;
@@ -160,6 +181,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             var result = _promoteUsersRegularRequestCommand.PromoteUsersRegularRequest(username);
 
+            UpdateFullPlaylist();
             //TODO SignalR Update
 
             return result.PlaylistIndex;
@@ -169,6 +191,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             var result = _promoteUsersRegularRequestCommand.PromoteUsersRegularRequest(username, songId);
 
+            UpdateFullPlaylist();
             // TODO SignalR Update
 
             return result.PromoteRequestResult;
@@ -183,6 +206,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             _archiveRequestCommand.ArchiveRequest(currentRequest.songRequestId);
 
+            UpdateFullPlaylist(true);
             // TODO SignalR Update
         }
 
@@ -222,6 +246,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             _archiveRequestCommand.ArchiveRequest(songId);
 
+            UpdateFullPlaylist();
             // TODO SignalR Update
 
             return true;
@@ -230,7 +255,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public void ClearRockRequests()
         {
             _removeAndRefundAllRequestsCommand.RemoveAndRefundAllRequests();
-
+            
+            UpdateFullPlaylist();
             // TODO SignalR Update
         }
 
@@ -269,6 +295,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             // Query can use existing GetUsersRequestsRepository to get the song request id
             success = _removeUsersRequestByPlaylistIndexCommand.Remove(username, playlistIndex);
 
+            UpdateFullPlaylist();
             // TODO SignalR Update
 
             return success;
@@ -391,8 +418,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     break;
             }
 
-            // TODO SignalR Update
-
             return result == EditRequestResult.Success;
         }
 
@@ -404,6 +429,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             {
                 _editRequestCommand.Edit(editWebRequestRequestModel);
 
+                UpdateFullPlaylist();
                 // TODO SignalR Update
 
                 return EditRequestResult.Success;
@@ -422,6 +448,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             var result = _addSongToDriveCommand.AddSongToDrive(songId);
 
+            UpdateFullPlaylist();
             // TODO SignalR update
 
             return result;
@@ -480,6 +507,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 };
             }
 
+            UpdateFullPlaylist();
             //TODO SignalR Update
 
             return result.AddRequestResult;
@@ -489,6 +517,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             var songId = _editSuperVipCommand.Edit(username, songText);
 
+            UpdateFullPlaylist();
             // TODO SignalR Update - Use returned SongId to target update (may need more info)
 
             return songId > 0;
@@ -500,14 +529,39 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             _removeSuperVipCommand.Remove(username);
 
+            UpdateFullPlaylist();
+            // TODO SignalR Update
+
             return true;
         }
 
-        public void UpdateFullPlaylist(bool updateCurrent = false)
+        public async void UpdateFullPlaylist(bool updateCurrent = false)
         {
-            // TODO: WHEN SIGNALR IS IMPLEMENTED PROPERLY THIS WON'T BE NEEDED
+            var psk = _secretService.GetSecret<string>("SignalRKey");
 
-            throw new System.NotImplementedException();
+            var connection = _signalRService.GetCurrentConnection();
+
+            if (connection == null) return;
+
+            var requests = GetAllSongs();
+
+            if (updateCurrent)
+            {
+                UpdateCurrentSong(requests.RegularList, requests.VipList);
+            }
+
+            requests.RegularList = requests.RegularList.Where(r => r.songRequestId != _currentRequest.songRequestId)
+                .ToArray();
+            requests.VipList = requests.VipList.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
+
+            await connection.InvokeAsync<SongListHubModel>("SendAll",
+                new SongListHubModel
+                {
+                    psk = psk,
+                    currentSong = _currentRequest,
+                    regularRequests = requests.RegularList,
+                    vipRequests = requests.VipList
+                });
         }
 
         public bool IsSuperVipRequestInQueue()
@@ -520,6 +574,85 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public PlaylistItem GetCurrentSongRequest()
         {
             return _currentRequest;
+        }
+
+
+        private void UpdateCurrentSong(PlaylistItem[] regularRequests, PlaylistItem[] vipRequests)
+        {
+            var inChatRegularRequests = regularRequests.Where(r => r.isInChat).ToList();
+            if (!inChatRegularRequests.Any() && !vipRequests.Any())
+            {
+                _currentRequest = null;
+                return;
+            }
+
+            if (_currentRequest.isVip)
+            {
+                _currentVipRequestsPlayed++;
+                if (vipRequests.Any(vr => vr.isSuperVip))
+                {
+                    UpdateCurrentToSuperVipRequest(vipRequests);
+                }
+                else if (_currentVipRequestsPlayed < _concurrentVipSongsToPlay
+                    && vipRequests.Any())
+                {
+                    UpdateCurrentToVipRequest(vipRequests);
+                }
+                else if (inChatRegularRequests.Any())
+                {
+                    _currentVipRequestsPlayed = 0;
+                    UpdateCurrentToRegularRequest(inChatRegularRequests);
+                }
+                else if (vipRequests.Any())
+                {
+                    UpdateCurrentToVipRequest(vipRequests);
+                }
+                else
+                {
+                    EmptyCurrent();
+                }
+            }
+            else
+            {
+                if (vipRequests.Any(vr => vr.isSuperVip))
+                {
+                    UpdateCurrentToSuperVipRequest(vipRequests);
+                }
+                else if (vipRequests.Any())
+                {
+                    UpdateCurrentToVipRequest(vipRequests);
+                }
+                else if (inChatRegularRequests.Any())
+                {
+                    UpdateCurrentToRegularRequest(inChatRegularRequests);
+                }
+                else
+                {
+                    EmptyCurrent();
+                }
+            }
+        }
+
+        private void UpdateCurrentToRegularRequest(List<PlaylistItem> inChatRegularRequests)
+        {
+            _currentRequest = inChatRegularRequests[_rand.Next(inChatRegularRequests.Count)];
+        }
+
+        private void UpdateCurrentToVipRequest(PlaylistItem[] vipRequests)
+        {
+
+            _currentRequest = vipRequests.FirstOrDefault();
+        }
+
+        private void UpdateCurrentToSuperVipRequest(PlaylistItem[] vipRequests)
+        {
+
+            _currentRequest = vipRequests.FirstOrDefault(vr => vr.isSuperVip);
+        }
+
+        private void EmptyCurrent()
+        {
+            _currentRequest = null;
         }
     }
 }

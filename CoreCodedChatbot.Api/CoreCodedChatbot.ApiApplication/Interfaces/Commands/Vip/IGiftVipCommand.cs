@@ -1,4 +1,4 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
 {
     public interface IGiftVipCommand
     {

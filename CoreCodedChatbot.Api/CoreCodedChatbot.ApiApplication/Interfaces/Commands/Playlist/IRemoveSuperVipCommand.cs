@@ -1,4 +1,4 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
 {
     public interface IRemoveSuperVipCommand
     {

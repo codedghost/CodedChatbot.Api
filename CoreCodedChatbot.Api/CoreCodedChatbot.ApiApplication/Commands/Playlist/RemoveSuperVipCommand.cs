@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 {
