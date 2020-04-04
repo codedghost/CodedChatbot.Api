@@ -18,6 +18,8 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
         public void Edit(EditWebRequestRequestModel model)
         {
             _editRequestRepository.Edit(model.SongRequestId,
+                string.IsNullOrWhiteSpace(model.Artist) && string.IsNullOrWhiteSpace(model.SelectedInstrument) ?
+                    model.Title :
                 $"{model.Artist} - {model.Title} - {model.SelectedInstrument}",
                 model.Username, model.IsMod);
         }

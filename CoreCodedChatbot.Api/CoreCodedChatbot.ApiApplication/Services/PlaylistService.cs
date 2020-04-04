@@ -333,18 +333,19 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     FormattedRequest.GetFormattedRequest(songRequestText);
 
                 var songRequestId = _getSingleSongRequestIdRepository.Get(username, editRequestType);
-
-                result = EditWebRequest(new EditWebRequestRequestModel
+                var editRequestModel = new EditWebRequestRequestModel
                 {
                     SongRequestId = songRequestId,
-                    Title = formattedRequest.SongName,
-                    Artist = formattedRequest.SongArtist,
-                    SelectedInstrument = formattedRequest.InstrumentName,
+                    Title = formattedRequest?.SongName ?? songRequestText,
+                    Artist = formattedRequest?.SongArtist ?? string.Empty,
+                    SelectedInstrument = formattedRequest?.InstrumentName ?? string.Empty,
                     IsVip = editRequestType == SongRequestType.Vip,
                     IsSuperVip = editRequestType == SongRequestType.SuperVip,
                     Username = username,
                     IsMod = isMod
-                });
+                };
+
+                result = EditWebRequest(editRequestModel);
             }
             else
             {
@@ -363,18 +364,19 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
                 var formattedRequest =
                     FormattedRequest.GetFormattedRequest(commandText);
-
-                result = EditWebRequest(new EditWebRequestRequestModel
+                var editRequestModel = new EditWebRequestRequestModel
                 {
                     SongRequestId = songRequest.SongRequestId,
-                    Title = formattedRequest.SongName,
-                    Artist = formattedRequest.SongArtist,
-                    SelectedInstrument = formattedRequest.InstrumentName,
+                    Title = formattedRequest?.SongName ?? songRequestText,
+                    Artist = formattedRequest?.SongArtist ?? string.Empty,
+                    SelectedInstrument = formattedRequest?.InstrumentName ?? string.Empty,
                     IsVip = songRequest.IsVip,
                     IsSuperVip = songRequest.IsSuperVip,
                     Username = username,
                     IsMod = isMod
-                });
+                };
+
+                result = EditWebRequest(editRequestModel);
             }
 
             switch (result)
