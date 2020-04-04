@@ -1,6 +1,6 @@
 ﻿using CoreCodedChatbot.ApiContract.RequestModels.Search;
 
-namespace CoreCodedChatbot.Api.Interfaces.Services
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {
     public interface ISearchService
     {

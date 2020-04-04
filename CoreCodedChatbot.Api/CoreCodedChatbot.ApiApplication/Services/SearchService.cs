@@ -1,8 +1,8 @@
-﻿using CoreCodedChatbot.Api.Interfaces.Services;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 
-namespace CoreCodedChatbot.Api.Services
+namespace CoreCodedChatbot.ApiApplication.Services
 {
     public class SearchService : ISearchService
     {
