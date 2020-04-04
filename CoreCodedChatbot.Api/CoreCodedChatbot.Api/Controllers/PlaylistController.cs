@@ -206,7 +206,18 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult PromoteRequest([FromBody] PromoteSongRequest promoteSongRequest)
         {
-            return new JsonResult(_playlistService.PromoteRequest(promoteSongRequest.Username));
+            try
+            {
+                var result =
+                    _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId);
+
+                return new JsonResult(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in PromoteWebRequest", promoteSongRequest);
+                return BadRequest();
+            }
         }
 
         [HttpGet]
@@ -330,28 +341,6 @@ namespace CoreCodedChatbot.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "Error in EditWebRequest", editWebRequestRequestModel);
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult PromoteWebRequest([FromBody] PromoteWebRequestRequestModel promoteWebRequestRequestModel)
-        {
-            try
-            {
-                var result = _playlistService.PromoteWebRequest(promoteWebRequestRequestModel.SongRequestId,
-                    promoteWebRequestRequestModel.Username);
-
-                var responseModel = new PromoteWebRequestResponseModel
-                {
-                    Result = result
-                };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in PromoteWebRequest", promoteWebRequestRequestModel);
                 return BadRequest();
             }
         }
