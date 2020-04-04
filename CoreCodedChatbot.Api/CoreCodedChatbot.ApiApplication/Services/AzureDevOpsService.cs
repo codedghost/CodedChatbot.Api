@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreCodedChatbot.Api.Commands;
+using CoreCodedChatbot.Api.Interfaces.Commands;
+using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.Api.Queries;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
@@ -20,6 +25,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
     {
         private readonly IConfigService _configService;
         private readonly ICreateJsonPatchDocumentFromBugRequestCommand _createJsonPatchDocumentFromBugRequestCommand;
+        private readonly ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand _createJsonPatchDocumentFromProductBacklogItemRequestCommand;
         private readonly IGetDevOpsWorkItemIdsFromQueryId _getDevOpsWorkItemIdsFromQueryId;
         private readonly ILogger<AzureDevOpsService> _logger;
         private readonly WorkItemTrackingHttpClient _workItemTrackingClient;
@@ -28,12 +34,14 @@ namespace CoreCodedChatbot.ApiApplication.Services
             ISecretService secretService,
             IConfigService configService,
             ICreateJsonPatchDocumentFromBugRequestCommand createJsonPatchDocumentFromBugRequestCommand,
+            ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand createJsonPatchDocumentFromProductBacklogItemRequestCommand,
             IGetDevOpsWorkItemIdsFromQueryId getDevOpsWorkItemIdsFromQueryId,
             ILogger<AzureDevOpsService> logger
         )
         {
             _configService = configService;
             _createJsonPatchDocumentFromBugRequestCommand = createJsonPatchDocumentFromBugRequestCommand;
+            _createJsonPatchDocumentFromProductBacklogItemRequestCommand = createJsonPatchDocumentFromProductBacklogItemRequestCommand;
             _getDevOpsWorkItemIdsFromQueryId = getDevOpsWorkItemIdsFromQueryId;
             _logger = logger;
             var vssConnection = new VssConnection(
@@ -144,6 +152,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     $"Could not raise bug: {twitchUsername}, {bugInfo.Title}, {bugInfo.ReproSteps}, {bugInfo.AcceptanceCriteria}, {bugInfo.SystemInfo}");
                 return false;
             }
+        }
+
+        public async void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest)
+        {
+            var tags = new List<string> {"Song Request"};
+            var jsonPatch = _createJsonPatchDocumentFromProductBacklogItemRequestCommand.Create(twitchUsername, songRequest,tags);
+
+            await _workItemTrackingClient.CreateWorkItemAsync(jsonPatch,
+                _configService.Get<string>("DevOpsProjectName"), "Product Backlog Item");
         }
     }
 }

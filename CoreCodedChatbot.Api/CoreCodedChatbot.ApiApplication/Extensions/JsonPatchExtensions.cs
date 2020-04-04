@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Services.WebApi.Patch;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace CoreCodedChatbot.ApiApplication.Extensions
@@ -32,6 +33,13 @@ namespace CoreCodedChatbot.ApiApplication.Extensions
         public static JsonPatchDocument AddDescription(this JsonPatchDocument jsonPatchDocument, string description)
         {
             jsonPatchDocument.AddStringField(AzureDevOpsFields.Description, description);
+            return jsonPatchDocument;
+        }
+
+        public static JsonPatchDocument AddTags(this JsonPatchDocument jsonPatchDocument, List<string> tags)
+        {
+            jsonPatchDocument.AddStringField(AzureDevOpsFields.Tags, string.Join("; ", tags));
+
             return jsonPatchDocument;
         }
 
