@@ -177,14 +177,18 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return playlistState;
         }
 
-        public int PromoteRequest(string username)
+        public PromoteSongResponse PromoteRequest(string username, int songId)
         {
-            var result = _promoteUsersRegularRequestCommand.PromoteUsersRegularRequest(username);
+            var result = _promoteUsersRegularRequestCommand.PromoteUsersRegularRequest(username, songId);
 
             UpdateFullPlaylist();
             //TODO SignalR Update
 
-            return result.PlaylistIndex;
+            return new PromoteSongResponse
+            {
+                PlaylistIndex = result.PlaylistIndex,
+                PromoteRequestResult = result.PromoteRequestResult
+            };
         }
 
         public PromoteRequestResult PromoteWebRequest(int songId, string username)

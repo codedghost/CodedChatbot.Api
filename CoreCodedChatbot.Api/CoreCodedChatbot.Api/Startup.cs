@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using CodedGhost.Config;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context;

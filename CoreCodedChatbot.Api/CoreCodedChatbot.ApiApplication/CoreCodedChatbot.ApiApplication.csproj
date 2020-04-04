@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.575" />
-    <PackageReference Include="CoreCodedChatbot.Config" Version="1.0.345" />
+    <PackageReference Include="CodedGhost.Config" Version="1.0.549" />
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.583" />
     <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.558" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.568" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />

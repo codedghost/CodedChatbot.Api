@@ -12,7 +12,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         AddRequestResult AddSuperVipRequest(string username, string commandText);
         AddRequestResult AddWebRequest(AddWebSongRequest requestSongViewModel, string username);
         PlaylistState GetPlaylistState();
-        int PromoteRequest(string username);
+        PromoteSongResponse PromoteRequest(string username, int songId);
         void UpdateFullPlaylist(bool updateCurrent = false);
         void ArchiveCurrentRequest(int songId = 0);
         string GetUserRequests(string username);
@@ -24,7 +24,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
             out bool syntaxError);
 
         EditRequestResult EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel);
-        PromoteRequestResult PromoteWebRequest(int songId, string username);
 
         bool AddSongToDrive(int songId);
 
