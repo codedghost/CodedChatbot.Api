@@ -2,7 +2,6 @@
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
-using CoreCodedChatbot.Library.Models.View;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {

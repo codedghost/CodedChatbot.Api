@@ -1,5 +1,4 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 

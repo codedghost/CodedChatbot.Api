@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Library.Extensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 {

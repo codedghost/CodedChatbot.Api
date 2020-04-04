@@ -1,7 +1,5 @@
 ﻿using System;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
-using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
-using CoreCodedChatbot.Database.Context;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist

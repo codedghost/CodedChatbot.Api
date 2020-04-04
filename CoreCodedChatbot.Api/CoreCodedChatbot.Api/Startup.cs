@@ -4,7 +4,6 @@ using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Library;
 using CoreCodedChatbot.Logging;
 using CoreCodedChatbot.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,7 +39,6 @@ namespace CoreCodedChatbot.Api
                 .AddDbContextFactory()
                 .AddChatbotNLog(secretService)
                 .AddTwitchServices(configService, secretService)
-                .AddLibraryServices()
                 .AddApplicationServices();
 
             services.AddRouting();

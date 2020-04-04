@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Extensions;
+﻿using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
