@@ -1,5 +1,5 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Quotes;
 using CoreCodedChatbot.ApiContract.ResponseModels.Quotes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
-    [Microsoft.AspNetCore.Components.Route("Quote/[action]")]
+    [Route("Quote/[action]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class QuoteController : Controller
     {

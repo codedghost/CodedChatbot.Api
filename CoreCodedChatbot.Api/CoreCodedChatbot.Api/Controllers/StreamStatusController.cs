@@ -1,7 +1,6 @@
 ﻿using System;
-using CoreCodedChatbot.Api.Commands;
-using CoreCodedChatbot.Api.Interfaces.Commands;
-using CoreCodedChatbot.Api.Interfaces.Queries;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using CoreCodedChatbot.ApiContract.ResponseModels.StreamStatus;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using CoreCodedChatbot.Api.Extensions;
-using CoreCodedChatbot.Api.Interfaces.Queries;
-using CoreCodedChatbot.Api.Interfaces.Services;
-using CoreCodedChatbot.Api.Queries;
+using CoreCodedChatbot.ApiApplication.Extensions;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace CoreCodedChatbot.Api.Controllers
 {
@@ -108,7 +107,8 @@ namespace CoreCodedChatbot.Api.Controllers
                 _azureDevOpsService.RaisePracticeSongRequest(request.Username, new DevOpsProductBacklogItem
                 {
                     Title = request.SongName,
-                    Description = request.ExtraInformation
+                    Description = request.ExtraInformation,
+                    Tags = new List<string> { "Song Request"}
                 });
             }
             catch (Exception e)

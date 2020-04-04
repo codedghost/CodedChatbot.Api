@@ -1,5 +1,4 @@
-﻿using CoreCodedChatbot.Api.Commands;
-using CoreCodedChatbot.Api.Interfaces.Services;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
