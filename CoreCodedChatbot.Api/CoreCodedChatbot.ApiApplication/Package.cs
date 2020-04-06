@@ -15,6 +15,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Quote;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
@@ -23,6 +24,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
@@ -30,6 +32,7 @@ using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Quote;
+using CoreCodedChatbot.ApiApplication.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Repositories.Bytes;
@@ -37,6 +40,7 @@ using CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Repositories.Settings;
+using CoreCodedChatbot.ApiApplication.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Services;
@@ -54,6 +58,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IQuoteService, QuoteService>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<ISignalRService, SignalRService>();
+            services.AddSingleton<IStreamLabsService, StreamLabsService>();
             services.AddSingleton<IVipService, VipService>();
 
             return services;
@@ -87,6 +92,9 @@ namespace CoreCodedChatbot.ApiApplication
             // Quote
             services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
+
+            // StreamLabs
+            services.AddSingleton<IGetRecentDonationsQuery, GetRecentDonationsQuery>();
 
             // Stream Status
             services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
@@ -145,8 +153,11 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Vip
             services.AddSingleton<IGiftVipCommand, GiftVipCommand>();
+            services.AddSingleton<IGiveSubscriptionVipsCommand, GiveSubscriptionVipsCommand>();
             services.AddSingleton<IModGiveVipCommand, ModGiveVipCommand>();
             services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
+            services.AddSingleton<IUpdateDonationVipsCommand, UpdateDonationVipsCommand>();
+            services.AddSingleton<IUpdateTotalBitsCommand, UpdateTotalBitsCommand>();
             services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
             services.AddSingleton<IUseVipCommand, UseVipCommand>();
 
@@ -201,6 +212,9 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
             services.AddSingleton<ISetOrCreateSettingRepository, SetOrCreateSettingRepository>();
 
+            // StreamLabs
+            services.AddSingleton<ISaveStreamLabsDonationsRepository, SaveStreamLabsDonationsRepository>();
+
             // Stream Status
             services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
             services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
@@ -214,6 +228,8 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
             services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
+            services.AddSingleton<IUpdateDonationVipsRepository, UpdateDonationVipsRepository>();
+            services.AddSingleton<IUpdateTotalBitsRepository, UpdateTotalBitsRepository>();
             services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
             services.AddSingleton<IUseVipRepository, UseVipRepository>();
 

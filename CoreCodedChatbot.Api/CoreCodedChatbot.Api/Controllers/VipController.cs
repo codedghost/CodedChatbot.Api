@@ -162,5 +162,37 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpPost]
+        public IActionResult GiveSubscriptionVips([FromBody] GiveSubscriptionVipsRequest request)
+        {
+            try
+            {
+                _vipService.GiveSubscriptionVips(request.Username);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GiveSubscriptionVips");
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public IActionResult UpdateBitsDropped([FromBody] UpdateTotalBitsDroppedRequest request)
+        {
+            try
+            {
+                _vipService.UpdateTotalBits(request.Username, request.TotalBitsDropped);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in UpdateBitsDropped");
+            }
+
+            return BadRequest();
+        }
     }
 }

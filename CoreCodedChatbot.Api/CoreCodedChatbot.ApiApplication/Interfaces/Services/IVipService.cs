@@ -1,4 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
+﻿using System.Collections.Generic;
+
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {
     public interface IVipService
     {
@@ -12,5 +14,7 @@
         bool ModGiveVip(string username, int numberOfVips);
         int GetUsersGiftedVips(string username);
         int GetUserVipCount(string username);
+        void GiveSubscriptionVips(List<string> usernames);
+        void UpdateTotalBits(string username, int totalBits);
     }
 }

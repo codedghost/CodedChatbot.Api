@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -18,6 +19,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IModGiveVipCommand _modGiveVipCommand;
         private readonly IGetUsersGiftedVipsQuery _getUsersGiftedVipsQuery;
         private readonly IGetUserVipCountQuery _getUserVipCountQuery;
+        private readonly IGiveSubscriptionVipsCommand _giveSubscriptionVipsCommand;
+        private readonly IUpdateTotalBitsCommand _updateTotalBitsCommand;
         private readonly IConfigService _configService;
         private readonly ILogger<IVipService> _logger;
 
@@ -30,6 +33,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IModGiveVipCommand modGiveVipCommand,
             IGetUsersGiftedVipsQuery getUsersGiftedVipsQuery,
             IGetUserVipCountQuery getUserVipCountQuery,
+            IGiveSubscriptionVipsCommand giveSubscriptionVipsCommand,
+            IUpdateTotalBitsCommand updateTotalBitsCommand,
             IConfigService configService,
             ILogger<IVipService> logger)
         {
@@ -41,6 +46,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _modGiveVipCommand = modGiveVipCommand;
             _getUsersGiftedVipsQuery = getUsersGiftedVipsQuery;
             _getUserVipCountQuery = getUserVipCountQuery;
+            _giveSubscriptionVipsCommand = giveSubscriptionVipsCommand;
+            _updateTotalBitsCommand = updateTotalBitsCommand;
             _configService = configService;
             _logger = logger;
         }
@@ -181,6 +188,16 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var vips = _getUserVipCountQuery.Get(username);
 
             return vips;
+        }
+
+        public void GiveSubscriptionVips(List<string> usernames)
+        {
+            _giveSubscriptionVipsCommand.Give(usernames);
+        }
+
+        public void UpdateTotalBits(string username, int totalBits)
+        {
+            _updateTotalBitsCommand.Update(username, totalBits);
         }
     }
 }

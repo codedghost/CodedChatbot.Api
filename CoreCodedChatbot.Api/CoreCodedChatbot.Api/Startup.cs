@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using CodedGhost.Config;
+using CoreCodedChatbot.ApiApplication.Services;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context;
@@ -101,6 +102,10 @@ namespace CoreCodedChatbot.Api
             {
                 endpoints.MapDefaultControllerRoute();
             });
+
+            var streamLabsService = (StreamLabsService) serviceProvider.GetService<IStreamLabsService>();
+            
+            streamLabsService.Initialise();
         }
     }
 }
