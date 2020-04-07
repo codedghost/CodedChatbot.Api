@@ -104,6 +104,7 @@ namespace CoreCodedChatbot.Api
             });
 
             var streamLabsService = (StreamLabsService) serviceProvider.GetService<IStreamLabsService>();
+            var chatterService = (ChatService) serviceProvider.GetService<IChatService>();
             
             streamLabsService.Initialise();
         }

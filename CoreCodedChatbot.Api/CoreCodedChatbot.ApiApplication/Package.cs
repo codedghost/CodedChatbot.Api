@@ -116,11 +116,6 @@ namespace CoreCodedChatbot.ApiApplication
 
         public static IServiceCollection AddApiCommands(this IServiceCollection services)
         {
-            // Bytes
-            services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
-            services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
-            services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
-
             // Azure DevOps
             services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
             services.AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand, CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
@@ -128,6 +123,12 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand, MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
             services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
             services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
+
+            // Bytes
+            services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
+            services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
+            services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
+            services.AddSingleton<IGiveViewershipBytesCommand, GiveViewershipBytesCommand>();
 
             // Guessing Game
             services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
@@ -183,6 +184,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetUserByteCountRepository, GetUserByteCountRepository>();
             services.AddSingleton<IGiveGiftSubBytesRepository, GiveGiftSubBytesRepository>();
             services.AddSingleton<IGiveUsersBytesRepository, GiveUsersBytesRepository>();
+            services.AddSingleton<IGiveViewershipBytesRepository, GiveViewershipBytesRepository>();
 
             // Guessing Game
             services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();
