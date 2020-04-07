@@ -16,5 +16,8 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         int GetUserVipCount(string username);
         void GiveSubscriptionVips(List<string> usernames);
         void UpdateTotalBits(string username, int totalBits);
+        string GetUserByteCount(string username);
+        int ConvertBytes(string username, int requestedVips);
+        int ConvertAllBytes(string username);
     }
 }

@@ -194,5 +194,65 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpPost]
+        public IActionResult ConvertBytes([FromBody] ConvertVipsRequest request)
+        {
+            try
+            {
+                var convertedBytes = _vipService.ConvertBytes(request.Username, request.NumberOfBytes);
+
+                return new JsonResult(new ByteConversionResponse
+                {
+                    ConvertedBytes = convertedBytes
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in ConvertBytes");
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public IActionResult ConvertAllBytes([FromBody] ConvertAllVipsRequest request)
+        {
+            try
+            {
+                var convertedBytes = _vipService.ConvertAllBytes(request.Username);
+
+                return new JsonResult(new ByteConversionResponse
+                {
+                    ConvertedBytes = convertedBytes
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in ConvertAllBytes");
+            }
+
+            return BadRequest();
+        }
+
+        [HttpGet]
+        public IActionResult GetUserByteCount(string username)
+        {
+            try
+            {
+                var bytes = _vipService.GetUserByteCount(username);
+
+                return new JsonResult(new GetUserByteCountResponse
+                {
+                    Bytes = bytes
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetUserByteCount");
+            }
+
+            return BadRequest();
+        }
     }
 }

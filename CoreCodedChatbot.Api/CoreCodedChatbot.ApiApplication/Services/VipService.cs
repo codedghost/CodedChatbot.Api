@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiContract.ResponseModels.Vip;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
 using IVipService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IVipService;
@@ -21,6 +24,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetUserVipCountQuery _getUserVipCountQuery;
         private readonly IGiveSubscriptionVipsCommand _giveSubscriptionVipsCommand;
         private readonly IUpdateTotalBitsCommand _updateTotalBitsCommand;
+        private readonly IGetUserByteCountQuery _getUserByteCountQuery;
+        private readonly IConvertBytesCommand _convertBytesCommand;
+        private readonly IConvertAllBytesCommand _convertAllBytesCommand;
         private readonly IConfigService _configService;
         private readonly ILogger<IVipService> _logger;
 
@@ -35,6 +41,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IGetUserVipCountQuery getUserVipCountQuery,
             IGiveSubscriptionVipsCommand giveSubscriptionVipsCommand,
             IUpdateTotalBitsCommand updateTotalBitsCommand,
+            IGetUserByteCountQuery getUserByteCountQuery,
+            IConvertBytesCommand convertBytesCommand,
+            IConvertAllBytesCommand convertAllBytesCommand,
             IConfigService configService,
             ILogger<IVipService> logger)
         {
@@ -48,6 +57,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getUserVipCountQuery = getUserVipCountQuery;
             _giveSubscriptionVipsCommand = giveSubscriptionVipsCommand;
             _updateTotalBitsCommand = updateTotalBitsCommand;
+            _getUserByteCountQuery = getUserByteCountQuery;
+            _convertBytesCommand = convertBytesCommand;
+            _convertAllBytesCommand = convertAllBytesCommand;
             _configService = configService;
             _logger = logger;
         }
@@ -198,6 +210,27 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public void UpdateTotalBits(string username, int totalBits)
         {
             _updateTotalBitsCommand.Update(username, totalBits);
+        }
+
+        public string GetUserByteCount(string username)
+        {
+            var bytes = _getUserByteCountQuery.Get(username);
+
+            return bytes;
+        }
+
+        public int ConvertBytes(string username, int requestedVips)
+        {
+            var bytesConverted = _convertBytesCommand.Convert(username, requestedVips);
+
+            return bytesConverted;
+        }
+
+        public int ConvertAllBytes(string username)
+        {
+            var bytesConverted = _convertAllBytesCommand.Convert(username);
+
+            return bytesConverted;
         }
     }
 }

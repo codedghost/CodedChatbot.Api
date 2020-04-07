@@ -1,10 +1,12 @@
 ﻿using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
@@ -12,6 +14,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Quote;
@@ -29,6 +32,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Quote;
@@ -66,12 +70,15 @@ namespace CoreCodedChatbot.ApiApplication
 
         public static IServiceCollection AddApiQueries(this IServiceCollection services)
         {
-            // DevOps
+            // Azure DevOps
             services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
             services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
             services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
             services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
             services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
+
+            // Bytes
+            services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
 
             // Guessing Game
             services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
@@ -109,7 +116,11 @@ namespace CoreCodedChatbot.ApiApplication
 
         public static IServiceCollection AddApiCommands(this IServiceCollection services)
         {
-            // DevOps
+            // Bytes
+            services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
+            services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
+
+            // Azure DevOps
             services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
             services.AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand, CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
             services.AddSingleton<ICreateJsonPatchForWorkItemCommand, CreateJsonPatchForWorkItemCommand>();
@@ -167,6 +178,8 @@ namespace CoreCodedChatbot.ApiApplication
         public static IServiceCollection AddApiRepositories(this IServiceCollection services)
         {
             // Bytes
+            services.AddSingleton<IConvertBytesRepository, ConvertBytesRepository>();
+            services.AddSingleton<IGetUserByteCountRepository, GetUserByteCountRepository>();
             services.AddSingleton<IGiveUsersBytesRepository, GiveUsersBytesRepository>();
 
             // Guessing Game
@@ -190,7 +203,6 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetIsUserInChatRepository, GetIsUserInChatRepository>();
             services.AddSingleton<IGetSingleSongRequestIdRepository, GetSingleSongRequestIdRepository>();
             services.AddSingleton<IGetSongRequestByIdRepository, GetSongRequestByIdRepository>();
-            services.AddSingleton<IGetUsersBytesCountRepository, GetUsersBytesCountRepository>();
             services.AddSingleton<IGetUsersCurrentRegularRequestCountRepository, GetUsersCurrentRegularRequestCountRepository>();
             services.AddSingleton<IGetUsersCurrentRequestCountRepository, GetUsersCurrentRequestCountRepository>();
             services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
