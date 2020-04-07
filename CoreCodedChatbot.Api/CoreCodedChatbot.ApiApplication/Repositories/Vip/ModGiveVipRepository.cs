@@ -1,4 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
@@ -19,10 +20,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var user = context.Users.Find(username) ?? new User
-                {
-                    Username = username
-                };
+                var user = context.GetOrCreateUser(username);
 
                 user.ModGivenVipRequests += vipsToGive;
 

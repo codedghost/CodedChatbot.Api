@@ -22,7 +22,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             {
                 var user = context.Users.SingleOrDefault(u => u.Username == username);
 
-                var tmiReportedInChat = user?.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
+                if (user == null) return false;
+
+                var tmiReportedInChat = user.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
 
                 return tmiReportedInChat;
             }

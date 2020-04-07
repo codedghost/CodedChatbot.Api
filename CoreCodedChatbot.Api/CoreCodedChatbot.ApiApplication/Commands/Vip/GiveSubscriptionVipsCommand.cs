@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
@@ -22,25 +23,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Vip
             {
                 foreach (var username in usernames)
                 {
-                    var user = context.Users.Find(username);
-
-                    if (user == null)
-                    {
-                        context.Users.Add(new User
-                        {
-                            Username = username,
-                            ModGivenVipRequests = 0,
-                            FollowVipRequest = 0,
-                            DonationOrBitsVipRequests = 0,
-                            SubVipRequests = 1,
-                            UsedVipRequests = 0,
-                            TokenBytes = 0,
-                            ReceivedGiftVipRequests = 0,
-                            SentGiftVipRequests = 0
-                        });
-
-                        return;
-                    }
+                    var user = context.GetOrCreateUser(username);
 
                     user.SubVipRequests++;
                 }

@@ -1,4 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
@@ -18,7 +19,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var user = context.Users.Find(username);
+                var user = context.GetOrCreateUser(username);
 
                 if (user == null) return 0;
 
