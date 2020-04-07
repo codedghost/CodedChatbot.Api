@@ -254,5 +254,20 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpPost]
+        public IActionResult GiveGiftSubBytes([FromBody]GiveGiftSubBytesRequest request)
+        {
+            try
+            {
+                _vipService.GiveGiftSubBytes(request.Username);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GiveGiftSubBytes");
+            }
+
+            return BadRequest();
+        }
     }
 }

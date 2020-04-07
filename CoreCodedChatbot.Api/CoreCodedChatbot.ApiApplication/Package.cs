@@ -119,6 +119,7 @@ namespace CoreCodedChatbot.ApiApplication
             // Bytes
             services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
             services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
+            services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
 
             // Azure DevOps
             services.AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand, CreateJsonPatchDocumentFromBugRequestCommand>();
@@ -180,6 +181,7 @@ namespace CoreCodedChatbot.ApiApplication
             // Bytes
             services.AddSingleton<IConvertBytesRepository, ConvertBytesRepository>();
             services.AddSingleton<IGetUserByteCountRepository, GetUserByteCountRepository>();
+            services.AddSingleton<IGiveGiftSubBytesRepository, GiveGiftSubBytesRepository>();
             services.AddSingleton<IGiveUsersBytesRepository, GiveUsersBytesRepository>();
 
             // Guessing Game

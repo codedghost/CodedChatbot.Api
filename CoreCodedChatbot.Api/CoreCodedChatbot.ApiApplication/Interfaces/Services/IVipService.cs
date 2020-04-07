@@ -19,5 +19,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         string GetUserByteCount(string username);
         int ConvertBytes(string username, int requestedVips);
         int ConvertAllBytes(string username);
+        void GiveGiftSubBytes(string username);
     }
 }

@@ -5,7 +5,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
-using CoreCodedChatbot.ApiContract.ResponseModels.Vip;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
 using IVipService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IVipService;
@@ -27,6 +26,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetUserByteCountQuery _getUserByteCountQuery;
         private readonly IConvertBytesCommand _convertBytesCommand;
         private readonly IConvertAllBytesCommand _convertAllBytesCommand;
+        private readonly IGiveGiftSubBytesCommand _giveGiftSubBytesCommand;
         private readonly IConfigService _configService;
         private readonly ILogger<IVipService> _logger;
 
@@ -44,6 +44,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IGetUserByteCountQuery getUserByteCountQuery,
             IConvertBytesCommand convertBytesCommand,
             IConvertAllBytesCommand convertAllBytesCommand,
+            IGiveGiftSubBytesCommand giveGiftSubBytesCommand,
             IConfigService configService,
             ILogger<IVipService> logger)
         {
@@ -60,6 +61,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getUserByteCountQuery = getUserByteCountQuery;
             _convertBytesCommand = convertBytesCommand;
             _convertAllBytesCommand = convertAllBytesCommand;
+            _giveGiftSubBytesCommand = giveGiftSubBytesCommand;
             _configService = configService;
             _logger = logger;
         }
@@ -231,6 +233,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var bytesConverted = _convertAllBytesCommand.Convert(username);
 
             return bytesConverted;
+        }
+
+        public void GiveGiftSubBytes(string username)
+        {
+            _giveGiftSubBytesCommand.Give(username);
         }
     }
 }
