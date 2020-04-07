@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading;
+using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
@@ -15,14 +16,17 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
     public class ChatService : IChatService
     {
+        private readonly IGiveViewershipBytesCommand _giveViewershipBytesCommand;
         private readonly IConfigService _configService;
         private readonly ILogger<IChatService> _logger;
         private Timer _checkChatTimer;
 
         public ChatService(
+            IGiveViewershipBytesCommand giveViewershipBytesCommand,
             IConfigService configService,
             ILogger<IChatService> logger)
         {
+            _giveViewershipBytesCommand = giveViewershipBytesCommand;
             _configService = configService;
             _logger = logger;
         }
@@ -51,7 +55,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                         JsonConvert.DeserializeObject<TmiChattersIntermediate>(currentChatters.Content
                             .ReadAsStringAsync().Result);
 
-
+                    _giveViewershipBytesCommand.Give(chattersModel.ChattersIntermediate);
                 }
                 else
                 {

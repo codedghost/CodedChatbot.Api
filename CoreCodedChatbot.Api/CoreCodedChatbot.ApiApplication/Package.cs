@@ -57,6 +57,7 @@ namespace CoreCodedChatbot.ApiApplication
         public static IServiceCollection AddApiServices(this IServiceCollection services)
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
+            services.AddSingleton<IChatService, ChatService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
             services.AddSingleton<IPlaylistService, PlaylistService>();
             services.AddSingleton<IQuoteService, QuoteService>();
