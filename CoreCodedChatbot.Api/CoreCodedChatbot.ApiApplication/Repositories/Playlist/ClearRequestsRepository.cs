@@ -23,12 +23,11 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 
             using (var context = _chatbotContextFactory.Create())
             {
-                var songRequests =
-                    context.SongRequests.Where(sr => requestsToRemove.Any(r => r.SongRequestId == sr.SongRequestId));
-
-                foreach (var request in songRequests)
+                foreach (var request in requestsToRemove)
                 {
-                    request.Played = true;
+                    var songRequest = context.SongRequests.Find(request.SongRequestId);
+
+                    songRequest.Played = true;
                 }
 
                 context.SaveChanges();
