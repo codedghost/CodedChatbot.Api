@@ -23,7 +23,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             using (var context = _chatbotContextFactory.Create())
             {
                 var userRequests = context.SongRequests
-                    .Where(sr => !sr.Played)
+                    .Where(sr => !sr.Played && sr.RequestUsername.ToLower() == username.ToLower())
                     .OrderRequests()
                     .Select((sr, index) =>
                         new UsersRequestsIntermediate
