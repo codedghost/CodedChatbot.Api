@@ -119,5 +119,13 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return Ok();
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetCurrentBurndownChart()
+        //{
+        //    var chart = await _azureDevOpsService.GetCurrentSprintBurndownChart();
+
+        //    return new JsonResult(chart);
+        //}
     }
 }

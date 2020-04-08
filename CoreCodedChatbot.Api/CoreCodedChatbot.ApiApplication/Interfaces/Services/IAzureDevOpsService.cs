@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
@@ -13,5 +14,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task<bool> RaiseBugInBacklog(string twitchUsername, DevOpsBug bugInfo);
         Task<List<WorkItem>> GetBacklogWorkItems();
         void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest);
+        //Task<string> GetCurrentSprintBurndownChart();
     }
 }

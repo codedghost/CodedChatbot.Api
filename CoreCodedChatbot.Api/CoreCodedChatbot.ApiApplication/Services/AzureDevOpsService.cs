@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
@@ -9,6 +10,8 @@ using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
+using Microsoft.TeamFoundation.Work.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
@@ -24,6 +27,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetDevOpsWorkItemIdsFromQueryId _getDevOpsWorkItemIdsFromQueryId;
         private readonly ILogger<AzureDevOpsService> _logger;
         private readonly WorkItemTrackingHttpClient _workItemTrackingClient;
+        //private readonly WorkHttpClient _workClient;
 
         public AzureDevOpsService(
             ISecretService secretService,
@@ -44,6 +48,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 new VssBasicCredential(string.Empty, secretService.GetSecret<string>("DevOpsChatbotPAT")));
 
             _workItemTrackingClient = vssConnection.GetClient<WorkItemTrackingHttpClient>();
+
+            //_workClient = vssConnection.GetClient<WorkHttpClient>();
+
         }
 
         public async Task<List<WorkItem>> GetCommittedPbisForThisIteration()
@@ -156,5 +163,25 @@ namespace CoreCodedChatbot.ApiApplication.Services
             await _workItemTrackingClient.CreateWorkItemAsync(jsonPatch,
                 _configService.Get<string>("DevOpsProjectName"), "Product Backlog Item");
         }
+
+        //public async Task<string> GetCurrentSprintBurndownChart()
+        //{
+        //    try
+        //    {
+        //        var projectName = _configService.Get<string>("DevOpsProjectName");
+        //        var iterations = await _workClient.GetTeamIterationsAsync(new TeamContext(projectName), "Current");
+        //        var boardImage = await _workClient.GetIterationChartImageAsync(
+        //            new TeamContext(projectName, "CodedChatbot Team"), iterations.First().Id,
+        //            "Burndown");
+
+        //        return string.Empty;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw;
+        //    }
+            
+
+        //}
     }
 }
