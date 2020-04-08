@@ -371,13 +371,21 @@ namespace CoreCodedChatbot.Api.Controllers
 
                 if (songRequest == null) return BadRequest();
 
-                var responseModel = new GetCurrentSongRequestResponse
-                {
-                    SongArtist = songRequest.FormattedRequest.SongArtist,
-                    SongName = songRequest.FormattedRequest.SongName,
-                    RequesterUsername = songRequest.songRequester,
-                    InstrumentName = songRequest.FormattedRequest.InstrumentName
-                };
+                var responseModel = songRequest.FormattedRequest == null
+                    ? new GetCurrentSongRequestResponse
+                    {
+                        SongArtist = string.Empty,
+                        SongName = songRequest.songRequestText,
+                        RequesterUsername = songRequest.songRequester,
+                        InstrumentName = string.Empty
+                    }
+                    : new GetCurrentSongRequestResponse
+                    {
+                        SongArtist = songRequest.FormattedRequest.SongArtist,
+                        SongName = songRequest.FormattedRequest.SongName,
+                        RequesterUsername = songRequest.songRequester,
+                        InstrumentName = songRequest.FormattedRequest.InstrumentName
+                    };
 
                 return new JsonResult(responseModel);
             }
