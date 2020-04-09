@@ -39,6 +39,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
         private readonly IGetUsersRequestAtPlaylistIndexQuery _getUsersRequestAtPlaylistIndexQuery;
         private readonly IEditRequestCommand _editRequestCommand;
+        private readonly IGetTopTenRequestsQuery _getTopTenRequestsQuery;
         private readonly ISecretService _secretService;
         private readonly IConfigService _configService;
         private readonly ISignalRService _signalRService;
@@ -70,6 +71,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository,
             IGetUsersRequestAtPlaylistIndexQuery getUsersRequestAtPlaylistIndexQuery,
             IEditRequestCommand editRequestCommand,
+            IGetTopTenRequestsQuery getTopTenRequestsQuery,
             ISecretService secretService,
             IConfigService configService,
             ISignalRService signalRService
@@ -95,6 +97,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
             _getUsersRequestAtPlaylistIndexQuery = getUsersRequestAtPlaylistIndexQuery;
             _editRequestCommand = editRequestCommand;
+            _getTopTenRequestsQuery = getTopTenRequestsQuery;
             _secretService = secretService;
             _configService = configService;
             _signalRService = signalRService;
@@ -580,6 +583,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return _currentRequest;
         }
 
+        public List<PlaylistItem> GetTopTenPlaylistItems()
+        {
+            return _getTopTenRequestsQuery.Get();
+        }
 
         private void UpdateCurrentSong(PlaylistItem[] regularRequests, PlaylistItem[] vipRequests)
         {

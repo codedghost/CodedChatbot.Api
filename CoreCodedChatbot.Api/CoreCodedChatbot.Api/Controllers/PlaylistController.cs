@@ -396,5 +396,22 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpGet]
+        public IActionResult GetTopTen()
+        {
+            try
+            {
+                var topRequests = _playlistService.GetTopTenPlaylistItems();
+
+                return new JsonResult(topRequests);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in GetTopTen");
+            }
+
+            return BadRequest();
+        }
     }
 }

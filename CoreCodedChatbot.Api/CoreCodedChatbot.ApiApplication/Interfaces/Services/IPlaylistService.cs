@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiContract.Enums.Playlist;
+﻿using System.Collections.Generic;
+using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
@@ -36,5 +37,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         bool RemoveSuperRequest(string username);
         bool IsSuperVipRequestInQueue();
         PlaylistItem GetCurrentSongRequest();
+        List<PlaylistItem> GetTopTenPlaylistItems();
     }
 }
