@@ -1,6 +1,7 @@
 ﻿using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
@@ -8,6 +9,7 @@ using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
@@ -95,6 +97,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetPlaylistStateQuery, GetPlaylistStateQuery>();
             services.AddSingleton<IGetSingleSongRequestIdQuery, GetSingleSongRequestIdQuery>();
             services.AddSingleton<IGetSongRequestByIdQuery, GetSongRequestByIdQuery>();
+            services.AddSingleton<IGetTopTenRequestsQuery, GetTopTenRequestsQuery>();
             services.AddSingleton<IGetUsersCurrentRequestCountsQuery, GetUsersCurrentRequestCountsQuery>();
             services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
             services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
@@ -141,7 +144,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
 
             // Moderation
-            services.AddSingleton<ITransferUserAccountRepository, TransferUserAccountRepository>();
+            services.AddSingleton<ITransferUserAccountCommand, TransferUserAccountCommand>();
 
             // Playlist
             services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();

@@ -88,17 +88,40 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Moderation
         private void TransferVipsAndBytes(IChatbotContext context, User oldUsername, User newUsername)
         {
             newUsername.UsedVipRequests += oldUsername.UsedVipRequests;
+            oldUsername.UsedVipRequests = 0;
+
             newUsername.UsedSuperVipRequests += oldUsername.UsedSuperVipRequests;
+            oldUsername.UsedSuperVipRequests = 0;
+
             newUsername.SentGiftVipRequests += oldUsername.SentGiftVipRequests;
+            oldUsername.SentGiftVipRequests = 0;
+
             newUsername.ModGivenVipRequests += oldUsername.ModGivenVipRequests;
+            oldUsername.ModGivenVipRequests = 0;
+
             newUsername.FollowVipRequest = oldUsername.FollowVipRequest;
+            oldUsername.FollowVipRequest = 0;
+
             newUsername.SubVipRequests += oldUsername.SubVipRequests;
+            oldUsername.SubVipRequests = 0;
+
             newUsername.DonationOrBitsVipRequests = oldUsername.DonationOrBitsVipRequests;
+            oldUsername.DonationOrBitsVipRequests = 0;
+
             newUsername.ReceivedGiftVipRequests += oldUsername.ReceivedGiftVipRequests;
+            oldUsername.ReceivedGiftVipRequests = 0;
+
             newUsername.TokenVipRequests += oldUsername.TokenVipRequests;
+            oldUsername.TokenVipRequests = 0;
+
             newUsername.TokenBytes += oldUsername.TokenBytes;
+            oldUsername.TokenBytes = 0;
+
             newUsername.TotalBitsDropped = oldUsername.TotalBitsDropped;
+            oldUsername.TotalBitsDropped = 0;
+
             newUsername.TotalDonated += oldUsername.TotalDonated;
+            oldUsername.TotalDonated = 0;
         }
 
         private void LogTransfer(IChatbotContext context, string moderatorUsername, string oldUsername, string newUsername)

@@ -25,10 +25,16 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult TransferUserAccount(TransferUserAccountRequest request)
+        public IActionResult TransferUserAccount([FromBody]TransferUserAccountRequest request)
         { 
             try
             {
+                if (string.IsNullOrWhiteSpace(request.RequestingModerator) ||
+                    string.IsNullOrWhiteSpace(request.OldUsername) || string.IsNullOrWhiteSpace(request.NewUsername))
+                {
+                    return BadRequest();
+                }
+
                 _moderationService.TransferUserAccount(request.RequestingModerator, request.OldUsername,
                     request.NewUsername);
 
