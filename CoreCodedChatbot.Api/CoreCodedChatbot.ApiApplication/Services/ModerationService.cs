@@ -14,7 +14,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public void TransferUserAccount(string moderationUsername, string oldUsername, string newUsername)
         {
-            _transferUserAccountCommand.Transfer(moderationUsername, oldUsername, newUsername);
+            _transferUserAccountCommand.Transfer(
+                moderationUsername.Trim('@'),
+                oldUsername.Trim('@'), 
+                newUsername.Trim('@'));
         }
     }
 }
