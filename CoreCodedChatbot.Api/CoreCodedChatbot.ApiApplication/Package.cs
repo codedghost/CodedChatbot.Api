@@ -23,6 +23,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
@@ -41,6 +42,7 @@ using CoreCodedChatbot.ApiApplication.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Repositories.Settings;
@@ -59,6 +61,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<IChatService, ChatService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
+            services.AddSingleton<IModerationService, ModerationService>();
             services.AddSingleton<IPlaylistService, PlaylistService>();
             services.AddSingleton<IQuoteService, QuoteService>();
             services.AddSingleton<ISearchService, SearchService>();
@@ -137,6 +140,9 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<ISetGuessingGameStateCommand, SetGuessingGameStateCommand>();
             services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
 
+            // Moderation
+            services.AddSingleton<ITransferUserAccountRepository, TransferUserAccountRepository>();
+
             // Playlist
             services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();
             services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
@@ -196,6 +202,9 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetSongPercentageGuessesRepository, GetSongPercentageGuessesRepository>();
             services.AddSingleton<IOpenGuessingGameRepository, OpenGuessingGameRepository>();
             services.AddSingleton<ISubmitOrUpdateGuessRepository, SubmitOrUpdateGuessRepository>();
+
+            // Moderation
+            services.AddSingleton<ITransferUserAccountRepository, TransferUserAccountRepository>();
 
             // Playlist
             services.AddSingleton<IAddRequestRepository, AddRequestRepository>();
