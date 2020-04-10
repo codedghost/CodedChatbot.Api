@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using CoreCodedChatbot.ApiApplication.Commands.Bytes;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
