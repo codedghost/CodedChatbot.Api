@@ -1,5 +1,7 @@
 ﻿using System;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiContract.RequestModels.CustomChatCommands;
+using CoreCodedChatbot.ApiContract.ResponseModels.CustomChatCommands;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +31,10 @@ namespace CoreCodedChatbot.Api.Controllers
             {
                 var commandText = _chatCommandService.GetCommandText(request.Keyword);
 
-
+                return new JsonResult(new GetCommandTextResponse
+                {
+                    CommandText = commandText
+                });
             }
             catch (Exception e)
             {
@@ -44,9 +49,12 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                var commandText = _chatCommandService.GetCommandHelpText(request.Keyword);
+                var helpText = _chatCommandService.GetCommandHelpText(request.Keyword);
 
-
+                return new JsonResult(new GetCommandHelpTextResponse
+                {
+                    HelpText = helpText
+                });
             }
             catch (Exception e)
             {
@@ -56,17 +64,17 @@ namespace CoreCodedChatbot.Api.Controllers
             return BadRequest();
         }
 
-        [HttpPost]
-        public IActionResult AddCommand(AddCommandRequest request)
-        {
-            try
-            {
+        //[HttpPost]
+        //public IActionResult AddCommand(AddCommandRequest request)
+        //{
+        //    try
+        //    {
 
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error encountered when adding a custom command", new {request.});
-            }
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e, "Error encountered when adding a custom command", new {request.});
+        //    }
+        //}
     }
 }
