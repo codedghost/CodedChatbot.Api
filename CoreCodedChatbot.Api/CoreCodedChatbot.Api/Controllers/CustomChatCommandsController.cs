@@ -65,7 +65,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCommand(AddCommandRequest request)
+        public IActionResult AddCommand([FromBody] AddCommandRequest request)
         {
             try
             {
