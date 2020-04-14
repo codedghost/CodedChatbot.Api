@@ -1,6 +1,6 @@
 ﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Commands.Bytes
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes
 {
     public interface IGiveViewershipBytesCommand
     {
