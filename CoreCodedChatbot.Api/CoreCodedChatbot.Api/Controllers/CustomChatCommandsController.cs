@@ -25,11 +25,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetCommandText(GetCommandTextRequest request)
+        public IActionResult GetCommandText(string keyword)
         {
             try
             {
-                var commandText = _chatCommandService.GetCommandText(request.Keyword);
+                var commandText = _chatCommandService.GetCommandText(keyword);
 
                 return new JsonResult(new GetCommandTextResponse
                 {
@@ -38,18 +38,18 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error encountered when getting custom command text", new {request.Keyword});
+                _logger.LogError(e, "Error encountered when getting custom command text", new {keyword});
             }
 
             return BadRequest();
         }
 
         [HttpGet]
-        public IActionResult GetCommandHelpText(GetCommandHelpTextRequest request)
+        public IActionResult GetCommandHelpText(string keyword)
         {
             try
             {
-                var helpText = _chatCommandService.GetCommandHelpText(request.Keyword);
+                var helpText = _chatCommandService.GetCommandHelpText(keyword);
 
                 return new JsonResult(new GetCommandHelpTextResponse
                 {
@@ -58,7 +58,7 @@ namespace CoreCodedChatbot.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error encountered when getting custom command text", new {request.Keyword});
+                _logger.LogError(e, "Error encountered when getting custom command text", new {keyword});
             }
 
             return BadRequest();
