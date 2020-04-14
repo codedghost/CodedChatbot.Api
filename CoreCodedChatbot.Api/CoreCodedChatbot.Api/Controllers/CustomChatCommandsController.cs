@@ -64,17 +64,22 @@ namespace CoreCodedChatbot.Api.Controllers
             return BadRequest();
         }
 
-        //[HttpPost]
-        //public IActionResult AddCommand(AddCommandRequest request)
-        //{
-        //    try
-        //    {
+        [HttpPost]
+        public IActionResult AddCommand(AddCommandRequest request)
+        {
+            try
+            {
+                _chatCommandService.AddCommand(request.Aliases, request.InformationText, request.HelpText,
+                    request.Username);
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.LogError(e, "Error encountered when adding a custom command", new {request.});
-        //    }
-        //}
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error encountered when adding a custom command", new  {request.Aliases, request.InformationText, request.HelpText, request.Username});
+            }
+
+            return BadRequest();
+        }
     }
 }
