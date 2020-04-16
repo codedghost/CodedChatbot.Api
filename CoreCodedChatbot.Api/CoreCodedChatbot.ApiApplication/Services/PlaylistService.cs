@@ -144,7 +144,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public AddRequestResult AddWebRequest(AddWebSongRequest requestSongViewModel, string username)
         {
             var requestText =
-                $"{requestSongViewModel.Artist} - {requestSongViewModel.Title} - {requestSongViewModel.SelectedInstrument}";
+                $"{requestSongViewModel.Artist} - {requestSongViewModel.Title} ({requestSongViewModel.SelectedInstrument})";
 
             var result = _addSongRequestCommand.AddSongRequest(username, requestText,
                 requestSongViewModel.IsSuperVip ? SongRequestType.SuperVip :

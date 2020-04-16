@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using CodedGhost.Config;
+using CoreCodedChatbot.ApiApplication;
 using CoreCodedChatbot.ApiApplication.Services;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database;
@@ -41,7 +42,8 @@ namespace CoreCodedChatbot.Api
                 .AddDbContextFactory()
                 .AddChatbotNLog(secretService)
                 .AddTwitchServices(configService, secretService)
-                .AddApplicationServices();
+                .AddApplicationServices()
+                .AddSolr(secretService);
 
             services.AddRouting();
 

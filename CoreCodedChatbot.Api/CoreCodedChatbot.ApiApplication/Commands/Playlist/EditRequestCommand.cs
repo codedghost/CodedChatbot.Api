@@ -20,7 +20,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _editRequestRepository.Edit(model.SongRequestId,
                 string.IsNullOrWhiteSpace(model.Artist) && string.IsNullOrWhiteSpace(model.SelectedInstrument) ?
                     model.Title :
-                $"{model.Artist} - {model.Title} - {model.SelectedInstrument}",
+                $"{model.Artist} - {model.Title} ({model.SelectedInstrument})",
                 model.Username, model.IsMod);
         }
     }

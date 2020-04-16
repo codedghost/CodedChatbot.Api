@@ -2,7 +2,7 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Quote
+namespace CoreCodedChatbot.ApiApplication.Repositories.Search
 {
     public class SaveSearchSynonymRequestRepository : ISaveSearchSynonymRequestRepository
     {

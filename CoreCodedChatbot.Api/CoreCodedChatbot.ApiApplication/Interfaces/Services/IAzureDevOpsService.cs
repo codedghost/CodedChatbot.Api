@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;

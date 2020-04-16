@@ -1,6 +1,5 @@
 ﻿using System;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
-using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 

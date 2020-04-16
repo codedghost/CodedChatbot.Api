@@ -1,13 +1,6 @@
-﻿using System;
-using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Moderation;
-using CoreCodedChatbot.Database.Context.Enums;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Moderation;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.VisualStudio.Services.Identity;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Moderation
 {

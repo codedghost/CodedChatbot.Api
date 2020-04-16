@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes
