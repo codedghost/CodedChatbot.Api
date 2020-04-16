@@ -1,4 +1,7 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
+﻿using System;
+using System.Net.Http.Headers;
+using System.Text;
+using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
@@ -23,6 +26,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Quote;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
@@ -38,12 +42,14 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Quote;
+using CoreCodedChatbot.ApiApplication.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
@@ -53,12 +59,15 @@ using CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Repositories.Quote;
+using CoreCodedChatbot.ApiApplication.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Services;
+using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
+using SolrNet;
 
 namespace CoreCodedChatbot.ApiApplication
 {
@@ -117,6 +126,9 @@ namespace CoreCodedChatbot.ApiApplication
             // Quote
             services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
+
+            // Search
+            services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
 
             // StreamLabs
             services.AddSingleton<IGetRecentDonationsQuery, GetRecentDonationsQuery>();
@@ -254,6 +266,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
 
             // Search
+            services.AddSingleton<IGetSongsFromSearchResultsRepository, GetSongsFromSearchResultsRepository>();
             services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();
 
             // Settings
@@ -280,6 +293,27 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IUpdateTotalBitsRepository, UpdateTotalBitsRepository>();
             services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
             services.AddSingleton<IUseVipRepository, UseVipRepository>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSolr(this IServiceCollection services, ISecretService secretService)
+        {
+            var solrUser = secretService.GetSecret<string>("SolrUsername");
+            var solrPass = secretService.GetSecret<string>("SolrPassword");
+
+            var credentials = Encoding.ASCII.GetBytes($"{solrUser}:{solrPass}");
+
+            var credentialsBase64 = Convert.ToBase64String(credentials);
+
+            services.AddSolrNet<SongSearch>("http://codedghost.com:8983/solr/SongSearch", options =>
+            {
+                options.HttpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Basic", credentialsBase64);
+            });
+
+            services.AddSingleton<ISolrService, SolrService>();
+            //services.AddSingleton<IDownloadChartService, DownloadChartService>();
 
             return services;
         }

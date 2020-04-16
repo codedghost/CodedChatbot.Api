@@ -8,7 +8,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
     {
         private readonly ISaveSearchSynonymRequestCommand _saveSearchSynonymRequestCommand;
 
-        public SearchService(ISaveSearchSynonymRequestCommand saveSearchSynonymRequestCommand)
+        public SearchService(
+            ISaveSearchSynonymRequestCommand saveSearchSynonymRequestCommand
+            )
         {
             _saveSearchSynonymRequestCommand = saveSearchSynonymRequestCommand;
         }
