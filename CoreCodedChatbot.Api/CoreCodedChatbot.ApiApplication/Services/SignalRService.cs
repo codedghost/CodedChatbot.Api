@@ -8,30 +8,44 @@ namespace CoreCodedChatbot.ApiApplication.Services
 {
     public class SignalRService : ISignalRService
     {
-        private readonly HubConnection _connection;
+        private readonly IConfigService _configService;
+        private readonly ILogger<SignalRService> _logger;
+        private HubConnection _connection;
 
         public SignalRService(
             IConfigService configService,
             ILogger<SignalRService> logger
             )
         {
+            _configService = configService;
+            _logger = logger;
+
+            Connect();
+        }
+
+        private void Connect()
+        {
             try
             {
                 _connection = new HubConnectionBuilder()
-                    .WithUrl($"{configService.Get<string>("WebPlaylistUrl")}/SongList")
+                    .WithUrl($"{_configService.Get<string>("WebPlaylistUrl")}/SongList")
                     .Build();
 
                 _connection.StartAsync().Wait();
             }
             catch (Exception e)
             {
-                logger.LogError("Error when creating SignalR Connection", e);
+                _logger.LogError("Error when creating SignalR Connection", e);
                 _connection = null;
             }
+
         }
 
         public HubConnection GetCurrentConnection()
         {
+            if (_connection == null)
+                Connect();
+
             return _connection;
         }
     }
