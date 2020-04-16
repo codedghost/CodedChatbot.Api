@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
-using CoreCodedChatbot.ApiApplication.Repositories.Search;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 
 namespace CoreCodedChatbot.ApiApplication.Queries.Search

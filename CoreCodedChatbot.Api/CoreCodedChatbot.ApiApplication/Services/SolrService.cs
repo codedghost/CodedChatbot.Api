@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
-using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 using SolrNet;

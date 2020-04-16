@@ -128,6 +128,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
 
             // Search
+            services.AddSingleton<IGetSongBySearchIdQuery, GetSongBySearchIdQuery>();
             services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
 
             // StreamLabs
@@ -266,6 +267,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
 
             // Search
+            services.AddSingleton<IGetSongBySearchIdRepository, GetSongBySearchIdRepository>();
             services.AddSingleton<IGetSongsFromSearchResultsRepository, GetSongsFromSearchResultsRepository>();
             services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();
 

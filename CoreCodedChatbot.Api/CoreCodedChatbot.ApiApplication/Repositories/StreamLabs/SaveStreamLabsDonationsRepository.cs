@@ -4,7 +4,6 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
-using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 

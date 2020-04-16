@@ -2,7 +2,7 @@
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Search
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search
 {
     public interface IGetSongsFromSearchResultsRepository
     {

@@ -22,7 +22,7 @@ namespace CoreCodedChatbot.Api.Controllers
             ISearchService searchService,
             ISolrService solrService,
             ILogger<SearchController> logger
-            )
+        )
         {
             _searchService = searchService;
             _solrService = solrService;
@@ -30,7 +30,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveSearchSynonymRequest([FromBody]SaveSearchSynonymRequest request)
+        public IActionResult SaveSearchSynonymRequest([FromBody] SaveSearchSynonymRequest request)
         {
             if (_searchService.SaveSearchSynonymRequest(request))
             {
@@ -75,6 +75,21 @@ namespace CoreCodedChatbot.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "Error in FormattedSongSearch");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> DownloadToOneDrive([FromBody] DownloadToOneDriveRequest request)
+        {
+            try
+            {
+                _searchService.DownloadSongToOneDrive(request.SongId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in DownloadToOneDrive");
                 return BadRequest();
             }
         }

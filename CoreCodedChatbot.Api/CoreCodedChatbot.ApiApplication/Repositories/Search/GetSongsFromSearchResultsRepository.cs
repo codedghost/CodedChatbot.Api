@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 using CoreCodedChatbot.Database.Context.Interfaces;
