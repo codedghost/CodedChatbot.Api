@@ -78,11 +78,13 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<IChatCommandService, ChatCommandService>();
             services.AddSingleton<IChatService, ChatService>();
+            services.AddSingleton<IDownloadChartService, DownloadChartService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
             services.AddSingleton<IModerationService, ModerationService>();
             services.AddSingleton<IPlaylistService, PlaylistService>();
             services.AddSingleton<IQuoteService, QuoteService>();
             services.AddSingleton<ISearchService, SearchService>();
+            services.AddSingleton<ISolrService, SolrService>();
             services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IStreamLabsService, StreamLabsService>();
             services.AddSingleton<IVipService, VipService>();
