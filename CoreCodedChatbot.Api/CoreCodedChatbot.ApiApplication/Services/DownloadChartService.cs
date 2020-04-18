@@ -32,7 +32,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             if (mainDevice == null) throw new Exception("JDownloader instance not running or not discoverable");
 
-            var handler = jdownloader.GetDeviceHandler(mainDevice);
+            var handler = jdownloader.GetDeviceHandler(mainDevice, true);
 
             handler.LinkgrabberV2.AddLinks(new AddLinkRequestObject
             {
