@@ -557,6 +557,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 UpdateCurrentSong(requests.RegularList, requests.VipList);
             }
 
+            // Should refresh the current song object to ensure any changes (like in-drive) are respected
+            var current = requests.RegularList.SingleOrDefault(r => r.songRequestId == _currentRequest.songRequestId);
+            _currentRequest = current ?? requests.VipList.SingleOrDefault(r => r.songRequestId == _currentRequest.songRequestId);
+
             requests.RegularList = requests.RegularList.Where(r => r.songRequestId != _currentRequest.songRequestId)
                 .ToArray();
             requests.VipList = requests.VipList.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
