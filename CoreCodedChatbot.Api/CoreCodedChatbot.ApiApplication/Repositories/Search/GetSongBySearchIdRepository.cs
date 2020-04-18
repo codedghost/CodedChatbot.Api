@@ -1,5 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
-using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
+using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Search
@@ -15,17 +15,17 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public BasicSongSearchResult Get(int songId)
+        public SongSearchIntermediate Get(int songId)
         {
             using (var context = _chatbotContextFactory.Create())
             {
                 var song = context.Songs.Find(songId);
 
-                return new BasicSongSearchResult
+                return new SongSearchIntermediate
                 {
                     SongId = song.SongId,
                     SongName = song.SongName,
-                    ArtistName = song.SongArtist,
+                    SongArtist = song.SongArtist,
                     DownloadUrl = song.DownloadUrl
                 };
             }

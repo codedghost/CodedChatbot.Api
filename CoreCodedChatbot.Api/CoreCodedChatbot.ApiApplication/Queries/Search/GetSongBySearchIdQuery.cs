@@ -1,6 +1,6 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
-using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
+using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
 namespace CoreCodedChatbot.ApiApplication.Queries.Search
 {
@@ -13,7 +13,7 @@ namespace CoreCodedChatbot.ApiApplication.Queries.Search
             _getSongBySearchIdRepository = getSongBySearchIdRepository;
         }
 
-        public BasicSongSearchResult Get(int songId)
+        public SongSearchIntermediate Get(int songId)
         {
             var songRequest = _getSongBySearchIdRepository.Get(songId);
 

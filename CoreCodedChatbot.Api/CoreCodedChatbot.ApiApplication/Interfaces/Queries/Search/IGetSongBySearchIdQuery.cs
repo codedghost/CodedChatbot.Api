@@ -1,9 +1,9 @@
-﻿using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
+﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search
 {
     public interface IGetSongBySearchIdQuery
     {
-        BasicSongSearchResult Get(int songId);
+        SongSearchIntermediate Get(int songId);
     }
 }

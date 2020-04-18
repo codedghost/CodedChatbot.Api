@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
@@ -33,7 +34,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                         SongId = song.SongId,
                         SongName = song.SongName,
                         ArtistName = song.SongArtist,
-                        DownloadUrl = song.DownloadUrl
+                        Instruments = song.ChartedPaths?.Split(",").ToList(),
+                        IsOfficial = song.IsOfficial,
+                        IsLinkDead = !song.DownloadUrl.StartsWith("http")
                     });
                 }
             }
