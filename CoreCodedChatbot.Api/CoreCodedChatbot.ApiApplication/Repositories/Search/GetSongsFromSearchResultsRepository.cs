@@ -36,7 +36,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                         ArtistName = song.SongArtist,
                         Instruments = song.ChartedPaths?.Split(",").ToList(),
                         IsOfficial = song.IsOfficial,
-                        IsLinkDead = !song.DownloadUrl.StartsWith("http")
+                        IsLinkDead = !song.DownloadUrl.StartsWith("http"),
+                        IsDownloaded = false
                     });
                 }
             }
