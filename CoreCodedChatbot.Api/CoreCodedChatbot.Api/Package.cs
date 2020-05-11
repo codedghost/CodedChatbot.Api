@@ -13,6 +13,7 @@ namespace CoreCodedChatbot.Api
         public static IServiceCollection AddTwitchServices(this IServiceCollection services, IConfigService configService, ISecretService secretService)
         {
             var api = new TwitchAPI();
+            api.Settings.ClientId = secretService.GetSecret<string>("ChatbotAccessClientId");
             api.Settings.AccessToken = secretService.GetSecret<string>("ChatbotAccessToken");
 
             // TODO: Remove the need for the playlist service to talk directly in chat when opening the playlist.
