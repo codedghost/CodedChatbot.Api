@@ -41,7 +41,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPut]
-        public IActionResult PutStreamStatus(PutStreamStatusRequest streamStatusRequest)
+        public IActionResult PutStreamStatus([FromBody] PutStreamStatusRequest streamStatusRequest)
         {
             try
             {
