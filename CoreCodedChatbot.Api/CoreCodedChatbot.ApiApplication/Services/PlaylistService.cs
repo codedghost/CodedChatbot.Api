@@ -333,19 +333,18 @@ namespace CoreCodedChatbot.ApiApplication.Services
             SongRequestType editRequestType;
             EditRequestResult result;
 
-            // If the command text doesn't parse, we should attempt to remove a regular request
+            // If the command text doesn't parse, we should attempt to edit a regular request
             if (!int.TryParse(commandTextTerms[0].Trim(), out var playlistIndex))
             {
-                songRequestText = string.Join(' ',
-                    commandTextTerms.TakeLast(commandTextTerms.Length - 1));
+                songRequestText = commandText;
 
-                // remove regular request if it exists
+                // edit regular request if it exists
                 if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
                     SongRequestType.Regular) == 1)
                 {
                     editRequestType = SongRequestType.Regular;
                 }
-                // if true return, otherwise attempt to remove and refund a single vip
+                // if true return, otherwise attempt to edit and refund a single vip
                 else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
                 {
                     editRequestType = SongRequestType.Vip;
@@ -383,7 +382,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
             else
             {
-                songRequestText = commandText;
+                songRequestText = string.Join(' ', commandTextTerms);
 
                 // Edit request at position playlistIndex
                 var songRequest = _getUsersRequestAtPlaylistIndexQuery.Get(username, playlistIndex,
