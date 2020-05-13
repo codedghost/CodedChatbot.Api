@@ -92,7 +92,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         private static List<string> GetStringFuzzySearchTerms(string searchTerm)
         {
-            return string.IsNullOrWhiteSpace(searchTerm) ? null : searchTerm.Split(" ").Select(s => $"{s}~2").ToList();
+            return string.IsNullOrWhiteSpace(searchTerm) ? null : 
+                searchTerm.Split(" ")
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Select(s => $"{s}~2")
+                    .ToList();
         }
     }
 }
