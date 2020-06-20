@@ -23,7 +23,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes
                 {
                     var user = context.GetOrCreateUser(username, true);
 
-                    user.TokenBytes++;
+                    //user.TokenBytes++;
                     user.TimeLastInChat = DateTime.UtcNow;
                 }
 
