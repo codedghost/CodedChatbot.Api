@@ -104,7 +104,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 var streamerChannelName = _configService.Get<string>("StreamerChannel");
 
                 var winners = _getPotentialWinnersQuery.Get(currentGuessingGameMetadata.GuessingGameRecordId,
-                    currentGuessingGameMetadata.GuessingGameFinishedPercentage);
+                    finalPercentage);
 
                 // No-one guessed?
                 if (!winners.Any())
