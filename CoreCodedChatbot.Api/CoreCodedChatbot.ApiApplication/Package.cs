@@ -305,6 +305,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetUsersGiftedVipsRepository, GetUsersGiftedVipsRepository>();
             services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
             services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
+            services.AddSingleton<IGiveSubVipsRepository, GiveSubVipsRepository>();
             services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
             services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();

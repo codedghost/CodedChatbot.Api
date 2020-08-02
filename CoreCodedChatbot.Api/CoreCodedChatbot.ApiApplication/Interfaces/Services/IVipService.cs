@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CoreCodedChatbot.ApiContract.RequestModels.Vip.ChildModels;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {
@@ -14,7 +15,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         bool ModGiveVip(string username, int numberOfVips);
         int GetUsersGiftedVips(string username);
         int GetUserVipCount(string username);
-        void GiveSubscriptionVips(List<string> usernames);
+        void GiveSubscriptionVips(List<UserSubDetail> usernames);
         void UpdateTotalBits(string username, int totalBits);
         string GetUserByteCount(string username);
         int ConvertBytes(string username, int requestedVips);
