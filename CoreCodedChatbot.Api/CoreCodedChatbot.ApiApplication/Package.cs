@@ -132,6 +132,7 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Quote
             services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
+            services.AddSingleton<IGetQuotesQuery, GetQuotesQuery>();
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
 
             // Search
@@ -279,6 +280,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IEditQuoteRepository, EditQuoteRepository>();
             services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
             services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
+            services.AddSingleton<IGetQuotesRepository, GetQuotesRepository>();
             services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
 
             // Search
@@ -303,6 +305,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetUsersGiftedVipsRepository, GetUsersGiftedVipsRepository>();
             services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
             services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
+            services.AddSingleton<IGiveSubVipsRepository, GiveSubVipsRepository>();
             services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
             services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
             services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();

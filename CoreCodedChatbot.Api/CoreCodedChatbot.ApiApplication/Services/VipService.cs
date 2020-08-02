@@ -5,6 +5,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiContract.RequestModels.Vip.ChildModels;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
 using IVipService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IVipService;
@@ -204,7 +205,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return vips;
         }
 
-        public void GiveSubscriptionVips(List<string> usernames)
+        public void GiveSubscriptionVips(List<UserSubDetail> usernames)
         {
             _giveSubscriptionVipsCommand.Give(usernames);
         }

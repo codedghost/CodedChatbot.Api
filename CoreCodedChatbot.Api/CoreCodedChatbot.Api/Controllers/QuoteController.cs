@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Quotes;
 using CoreCodedChatbot.ApiContract.ResponseModels.Quotes;
+using CoreCodedChatbot.ApiContract.ResponseModels.Quotes.ChildModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -84,14 +86,41 @@ namespace CoreCodedChatbot.Api.Controllers
                 var quote = _quoteService.GetQuote(quoteId);
 
                 return Json(new GetQuoteResponse
-                {
-                    QuoteText = quote.QuoteText,
-                    QuoteId = quote.QuoteId
+                { 
+                    Quote = new Quote
+                    {
+                        QuoteId = quote.QuoteId,
+                        QuoteText = quote.QuoteText
+                    }
                 });
             }
             catch (Exception e)
             {
                 _logger.Log(LogLevel.Error, e, "Error when retrieving quote", quoteId);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetQuotes()
+        {
+            try
+            {
+                var quotes = _quoteService.GetQuotes();
+
+                return Json(new GetQuotesResponse
+                {
+                    Quotes = quotes.Select(q => new Quote
+                    {
+                        QuoteId = q.QuoteId,
+                        QuoteText = q.QuoteText,
+                        CreatedBy = q.CreatedBy
+                    }).ToList()
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error when retrieving quote list");
                 return BadRequest();
             }
         }

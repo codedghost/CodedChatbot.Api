@@ -168,7 +168,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                _vipService.GiveSubscriptionVips(request.Username);
+                _vipService.GiveSubscriptionVips(request.UserSubDetails);
             }
             catch (Exception e)
             {
