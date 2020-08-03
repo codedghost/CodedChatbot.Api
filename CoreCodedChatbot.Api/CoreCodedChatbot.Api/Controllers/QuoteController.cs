@@ -114,7 +114,10 @@ namespace CoreCodedChatbot.Api.Controllers
                     {
                         QuoteId = q.QuoteId,
                         QuoteText = q.QuoteText,
-                        CreatedBy = q.CreatedBy
+                        CreatedBy = q.CreatedBy,
+                        Disabled = q.Disabled,
+                        LastEditedBy = q.EditedBy,
+                        EditedAt = q.EditedAt
                     }).ToList()
                 });
             }

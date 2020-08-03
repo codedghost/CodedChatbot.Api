@@ -25,7 +25,10 @@ namespace CoreCodedChatbot.ApiApplication.Queries.Quote
             {
                 QuoteId = q.QuoteId,
                 QuoteText = q.QuoteText,
-                CreatedBy = q.CreatedBy
+                CreatedBy = q.CreatedBy,
+                Disabled = !q.Enabled,
+                EditedBy = q.LastEditedBy,
+                EditedAt = q.LastEdited
             });
 
             return intermediates.ToList();
