@@ -28,7 +28,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
                                    user.ModGivenVipRequests +
                                    user.SubVipRequests +
                                    user.TokenVipRequests +
-                                   user.ReceivedGiftVipRequests;
+                                   user.ReceivedGiftVipRequests +
+                                   user.Tier2Vips +
+                                   (user.Tier3Vips * 2);
 
                 var vipsUsed = user.UsedVipRequests + user.SentGiftVipRequests;
 
