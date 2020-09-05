@@ -168,6 +168,13 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
+                _logger.LogInformation(
+                    $"Api received GiveSubscriptionVips with {request.UserSubDetails.Count} subscriber(s)");
+                foreach (var sub in request.UserSubDetails)
+                {
+                    _logger.LogInformation(
+                        $"{sub.Username} - {sub.SubStreak} substreak - {sub.TotalSubMonths} total months - {sub.SubscriptionTier} subtier");
+                }
                 _vipService.GiveSubscriptionVips(request.UserSubDetails);
             }
             catch (Exception e)
