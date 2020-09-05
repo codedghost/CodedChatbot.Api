@@ -321,12 +321,13 @@ namespace CoreCodedChatbot.ApiApplication
         {
             var solrUser = secretService.GetSecret<string>("SolrUsername");
             var solrPass = secretService.GetSecret<string>("SolrPassword");
+            var solrUrl = secretService.GetSecret<string>("SolrUrl");
 
             var credentials = Encoding.ASCII.GetBytes($"{solrUser}:{solrPass}");
 
             var credentialsBase64 = Convert.ToBase64String(credentials);
 
-            services.AddSolrNet<SongSearch>("http://codedghost.com:8983/solr/SongSearch", options =>
+            services.AddSolrNet<SongSearch>($"{solrUrl}/SongSearch", options =>
             {
                 options.HttpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic", credentialsBase64);
