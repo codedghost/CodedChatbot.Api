@@ -28,20 +28,20 @@ namespace CoreCodedChatbot.Api
             services.AddOptions();
             services.AddMemoryCache();
 
-            services
-                .AddChatbotConfigService()
-                .AddChatbotSecretServiceCollection(
-                    configService.Get<string>("KeyVaultAppId"),
-                    configService.Get<string>("KeyVaultCertThumbprint"),
-                    configService.Get<string>("KeyVaultBaseUrl")
-                );
+            services.AddChatbotConfigService();
 
-            var secretService = services.BuildServiceProvider().GetService<ISecretService>();
+            var secretService = new AzureKeyVaultService(
+                configService.Get<string>("KeyVaultAppId"),
+                configService.Get<string>("KeyVaultCertThumbprint"),
+                configService.Get<string>("KeyVaultBaseUrl"));
+
+            secretService.Initialize().Wait();
+            services.AddSingleton<ISecretService, AzureKeyVaultService>(provider => secretService);
 
             services
                 .AddDbContextFactory()
-                .AddChatbotNLog(secretService)
-                .AddTwitchServices(configService, secretService)
+                .AddChatbotNLog()
+                .AddTwitchServices()
                 .AddApplicationServices()
                 .AddSolr(secretService);
 
@@ -55,15 +55,21 @@ namespace CoreCodedChatbot.Api
                 })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
+                });
+
+            services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+                .Configure<ISecretService>((options, secrets) =>
+                {
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretService.GetSecret<string>("ApiSecretSymmetricKey"))),
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secrets.GetSecret<string>("ApiSecretSymmetricKey"))),
                         ValidateIssuer = true,
-                        ValidIssuer = secretService.GetSecret<string>("ApiValidIssuer"),
+                        ValidIssuer = secrets.GetSecret<string>("ApiValidIssuer"),
                         ValidateAudience = true,
-                        ValidAudience = secretService.GetSecret<string>("ApiValidAudience")
+                        ValidAudience = secrets.GetSecret<string>("ApiValidAudience")
                     };
                 });
 

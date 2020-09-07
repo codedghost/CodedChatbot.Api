@@ -334,7 +334,7 @@ namespace CoreCodedChatbot.ApiApplication
             });
 
             services.AddSingleton<ISolrService, SolrService>();
-            //services.AddSingleton<IDownloadChartService, DownloadChartService>();
+            services.AddSingleton<IDownloadChartService, DownloadChartService>();
 
             return services;
         }
