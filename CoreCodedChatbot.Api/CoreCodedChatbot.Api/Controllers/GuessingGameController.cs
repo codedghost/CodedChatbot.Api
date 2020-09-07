@@ -70,5 +70,21 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpGet]
+        public IActionResult InitialiseGuessingGame()
+        {
+            try
+            {
+                _guessingGameService.SetGuessingGameState(false);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in InitialiseGuessingGame");
+                return BadRequest();
+            }
+        }
     }
 }
