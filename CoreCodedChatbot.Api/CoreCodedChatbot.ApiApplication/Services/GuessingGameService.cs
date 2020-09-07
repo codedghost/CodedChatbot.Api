@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CodedChatbot.TwitchFactories.Interfaces;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
@@ -17,7 +18,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IChatbotContextFactory _chatbotContextFactory;
         private readonly IConfigService _configService;
         private readonly ILogger<IGuessingGameService> _logger;
-        private readonly TwitchClient _twitchClient;
+        private readonly ITwitchClientFactory _twitchClientFactory;
         private readonly IOpenGuessingGameRepository _openGuessingGameRepository;
         private readonly ICloseGuessingGameRepository _closeGuessingGameRepository;
         private readonly IGetCurrentGuessingGameMetadataQuery _getCurrentGuessingGameMetadataQuery;
@@ -32,7 +33,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IChatbotContextFactory chatbotContextFactory,
             IConfigService configService,
             ILogger<IGuessingGameService> logger,
-            TwitchClient twitchClient,
+            ITwitchClientFactory twitchClientFactory,
             IOpenGuessingGameRepository openGuessingGameRepository,
             ICloseGuessingGameRepository closeGuessingGameRepository,
             IGetCurrentGuessingGameMetadataQuery getCurrentGuessingGameMetadataQuery,
@@ -47,7 +48,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _chatbotContextFactory = chatbotContextFactory;
             _configService = configService;
             _logger = logger;
-            _twitchClient = twitchClient;
+            _twitchClientFactory = twitchClientFactory;
             _openGuessingGameRepository = openGuessingGameRepository;
             _closeGuessingGameRepository = closeGuessingGameRepository;
             _getCurrentGuessingGameMetadataQuery = getCurrentGuessingGameMetadataQuery;
@@ -62,6 +63,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async Task GuessingGameStart(string songName, int songLengthInSeconds)
         {
+            var twitchClient = _twitchClientFactory.Get();
+
             var secondsForGuessingGame = _configService.Get<int>("SecondsForGuessingGame");
             var streamerChannelName = _configService.Get<string>("StreamerChannel");
             if (songLengthInSeconds < secondsForGuessingGame)
@@ -71,23 +74,23 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             if (!_openGuessingGameRepository.Open(songName))
             {
-                _twitchClient.SendMessage(streamerChannelName, "I couldn't start the guessing game :S");
+                twitchClient.SendMessage(streamerChannelName, "I couldn't start the guessing game :S");
                 return;
             }
 
             SetGuessingGameState(true);
 
-            _twitchClient.SendMessage(streamerChannelName,
+            twitchClient.SendMessage(streamerChannelName,
                 $"The guessing game has begun! You have {secondsForGuessingGame} seconds to !guess the accuracy that {streamerChannelName} will get on {songName}!");
 
             await Task.Delay(TimeSpan.FromSeconds(secondsForGuessingGame));
 
             if (!_closeGuessingGameRepository.Close())
             {
-                _twitchClient.SendMessage(streamerChannelName, "I couldn't close the guessing game for some reason... SEND HALP");
+                twitchClient.SendMessage(streamerChannelName, "I couldn't close the guessing game for some reason... SEND HALP");
             }
 
-            _twitchClient.SendMessage(streamerChannelName, "The guessing game has now closed. Good luck everyone!");
+            twitchClient.SendMessage(streamerChannelName, "The guessing game has now closed. Good luck everyone!");
 
             SetGuessingGameState(false);
         }
@@ -97,6 +100,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             try
             {
+                var twitchClient = _twitchClientFactory.Get();
+
                 var currentGuessingGameMetadata = _getCurrentGuessingGameMetadataQuery.Get();
 
                 _completeGuessingGameCommand.CompleteCurrentGuessingGame(finalPercentage);
@@ -108,11 +113,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
                 // No-one guessed?
                 if (!winners.Any())
-                    _twitchClient.SendMessage(streamerChannelName, "Nobody guessed! Good luck next time :)");
+                    twitchClient.SendMessage(streamerChannelName, "Nobody guessed! Good luck next time :)");
 
                 _giveGuessingGameWinnersBytesCommand.Give(winners.Where(w => w.Difference <= 20).ToList());
 
-                _twitchClient.SendMessage(streamerChannelName,
+                twitchClient.SendMessage(streamerChannelName,
                     winners[0].Difference > 20
                         ? $"@{string.Join(", @", winners.Select(w => w.Username))} has won... nothing!" +
                           $" {string.Join(", ", winners.Select(w => $"{w.Username} guessed {w.Guess}%"))} " +
