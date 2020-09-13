@@ -9,6 +9,7 @@ using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Quote;
+using CoreCodedChatbot.ApiApplication.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
@@ -20,6 +21,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
@@ -89,6 +91,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IPlaylistService, PlaylistService>();
             services.AddSingleton<IQuoteService, QuoteService>();
             services.AddSingleton<ISearchService, SearchService>();
+            services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<ISolrService, SolrService>();
             services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IStreamLabsService, StreamLabsService>();
@@ -209,6 +212,9 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Search
             services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
+
+            // Settings
+            services.AddSingleton<IUpdateSettingsCommand, UpdateSettingsCommand>();
 
             // Stream Status
             services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
