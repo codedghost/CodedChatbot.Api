@@ -34,6 +34,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                         SongId = song.SongId,
                         SongName = song.SongName,
                         ArtistName = song.SongArtist,
+                        CharterUsername = song.UploaderUsername,
                         Instruments = song.ChartedPaths?.Split(",").ToList(),
                         IsOfficial = song.IsOfficial,
                         IsLinkDead = !song.DownloadUrl.StartsWith("http"),
