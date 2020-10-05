@@ -5,7 +5,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {
     public interface IVipService
     {
-        bool GiftVip(string donorUsername, string receiverUsername);
+        bool GiftVip(string donorUsername, string receiverUsername, int numberOfVips);
         bool RefundVip(string username, bool deferSave = false);
         bool RefundSuperVip(string username, bool deferSave = false);
         bool HasVip(string username);
