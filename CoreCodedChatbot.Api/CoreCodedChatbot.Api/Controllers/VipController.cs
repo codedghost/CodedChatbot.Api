@@ -33,7 +33,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                if (_vipService.GiftVip(giftVipModel.DonorUsername, giftVipModel.ReceiverUsername)) return Ok();
+                if (_vipService.GiftVip(giftVipModel.DonorUsername, giftVipModel.ReceiverUsername, giftVipModel.NumberOfVips)) return Ok();
             }
             catch (Exception e)
             {

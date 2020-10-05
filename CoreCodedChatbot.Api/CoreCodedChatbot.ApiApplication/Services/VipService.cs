@@ -67,9 +67,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _logger = logger;
         }
 
-        public bool GiftVip(string donorUsername, string receiverUsername)
+        public bool GiftVip(string donorUsername, string receiverUsername, int numberOfVips)
         {
-            var success = _giftVipCommand.GiftVip(donorUsername, receiverUsername, 1);
+            var success = _giftVipCommand.GiftVip(donorUsername, receiverUsername, numberOfVips);
 
             return success;
         }
