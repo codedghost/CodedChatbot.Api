@@ -83,6 +83,7 @@ namespace CoreCodedChatbot.ApiApplication
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<IChannelRewardsService, ChannelRewardsService>();
+            services.AddSingleton<IClientTriggerService, ClientTriggerService>();
             services.AddSingleton<IChatCommandService, ChatCommandService>();
             services.AddSingleton<IChatService, ChatService>();
             services.AddSingleton<IDownloadChartService, DownloadChartService>();

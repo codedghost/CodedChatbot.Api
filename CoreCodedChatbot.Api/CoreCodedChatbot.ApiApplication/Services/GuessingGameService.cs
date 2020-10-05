@@ -15,7 +15,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
 {
     public class GuessingGameService : IGuessingGameService
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
         private readonly IConfigService _configService;
         private readonly ILogger<IGuessingGameService> _logger;
         private readonly ITwitchClientFactory _twitchClientFactory;
@@ -30,7 +29,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly ISetGuessingGameStateCommand _setGuessingGameStateCommand;
 
         public GuessingGameService(
-            IChatbotContextFactory chatbotContextFactory,
             IConfigService configService,
             ILogger<IGuessingGameService> logger,
             ITwitchClientFactory twitchClientFactory,
@@ -45,7 +43,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             ISetGuessingGameStateCommand setGuessingGameStateCommand
         )
         {
-            _chatbotContextFactory = chatbotContextFactory;
             _configService = configService;
             _logger = logger;
             _twitchClientFactory = twitchClientFactory;

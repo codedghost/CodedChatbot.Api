@@ -2,7 +2,9 @@
 using System.Text;
 using CodedGhost.Config;
 using CoreCodedChatbot.ApiApplication;
+using CoreCodedChatbot.ApiApplication.Hubs;
 using CoreCodedChatbot.ApiApplication.Services;
+using CoreCodedChatbot.ApiContract.SignalRHubModels.API;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database;
 using CoreCodedChatbot.Database.Context;
@@ -45,6 +47,7 @@ namespace CoreCodedChatbot.Api
                 .AddApplicationServices()
                 .AddSolr(secretService);
 
+            services.AddSignalR();
             services.AddRouting();
 
             services.AddAuthentication(op =>
@@ -109,6 +112,7 @@ namespace CoreCodedChatbot.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapHub<BackgroundSongHub>(APIHubConstants.BackgroundSongHubPath);
             });
 
             var streamLabsService = (StreamLabsService) serviceProvider.GetService<IStreamLabsService>();

@@ -4,15 +4,15 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiContract.RequestModels.Vip.ChildModels;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
-using IVipService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IVipService;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
-    public class VipService : Interfaces.Services.IVipService
+    public class VipService : IVipService
     {
         private readonly IGiftVipCommand _giftVipCommand;
         private readonly IRefundVipCommand _refundVipCommand;
