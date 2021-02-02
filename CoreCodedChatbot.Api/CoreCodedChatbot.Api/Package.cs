@@ -1,11 +1,6 @@
 ﻿using CodedChatbot.TwitchFactories;
 using CoreCodedChatbot.ApiApplication;
-using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
-using TwitchLib.Api;
-using TwitchLib.Client;
-using TwitchLib.Client.Models;
 
 namespace CoreCodedChatbot.Api
 {
