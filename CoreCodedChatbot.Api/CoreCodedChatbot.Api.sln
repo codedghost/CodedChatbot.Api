@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreCodedChatbot.ApiTests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreCodedChatbot.ApiApplication", "CoreCodedChatbot.ApiApplication\CoreCodedChatbot.ApiApplication.csproj", "{7235CBEE-D918-4E2E-817B-CA72317D6D88}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrintfulLib", "..\..\PrintfulLib\PrintfulLib\PrintfulLib\PrintfulLib.csproj", "{524D719B-2C42-45D6-875A-D2D9EDDEEDB8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{7235CBEE-D918-4E2E-817B-CA72317D6D88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7235CBEE-D918-4E2E-817B-CA72317D6D88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7235CBEE-D918-4E2E-817B-CA72317D6D88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{524D719B-2C42-45D6-875A-D2D9EDDEEDB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{524D719B-2C42-45D6-875A-D2D9EDDEEDB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{524D719B-2C42-45D6-875A-D2D9EDDEEDB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{524D719B-2C42-45D6-875A-D2D9EDDEEDB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

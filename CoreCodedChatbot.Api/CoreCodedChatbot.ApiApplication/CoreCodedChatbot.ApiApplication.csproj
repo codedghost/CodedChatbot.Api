@@ -18,15 +18,12 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
     <PackageReference Include="My.JDownloader.Api" Version="2.4.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="PrintfulLib" Version="1.0.821" />
     <PackageReference Include="SolrNet" Version="1.0.19" />
     <PackageReference Include="SolrNet.Core" Version="1.0.19" />
     <PackageReference Include="SolrNet.Microsoft.DependencyInjection" Version="1.0.19" />
     <PackageReference Include="TwitchLib" Version="3.1.1" />
     <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PrintfulLib\PrintfulLib\PrintfulLib\PrintfulLib.csproj" />
   </ItemGroup>
 
 </Project>
