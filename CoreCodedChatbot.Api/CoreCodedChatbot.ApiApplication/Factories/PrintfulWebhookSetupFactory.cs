@@ -40,10 +40,10 @@ namespace CoreCodedChatbot.ApiApplication.Factories
                         WebhookEventType.OrderCancelled.ToWebhookTypeString(),
                         WebhookEventType.ProductSynced.ToWebhookTypeString(),
                         WebhookEventType.ProductUpdated.ToWebhookTypeString(),
-                        WebhookEventType.StockUpdated.ToWebhookTypeString(),
                         WebhookEventType.OrderPutOnHold.ToWebhookTypeString(),
                         WebhookEventType.OrderRemoveHold.ToWebhookTypeString()
-                    }
+                    },
+                    OptionalParams = new object{}
                 };
 
                 var result = await _printfulClient.SetWebhookConfiguration(request);
