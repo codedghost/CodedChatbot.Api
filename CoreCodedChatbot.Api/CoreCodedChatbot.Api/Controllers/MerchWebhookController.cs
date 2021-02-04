@@ -39,6 +39,7 @@ namespace CoreCodedChatbot.Api.Controllers
         [HttpPost]
         public IActionResult Event([FromBody] PrintfulWebhookResponse response)
         {
+            // TODO Re-enable commented code when testing is done
             // As this is an unprotected endpoint, we need to ensure that this is a legitimate request
             //if (response.StoreId != _secretService.GetSecret<int>("PrintfulStoreId"))
             //{
@@ -50,11 +51,11 @@ namespace CoreCodedChatbot.Api.Controllers
                 if (response.NumberOfRetries > 1)
                 {
                     // adding to proper queue has failed, add to Dead letter queue for this type
-                    _rabbitMessagePublisher.Publish(new MerchDeadLetter
-                    {
-                        EventCreated = response.Created,
-                        DataObjectString = JsonConvert.SerializeObject(response.WebhookDataObject)
-                    });
+                    //_rabbitMessagePublisher.Publish(new MerchDeadLetter
+                    //{
+                    //    EventCreated = response.Created,
+                    //    DataObjectString = JsonConvert.SerializeObject(response.WebhookDataObject)
+                    //});
                 }
 
                 switch (response.EventType)
