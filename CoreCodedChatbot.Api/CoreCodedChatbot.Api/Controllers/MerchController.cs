@@ -59,33 +59,14 @@ namespace CoreCodedChatbot.Api.Controllers
         //    return Json(result);
         //}
 
-        public class PrintfulWebhookModel
-        {
-            [JsonProperty("type")]
-            private string Type { get; set; }
-
-            [JsonProperty("created")]
-            [JsonConverter(typeof(TimestampDateTimeConverter))]
-            public DateTime Created { get; set; }
-
-            [JsonProperty("retries")]
-            public int NumberOfRetries { get; set; }
-
-            [JsonProperty("store")]
-            public int StoreId { get; set; }
-
-            [JsonProperty("data")]
-            public object WebhookData { get; set; }
-        }
-
         [HttpPost]
-        public IActionResult WebhookEndpoint([FromBody] PrintfulWebhookModel response)
+        public IActionResult WebhookEndpoint([FromBody] PrintfulWebhookResponse response)
         {
             // As this is an unprotected endpoint, we need to ensure that this is a legitimate request
-            if (response.StoreId != _secretService.GetSecret<int>("PrintfulStoreId"))
-            {
-                return BadRequest();
-            }
+            //if (response.StoreId != _secretService.GetSecret<int>("PrintfulStoreId"))
+            //{
+            //    return BadRequest();
+            //}
 
             try
             {
@@ -94,36 +75,36 @@ namespace CoreCodedChatbot.Api.Controllers
                     // adding to proper queue has failed, add to Dead letter queue for this type
                 }
 
-                //switch (response.GetType())
-                //{
-                //    case WebhookEventType.PackageShipped:
-                //        _rabbitMessagePublisher.Publish(new PackageShippedMessage
-                //        {
-                //            EventCreated = response.Created,
-                //            ShipmentInfo = (ShipmentInfo)response.WebhookData
-                //        });
-                //        break;
-                //    case WebhookEventType.PackageReturned:
-                //        break;
-                //    case WebhookEventType.OrderFailed:
-                //        break;
-                //    case WebhookEventType.OrderCancelled:
-                //        break;
-                //    case WebhookEventType.ProductSynced:
-                //        break;
-                //    case WebhookEventType.ProductUpdated:
-                //        break;
-                //    case WebhookEventType.StockUpdated:
-                //        break;
-                //    case WebhookEventType.OrderPutOnHold:
-                //        break;
-                //    case WebhookEventType.OrderRemoveHold:
-                //        break;
-                //    case WebhookEventType.NotBound:
-                //        return BadRequest();
-                //    default:
-                //        return BadRequest();
-                //}
+                switch (response.EventType)
+                {
+                    case WebhookEventType.PackageShipped:
+                        _rabbitMessagePublisher.Publish(new PackageShippedMessage
+                        {
+                            EventCreated = response.Created,
+                            ShipmentInfo = (ShipmentInfo)response.WebhookDataObject
+                        });
+                        break;
+                    case WebhookEventType.PackageReturned:
+                        break;
+                    case WebhookEventType.OrderFailed:
+                        break;
+                    case WebhookEventType.OrderCancelled:
+                        break;
+                    case WebhookEventType.ProductSynced:
+                        break;
+                    case WebhookEventType.ProductUpdated:
+                        break;
+                    case WebhookEventType.StockUpdated:
+                        break;
+                    case WebhookEventType.OrderPutOnHold:
+                        break;
+                    case WebhookEventType.OrderRemoveHold:
+                        break;
+                    case WebhookEventType.NotBound:
+                        return BadRequest();
+                    default:
+                        return BadRequest();
+                }
             }
             catch (Exception e)
             {
