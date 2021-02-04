@@ -58,7 +58,7 @@ namespace CoreCodedChatbot.Api.Controllers
         //}
 
         [HttpPost]
-        public IActionResult WebhookEndpoint([FromBody] object response)
+        public IActionResult WebhookEndpoint([FromBody] string type, [FromBody] int created, [FromBody] int retries, [FromBody] int store, [FromBody] object data)
         {
             // As this is an unprotected endpoint, we need to ensure that this is a legitimate request
             //if (response.StoreId != _secretService.GetSecret<int>("PrintfulStoreId"))
