@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Moderation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

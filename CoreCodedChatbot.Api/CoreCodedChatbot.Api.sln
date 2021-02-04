@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreCodedChatbot.Api", "CoreCodedChatbot.Api\CoreCodedChatbot.Api.csproj", "{B54DD2D6-7FD7-4D3D-949E-951476484DD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreCodedChatbot.ApiTests", "CoreCodedChatbot.ApiTests\CoreCodedChatbot.ApiTests.csproj", "{CB539AB9-CCED-417A-A9E4-3CA4FEE7C9C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreCodedChatbot.ApiTests", "CoreCodedChatbot.ApiTests\CoreCodedChatbot.ApiTests.csproj", "{CB539AB9-CCED-417A-A9E4-3CA4FEE7C9C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreCodedChatbot.ApiApplication", "CoreCodedChatbot.ApiApplication\CoreCodedChatbot.ApiApplication.csproj", "{7235CBEE-D918-4E2E-817B-CA72317D6D88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreCodedChatbot.ApiApplication", "CoreCodedChatbot.ApiApplication\CoreCodedChatbot.ApiApplication.csproj", "{7235CBEE-D918-4E2E-817B-CA72317D6D88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
