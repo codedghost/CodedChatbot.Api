@@ -81,7 +81,7 @@ namespace CoreCodedChatbot.Api.Controllers
                         _rabbitMessagePublisher.Publish(new PackageShippedMessage
                         {
                             EventCreated = response.Created,
-                            ShipmentInfo = (ShipmentInfo)response.WebhookDataObject
+                            ShipmentInfo = (ShipmentInfo) response.WebhookData
                         });
                         break;
                     case WebhookEventType.PackageReturned:
