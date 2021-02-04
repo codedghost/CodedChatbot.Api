@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodedChatbot.MerchContract" Version="1.0.787" />
+    <PackageReference Include="CodedChatbot.MerchContract" Version="1.0.815" />
     <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.748" />
     <PackageReference Include="CodedGhost.Config" Version="1.0.549" />
     <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.812" />

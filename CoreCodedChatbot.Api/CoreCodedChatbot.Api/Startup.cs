@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using CodedGhost.Config;
 using CoreCodedChatbot.ApiApplication;
+using CoreCodedChatbot.ApiApplication.Factories;
 using CoreCodedChatbot.ApiApplication.Hubs;
+using CoreCodedChatbot.ApiApplication.Interfaces.Factories;
 using CoreCodedChatbot.ApiApplication.Services;
 using CoreCodedChatbot.ApiContract.SignalRHubModels.API;
 using CoreCodedChatbot.Config;
@@ -47,7 +50,8 @@ namespace CoreCodedChatbot.Api
                 .AddApplicationServices()
                 .AddSolr(secretService)
                 .AddRabbitConnectionServices()
-                .AddPrintfulClient(secretService);
+                .AddPrintfulClient(secretService)
+                .AddFactories();
 
             services.AddSignalR();
             services.AddRouting();
@@ -119,9 +123,14 @@ namespace CoreCodedChatbot.Api
 
             var streamLabsService = (StreamLabsService) serviceProvider.GetService<IStreamLabsService>();
             var chatterService = (ChatService) serviceProvider.GetService<IChatService>();
-            
+            var printfulFactory =
+                (PrintfulWebhookSetupFactory) serviceProvider.GetService<IPrintfulWebhookSetupFactory>();
+
             streamLabsService.Initialise();
             chatterService.Initialise();
+            var setupWebhookTask = printfulFactory.SetupPrintfulWebhook();
+
+            Task.WaitAll(setupWebhookTask);
         }
     }
 }

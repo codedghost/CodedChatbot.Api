@@ -13,6 +13,7 @@ using CoreCodedChatbot.ApiApplication.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
+using CoreCodedChatbot.ApiApplication.Factories;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards;
@@ -25,6 +26,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+using CoreCodedChatbot.ApiApplication.Interfaces.Factories;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
@@ -323,6 +325,13 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IUpdateTotalBitsRepository, UpdateTotalBitsRepository>();
             services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
             services.AddSingleton<IUseVipRepository, UseVipRepository>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddFactories(this IServiceCollection services)
+        {
+            services.AddSingleton<IPrintfulWebhookSetupFactory, PrintfulWebhookSetupFactory>();
 
             return services;
         }
