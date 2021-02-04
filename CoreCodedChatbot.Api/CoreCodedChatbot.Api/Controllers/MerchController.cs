@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using PrintfulLib.Converters;
 using PrintfulLib.Interfaces.ExternalClients;
 using PrintfulLib.Models.ApiRequest;
 using PrintfulLib.Models.WebhookResponses;
@@ -57,57 +59,76 @@ namespace CoreCodedChatbot.Api.Controllers
         //    return Json(result);
         //}
 
+        public class PrintfulWebhookModel
+        {
+            [JsonProperty("type")]
+            private string Type { get; set; }
+
+            [JsonProperty("created")]
+            [JsonConverter(typeof(TimestampDateTimeConverter))]
+            public DateTime Created { get; set; }
+
+            [JsonProperty("retries")]
+            public int NumberOfRetries { get; set; }
+
+            [JsonProperty("store")]
+            public int StoreId { get; set; }
+
+            [JsonProperty("data")]
+            public object WebhookData { get; set; }
+        }
+
         [HttpPost]
-        public IActionResult WebhookEndpoint([FromBody] string type, [FromBody] int created, [FromBody] int retries, [FromBody] int store, [FromBody] object data)
+        public IActionResult WebhookEndpoint([FromBody] PrintfulWebhookModel response)
         {
             // As this is an unprotected endpoint, we need to ensure that this is a legitimate request
-            //if (response.StoreId != _secretService.GetSecret<int>("PrintfulStoreId"))
-            //{
-            //    return BadRequest();
-            //}
+            if (response.StoreId != _secretService.GetSecret<int>("PrintfulStoreId"))
+            {
+                return BadRequest();
+            }
 
-            //try
-            //{
-            //    if (response.NumberOfRetries > 1)
-            //    {
-            //        // adding to proper queue has failed, add to Dead letter queue for this type
-            //    }
+            try
+            {
+                if (response.NumberOfRetries > 1)
+                {
+                    // adding to proper queue has failed, add to Dead letter queue for this type
+                }
 
-            //    switch (response.EventType)
-            //    {
-            //        case WebhookEventType.PackageShipped:
-            //            _rabbitMessagePublisher.Publish(new PackageShippedMessage
-            //            {
-            //                EventCreated = response.Created,
-            //                ShipmentInfo = (ShipmentInfo)response.WebhookData
-            //            });
-            //            break;
-            //        case WebhookEventType.PackageReturned:
-            //            break;
-            //        case WebhookEventType.OrderFailed:
-            //            break;
-            //        case WebhookEventType.OrderCancelled:
-            //            break;
-            //        case WebhookEventType.ProductSynced:
-            //            break;
-            //        case WebhookEventType.ProductUpdated:
-            //            break;
-            //        case WebhookEventType.StockUpdated:
-            //            break;
-            //        case WebhookEventType.OrderPutOnHold:
-            //            break;
-            //        case WebhookEventType.OrderRemoveHold:
-            //            break;
-            //        case WebhookEventType.NotBound:
-            //            return BadRequest();
-            //        default:
-            //            return BadRequest();
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    return BadRequest();
-            //}
+                //switch (response.GetType())
+                //{
+                //    case WebhookEventType.PackageShipped:
+                //        _rabbitMessagePublisher.Publish(new PackageShippedMessage
+                //        {
+                //            EventCreated = response.Created,
+                //            ShipmentInfo = (ShipmentInfo)response.WebhookData
+                //        });
+                //        break;
+                //    case WebhookEventType.PackageReturned:
+                //        break;
+                //    case WebhookEventType.OrderFailed:
+                //        break;
+                //    case WebhookEventType.OrderCancelled:
+                //        break;
+                //    case WebhookEventType.ProductSynced:
+                //        break;
+                //    case WebhookEventType.ProductUpdated:
+                //        break;
+                //    case WebhookEventType.StockUpdated:
+                //        break;
+                //    case WebhookEventType.OrderPutOnHold:
+                //        break;
+                //    case WebhookEventType.OrderRemoveHold:
+                //        break;
+                //    case WebhookEventType.NotBound:
+                //        return BadRequest();
+                //    default:
+                //        return BadRequest();
+                //}
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
 
             return BadRequest();
         }
