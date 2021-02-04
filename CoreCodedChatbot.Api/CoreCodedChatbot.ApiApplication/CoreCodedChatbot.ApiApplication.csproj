@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
     <PackageReference Include="My.JDownloader.Api" Version="2.4.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="PrintfulLib" Version="1.0.800" />
+    <PackageReference Include="PrintfulLib" Version="1.0.804" />
     <PackageReference Include="SolrNet" Version="1.0.19" />
     <PackageReference Include="SolrNet.Core" Version="1.0.19" />
     <PackageReference Include="SolrNet.Microsoft.DependencyInjection" Version="1.0.19" />
