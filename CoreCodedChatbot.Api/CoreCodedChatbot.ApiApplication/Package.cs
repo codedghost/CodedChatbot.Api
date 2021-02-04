@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http.Headers;
 using System.Text;
+using CodedGhost.RabbitMQTools;
 using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.ChannelRewards;
@@ -73,6 +74,8 @@ using CoreCodedChatbot.ApiApplication.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Services;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.DependencyInjection;
+using PrintfulLib.ExternalClients;
+using PrintfulLib.Interfaces.ExternalClients;
 using SolrNet;
 
 namespace CoreCodedChatbot.ApiApplication
@@ -342,6 +345,23 @@ namespace CoreCodedChatbot.ApiApplication
 
             services.AddSingleton<ISolrService, SolrService>();
             services.AddSingleton<IDownloadChartService, DownloadChartService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddRabbitConnectionServices(this IServiceCollection services)
+        {
+            services.AddConnectionRabbitServices()
+                .AddRabbitPublisherService();
+
+            return services;
+        }
+
+        public static IServiceCollection AddPrintfulClient(this IServiceCollection services, ISecretService secretService)
+        {
+            var printfulClient = new PrintfulClient(secretService.GetSecret<string>("PrintfulAPIKey"));
+
+            services.AddSingleton<IPrintfulClient>(printfulClient);
 
             return services;
         }
