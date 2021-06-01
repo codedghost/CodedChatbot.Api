@@ -572,6 +572,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     regularRequests = requests.RegularList,
                     vipRequests = requests.VipList
                 });
+
+            await connection.InvokeAsync<SongListHubModel>("UpdateClients",
+                new SongListHubModel
+                {
+                    psk = psk,
+                    currentSong = _currentRequest,
+                    regularRequests = requests.RegularList,
+                    vipRequests = requests.VipList
+                });
         }
 
         public bool IsSuperVipRequestInQueue()
