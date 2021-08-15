@@ -90,7 +90,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PracticeSongRequest([FromBody] PracticeSongRequest request)
+        public IActionResult PracticeSongRequest([FromBody] PracticeSongRequest request)
         {
             if (request == null ||
                 string.IsNullOrWhiteSpace(request.SongName) ||

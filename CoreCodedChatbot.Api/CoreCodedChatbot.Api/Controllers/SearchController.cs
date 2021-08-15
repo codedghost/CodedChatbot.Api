@@ -80,7 +80,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> DownloadToOneDrive([FromBody] DownloadToOneDriveRequest request)
+        public IActionResult DownloadToOneDrive([FromBody] DownloadToOneDriveRequest request)
         {
             try
             {

@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -20,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _processSongRequestCommand = processSongRequestCommand;
         }
 
-        public AddSongResult AddSongRequest(string username, string requestText, SongRequestType songRequestType)
+        public async Task<AddSongResult> AddSongRequest(string username, string requestText, SongRequestType songRequestType)
         {
             if (string.IsNullOrWhiteSpace(requestText))
                 return new AddSongResult
@@ -59,7 +60,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 
                     break;
             }
-            return _processSongRequestCommand.ProcessAddingSongRequest(username, requestText, songRequestType);
+            return await _processSongRequestCommand.ProcessAddingSongRequest(username, requestText, songRequestType).ConfigureAwait(false);
         }
     }
 }

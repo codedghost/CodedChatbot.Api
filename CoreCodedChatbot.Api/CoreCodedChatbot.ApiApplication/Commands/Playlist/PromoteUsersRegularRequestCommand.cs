@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -20,9 +21,9 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _vipService = vipService;
         }
 
-        public PromoteRequestIntermediate PromoteUsersRegularRequest(string username, int songRequestId = 0)
+        public async Task<PromoteRequestIntermediate> PromoteUsersRegularRequest(string username, int songRequestId = 0)
         {
-            if (!_vipService.UseVip(username))
+            if (!await _vipService.UseVip(username))
                 return new PromoteRequestIntermediate
                 {
                     PromoteRequestResult = PromoteRequestResult.NoVipAvailable

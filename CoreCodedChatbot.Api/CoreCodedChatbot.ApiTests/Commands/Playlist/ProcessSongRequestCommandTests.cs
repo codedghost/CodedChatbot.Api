@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
@@ -28,9 +29,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _processRegularSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(new AddSongResult {AddRequestResult = AddRequestResult.Success});
             _processVipSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new AddSongResult { AddRequestResult = AddRequestResult.Success });
+                .ReturnsAsync(new AddSongResult { AddRequestResult = AddRequestResult.Success });
             _processSuperVipSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(new AddSongResult { AddRequestResult = AddRequestResult.Success });
+                .ReturnsAsync(new AddSongResult { AddRequestResult = AddRequestResult.Success });
 
             _subject = new ProcessSongRequestCommand(_processRegularSongRequestCommand.Object,
                 _processVipSongRequestCommand.Object,
@@ -40,9 +41,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase("Username", "Request Text", SongRequestType.Regular, TestName = "SuccessWhen_RegularRequest")]
         [TestCase("Username", "Request Text", SongRequestType.Vip, TestName = "SuccessWhen_VipRequest")]
         [TestCase("Username", "Request Text", SongRequestType.SuperVip, TestName = "SuccessWhen_SuperVipRequest")]
-        public void SuccessTest(string username, string requestText, SongRequestType requestType)
+        public async Task SuccessTest(string username, string requestText, SongRequestType requestType)
         {
-            var result = _subject.ProcessAddingSongRequest(username, requestText, requestType);
+            var result = await _subject.ProcessAddingSongRequest(username, requestText, requestType);
 
             Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
         }
@@ -50,7 +51,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase("Username", "Request Text", SongRequestType.Any, TestName = "ExceptionWhen_AnyRequestType")]
         public void ExceptionTest(string username, string requestText, SongRequestType requestType)
         { 
-            Assert.Throws<Exception>(() => _subject.ProcessAddingSongRequest(username, requestText, requestType));
+            Assert.ThrowsAsync<Exception>(async () => await _subject.ProcessAddingSongRequest(username, requestText, requestType));
         }
     }
 }

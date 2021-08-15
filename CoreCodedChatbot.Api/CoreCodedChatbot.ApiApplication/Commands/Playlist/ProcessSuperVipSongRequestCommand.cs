@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
@@ -24,7 +25,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _addRequestRepository = addRequestRepository;
         }
 
-        public AddSongResult Process(string username, string requestText)
+        public async Task<AddSongResult> Process(string username, string requestText)
         {
             if (_isSuperVipInQueueQuery.IsSuperVipInQueue())
                 return new AddSongResult
@@ -32,7 +33,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     AddRequestResult = AddRequestResult.OnlyOneSuper
                 };
 
-            if (!_vipService.UseSuperVip(username))
+            if (!await _vipService.UseSuperVip(username).ConfigureAwait(false))
                 return new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.NotEnoughVips

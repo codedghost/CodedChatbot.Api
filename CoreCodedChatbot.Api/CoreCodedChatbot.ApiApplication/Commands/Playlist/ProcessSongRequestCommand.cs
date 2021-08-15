@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -22,15 +23,15 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _processSuperVipSongRequestCommand = processSuperVipSongRequestCommand;
         }
 
-        public AddSongResult ProcessAddingSongRequest(string username, string requestText,
+        public async Task<AddSongResult> ProcessAddingSongRequest(string username, string requestText,
             SongRequestType songRequestType)
         {
             switch (songRequestType)
             {
                 case SongRequestType.SuperVip:
-                    return _processSuperVipSongRequestCommand.Process(username, requestText);
+                    return await _processSuperVipSongRequestCommand.Process(username, requestText).ConfigureAwait(false);
                 case SongRequestType.Vip:
-                    return _processVipSongRequestCommand.Process(username, requestText);
+                    return await _processVipSongRequestCommand.Process(username, requestText).ConfigureAwait(false);
                 case SongRequestType.Regular:
                     return _processRegularSongRequestCommand.Process(username, requestText);
                 default:

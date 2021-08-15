@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
@@ -29,6 +30,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IConvertAllBytesCommand _convertAllBytesCommand;
         private readonly IGiveGiftSubBytesCommand _giveGiftSubBytesCommand;
         private readonly IConfigService _configService;
+        private readonly ISignalRService _signalRService;
+        private readonly IClientIdService _clientIdService;
         private readonly ILogger<IVipService> _logger;
 
         public VipService(
@@ -47,6 +50,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IConvertAllBytesCommand convertAllBytesCommand,
             IGiveGiftSubBytesCommand giveGiftSubBytesCommand,
             IConfigService configService,
+            ISignalRService signalRService,
+            IClientIdService clientIdService,
             ILogger<IVipService> logger)
         {
             _giftVipCommand = giftVipCommand;
@@ -64,17 +69,37 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _convertAllBytesCommand = convertAllBytesCommand;
             _giveGiftSubBytesCommand = giveGiftSubBytesCommand;
             _configService = configService;
+            _signalRService = signalRService;
+            _clientIdService = clientIdService;
             _logger = logger;
         }
 
-        public bool GiftVip(string donorUsername, string receiverUsername, int numberOfVips)
+        public async Task UpdateClientVips(string username)
+        {
+            var vips = GetUserVipCount(username);
+
+            var clientIds = _clientIdService.GetClientIds(username, "SongList");
+
+            foreach (var clientId in clientIds)
+            {
+                await _signalRService.UpdateVips(clientId, vips);
+            }
+        }
+
+        public async Task<bool> GiftVip(string donorUsername, string receiverUsername, int numberOfVips)
         {
             var success = _giftVipCommand.GiftVip(donorUsername, receiverUsername, numberOfVips);
+
+            if (success)
+            {
+                await UpdateClientVips(donorUsername).ConfigureAwait(false);
+                await UpdateClientVips(receiverUsername).ConfigureAwait(false);
+            }
 
             return success;
         }
 
-        public bool RefundVip(string username, bool deferSave = false)
+        public async Task<bool> RefundVip(string username, bool deferSave = false)
         {
             try
             {
@@ -83,6 +108,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     Username = username,
                     VipsToRefund = 1
                 });
+
+                await UpdateClientVips(username).ConfigureAwait(false);
 
                 return true;
             }
@@ -93,7 +120,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
         }
 
-        public bool RefundSuperVip(string username, bool deferSave = false)
+        public async Task<bool> RefundSuperVip(string username, bool deferSave = false)
         {
             try
             {
@@ -102,6 +129,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     Username = username,
                     VipsToRefund = _configService.Get<int>("SuperVipCost")
                 });
+
+                await UpdateClientVips(username).ConfigureAwait(false);
 
                 return true;
             }
@@ -127,13 +156,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
         }
 
-        public bool UseVip(string username)
+        public async Task<bool> UseVip(string username)
         {
             try
             {
                 if (!HasVip(username)) return false;
 
                 _useVipCommand.UseVip(username, 1);
+
+                await UpdateClientVips(username).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -159,13 +190,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
         }
 
-        public bool UseSuperVip(string username)
+        public async Task<bool> UseSuperVip(string username)
         {
             try
             {
                 if (!HasSuperVip(username)) return false;
 
                 _useSuperVipCommand.UseSuperVip(username);
+
+                await UpdateClientVips(username).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -176,11 +209,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return true;
         }
 
-        public bool ModGiveVip(string username, int numberOfVips)
+        public async Task<bool> ModGiveVip(string username, int numberOfVips)
         {
             try
             {
                 _modGiveVipCommand.ModGiveVip(username, numberOfVips);
+
+                await UpdateClientVips(username).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -205,9 +240,14 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return vips;
         }
 
-        public void GiveSubscriptionVips(List<UserSubDetail> usernames)
+        public async Task GiveSubscriptionVips(List<UserSubDetail> usernames)
         {
             _giveSubscriptionVipsCommand.Give(usernames);
+
+            foreach (var user in usernames)
+            {
+                await UpdateClientVips(user.Username).ConfigureAwait(false);
+            }
         }
 
         public void UpdateTotalBits(string username, int totalBits)
@@ -222,16 +262,20 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return bytes;
         }
 
-        public int ConvertBytes(string username, int requestedVips)
+        public async Task<int> ConvertBytes(string username, int requestedVips)
         {
             var bytesConverted = _convertBytesCommand.Convert(username, requestedVips);
+
+            await UpdateClientVips(username).ConfigureAwait(false);
 
             return bytesConverted;
         }
 
-        public int ConvertAllBytes(string username)
+        public async Task<int> ConvertAllBytes(string username)
         {
             var bytesConverted = _convertAllBytesCommand.Convert(username);
+
+            await UpdateClientVips(username).ConfigureAwait(false);
 
             return bytesConverted;
         }

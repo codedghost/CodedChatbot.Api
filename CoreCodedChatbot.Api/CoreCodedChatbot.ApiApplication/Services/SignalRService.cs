@@ -1,6 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiContract.Enums.Playlist;
+using CoreCodedChatbot.ApiContract.SignalRHubModels.API;
+using CoreCodedChatbot.ApiContract.SignalRHubModels.Website;
+using CoreCodedChatbot.ApiContract.SignalRHubModels.Website.ClientSpecific;
 using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Secrets;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 
@@ -9,44 +16,89 @@ namespace CoreCodedChatbot.ApiApplication.Services
     public class SignalRService : ISignalRService
     {
         private readonly IConfigService _configService;
+        private readonly ISecretService _secretService;
         private readonly ILogger<SignalRService> _logger;
-        private HubConnection _connection;
+        private Dictionary<string, HubConnection> _hubConnections;
 
         public SignalRService(
             IConfigService configService,
+            ISecretService secretService,
             ILogger<SignalRService> logger
             )
         {
             _configService = configService;
+            _secretService = secretService;
             _logger = logger;
 
-            Connect();
+            _hubConnections = new Dictionary<string, HubConnection>
+            {
+                {
+                    APIHubConstants.SongListHubPath, Connect(APIHubConstants.SongListHubPath)
+                }
+            };
         }
 
-        private void Connect()
+        private HubConnection Connect(string hubEndpoint)
         {
+            HubConnection connection;
             try
             {
-                _connection = new HubConnectionBuilder()
-                    .WithUrl($"{_configService.Get<string>("WebPlaylistUrl")}/SongList")
+                connection = new HubConnectionBuilder()
+                    .WithUrl($"{_configService.Get<string>("WebPlaylistUrl")}{hubEndpoint}")
                     .Build();
 
-                _connection.StartAsync().Wait();
+                connection.StartAsync().Wait();
+
+                connection.On("Heartbeat", () => { Console.WriteLine("heartbeat ping"); });
             }
             catch (Exception e)
             {
                 _logger.LogError("Error when creating SignalR Connection", e);
-                _connection = null;
+                connection = null;
             }
 
+            return connection;
         }
 
-        public HubConnection GetCurrentConnection()
+        public HubConnection GetCurrentConnection(string hubEndpoint)
         {
-            if (_connection == null)
-                Connect();
+            if (_hubConnections[hubEndpoint] == null || _hubConnections[hubEndpoint].State != HubConnectionState.Connected)
+            {
+                _hubConnections[hubEndpoint] = Connect(hubEndpoint);
+            }
 
-            return _connection;
+            return _hubConnections[hubEndpoint];
+        }
+
+        public Task UpdatePlaylistState(PlaylistState state)
+        {
+            var connection = GetCurrentConnection(APIHubConstants.SongListHubPath);
+
+            if (connection == null) return Task.CompletedTask;
+
+            var psk = _secretService.GetSecret<string>("SignalRKey");
+
+            return connection.InvokeAsync("PlaylistState", new PlaylistStateUpdateModel
+            {
+                psk = psk,
+                playlistState = state.DisplayString()
+            });
+        }
+
+        public Task UpdateVips(string clientId, int totalVips)
+        {
+            var connection = GetCurrentConnection(APIHubConstants.SongListHubPath);
+
+            if (connection == null) return Task.CompletedTask;
+
+            var psk = _secretService.GetSecret<string>("SignalRKey");
+
+            return connection.InvokeAsync("UpdateVips", new VipTotalUpdateModel
+            {
+                ClientId = clientId,
+                psk = psk,
+                VipTotal = totalVips
+            });
         }
     }
 }

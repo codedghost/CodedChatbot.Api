@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
 
@@ -13,21 +15,24 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
         private readonly IArchiveRequestCommand _archiveRequestCommand;
         private readonly IRefundVipCommand _refundVipCommand;
         private readonly IConfigService _configService;
+        private readonly IVipService _vipService;
 
         public RemoveUsersRequestByPlaylistIndexCommand(
             IGetUsersRequestsRepository getUsersRequestsRepository,
             IArchiveRequestCommand archiveRequestCommand,
             IRefundVipCommand refundVipCommand,
-            IConfigService configService
+            IConfigService configService,
+            IVipService vipService
             )
         {
             _getUsersRequestsRepository = getUsersRequestsRepository;
             _archiveRequestCommand = archiveRequestCommand;
             _refundVipCommand = refundVipCommand;
             _configService = configService;
+            _vipService = vipService;
         }
 
-        public bool Remove(string username, int playlistPosition)
+        public async Task<bool> Remove(string username, int playlistPosition)
         {
             var usersRequests = _getUsersRequestsRepository.GetUsersRequests(username);
 
@@ -37,16 +42,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 
             if (request == null) return false;
 
-            if (request.IsVip || !request.IsSuperVip)
-            {
-                _refundVipCommand.Refund(new VipRefund
-                {
-                    Username = username,
-                    VipsToRefund = request.IsSuperVip ? _configService.Get<int>("SuperVipCost") : 1
-                });
-            }
-
-            _archiveRequestCommand.ArchiveRequest(request.SongRequestId);
+            await _archiveRequestCommand.ArchiveRequest(request.SongRequestId, true);
 
             return true;
         }

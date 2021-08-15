@@ -136,7 +136,7 @@ namespace CoreCodedChatbot.Api.Controllers
 
                 return Ok();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest();
             }

@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -20,9 +21,9 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _addRequestRepository = addRequestRepository;
         }
 
-        public AddSongResult Process(string username, string requestText)
+        public async Task<AddSongResult> Process(string username, string requestText)
         {
-            if (!_vipService.UseVip(username))
+            if (!await _vipService.UseVip(username))
                 return new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.NotEnoughVips

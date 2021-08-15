@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiContract.Enums.Playlist;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {
     public interface ISignalRService
     {
-        HubConnection GetCurrentConnection();
+        HubConnection GetCurrentConnection(string hubEndpoint);
+        Task UpdatePlaylistState(PlaylistState state);
+        Task UpdateVips(string clientId, int totalVips);
     }
 }

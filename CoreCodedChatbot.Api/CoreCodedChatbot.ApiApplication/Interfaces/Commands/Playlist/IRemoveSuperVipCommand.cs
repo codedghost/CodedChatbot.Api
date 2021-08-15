@@ -1,7 +1,9 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+﻿using System.Threading.Tasks;
+
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
 {
     public interface IRemoveSuperVipCommand
     {
-        void Remove(string username);
+        Task Remove(string username);
     }
 }

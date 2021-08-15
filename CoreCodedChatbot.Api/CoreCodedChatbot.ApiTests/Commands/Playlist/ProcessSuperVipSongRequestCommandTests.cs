@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
@@ -38,7 +39,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
         private void SetUserHasSuperVip(bool userHasSuperVip)
         {
-            _vipService.Setup(v => v.UseSuperVip(It.IsAny<string>())).Returns(userHasSuperVip);
+            _vipService.Setup(v => v.UseSuperVip(It.IsAny<string>())).ReturnsAsync(userHasSuperVip);
         }
 
         private void SetUpSubject()
@@ -53,14 +54,14 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase(false, false, AddRequestResult.NotEnoughVips, TestName = "FailureWhen_NoSuperVipInQueue_UserHasNoSuperVip")]
         [TestCase(true, false, AddRequestResult.OnlyOneSuper, TestName = "FailureWhen_SuperVipInQueue_UserHasNoSuperVip")]
         [TestCase(true, true, AddRequestResult.OnlyOneSuper, TestName = "FailureWhen_SuperVipInQueue_UserHasSuperVip")]
-        public void Test(bool superVipInQueue, bool userHasSuperVip, AddRequestResult expectedResult)
+        public async Task Test(bool superVipInQueue, bool userHasSuperVip, AddRequestResult expectedResult)
         {
             SetSuperVipInQueue(superVipInQueue);
             SetUserHasSuperVip(userHasSuperVip);
 
             SetUpSubject();
 
-            var result = _subject.Process("Username", "Request Text");
+            var result = await _subject.Process("Username", "Request Text");
 
             Assert.AreEqual(expectedResult, result.AddRequestResult);
         }

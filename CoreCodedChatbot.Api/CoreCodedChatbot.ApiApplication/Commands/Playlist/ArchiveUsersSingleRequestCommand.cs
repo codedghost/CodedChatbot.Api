@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
@@ -28,12 +29,11 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _configService = configService;
         }
 
-        public bool ArchiveAndRefundVips(string username, SongRequestType songRequestType, int currentSongRequestId)
+        public async Task<bool> ArchiveAndRefundVips(string username, SongRequestType songRequestType, int currentSongRequestId)
         {
             var usersRequests = _getUsersRequestsRepository.GetUsersRequests(username);
 
             int songRequestId = 0;
-            int vipsToRefund = 0;
             switch (songRequestType)
             {
                 case SongRequestType.Regular:
@@ -41,11 +41,9 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     break;
                 case SongRequestType.Vip:
                     songRequestId = usersRequests.SingleOrDefault(r => r.IsVip && !r.IsSuperVip)?.SongRequestId ?? 0;
-                    vipsToRefund = 1;
                     break;
                 case SongRequestType.SuperVip:
                     songRequestId = usersRequests.SingleOrDefault(r => r.IsSuperVip)?.SongRequestId ?? 0;
-                    vipsToRefund = _configService.Get<int>("SuperVipCost");
                     break;
                 default:
                     return false;
@@ -53,12 +51,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 
             if (songRequestId == 0 || songRequestId == currentSongRequestId) return false;
 
-            _archiveRequestCommand.ArchiveRequest(songRequestId);
-            _refundVipCommand.Refund(new VipRefund
-            {
-                Username = username,
-                VipsToRefund = vipsToRefund
-            });
+            await _archiveRequestCommand.ArchiveRequest(songRequestId, true).ConfigureAwait(false);
 
             return true;
         }

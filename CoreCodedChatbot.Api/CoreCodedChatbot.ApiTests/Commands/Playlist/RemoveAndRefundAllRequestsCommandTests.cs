@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
 using Moq;
@@ -17,6 +19,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         private Mock<IClearRequestsRepository> _clearRequestsRepository;
         private Mock<IRefundVipCommand> _refundVipCommand;
         private Mock<IConfigService> _configService;
+        private Mock<IVipService> _vipService;
 
         private RemoveAndRefundAllRequestsCommand _subject;
 
@@ -33,6 +36,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _clearRequestsRepository = new Mock<IClearRequestsRepository>();
             _refundVipCommand = new Mock<IRefundVipCommand>();
             _configService = new Mock<IConfigService>();
+            _vipService = new Mock<IVipService>();
 
             _configService.Setup(c => c.Get<int>("SuperVipCost")).Returns(_superVipCost);
         }
@@ -187,7 +191,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         private void SetUpSubject()
         {
             _subject = new RemoveAndRefundAllRequestsCommand(_getCurrentRequestsRepository.Object,
-                _clearRequestsRepository.Object, _refundVipCommand.Object, _configService.Object);
+                _clearRequestsRepository.Object, _refundVipCommand.Object, _configService.Object, _vipService.Object);
         }
 
         private bool VerifyRefundingVips(List<VipRefund> refunds)
@@ -200,12 +204,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void GracefulExitWhen_NullCurrentRequestsResponse()
+        public async Task GracefulExitWhen_NullCurrentRequestsResponse()
         {
             SetUpNullResponse();
             SetUpSubject();
             
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(It.IsAny<List<VipRefund>>()), Times.Never);
@@ -213,12 +217,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void GracefulExitWhen_NullRequestLists()
+        public async Task GracefulExitWhen_NullRequestLists()
         {
             SetUpNullRequestsResponse();
             SetUpSubject();
 
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(new List<VipRefund>()), Times.Once);
@@ -226,12 +230,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void SuccessWhen_NoCurrentRequests()
+        public async Task SuccessWhen_NoCurrentRequests()
         {
             SetUpNoCurrentRequests();
             SetUpSubject();
             
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(new List<VipRefund>()), Times.Once);
@@ -239,12 +243,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void SuccessWhen_OnlyRegularRequests()
+        public async Task SuccessWhen_OnlyRegularRequests()
         {
             SetUpOnlyRegularRequests();
             SetUpSubject();
 
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(new List<VipRefund>()), Times.Once);
@@ -253,12 +257,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void SuccessWhen_OnlyVipRequests()
+        public async Task SuccessWhen_OnlyVipRequests()
         {
             SetUpOnlyVips();
             SetUpSubject();
 
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(It.Is((List<VipRefund> list) => VerifyRefundingVips(list))), Times.Once);
@@ -267,12 +271,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void SuccessWhen_OnlySuperVipRequests()
+        public async Task SuccessWhen_OnlySuperVipRequests()
         {
             SetUpOnlySuperVips();
             SetUpSubject();
 
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(It.Is((List<VipRefund> list) => VerifyRefundingVips(list))), Times.Once);
@@ -281,12 +285,12 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void SuccessWhen_MixedRequests()
+        public async Task SuccessWhen_MixedRequests()
         {
             SetUpMixedRequests();
             SetUpSubject();
 
-            _subject.RemoveAndRefundAllRequests();
+            await _subject.RemoveAndRefundAllRequests();
 
             _getCurrentRequestsRepository.Verify(g => g.GetCurrentRequests(), Times.Once);
             _refundVipCommand.Verify(r => r.Refund(It.Is((List<VipRefund> list) => VerifyRefundingVips(list))), Times.Once);

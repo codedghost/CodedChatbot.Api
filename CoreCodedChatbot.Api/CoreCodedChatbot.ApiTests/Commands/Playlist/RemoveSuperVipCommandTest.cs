@@ -1,6 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using Moq;
 using NUnit.Framework;
 
@@ -10,6 +11,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
     public class RemoveSuperVipCommandTest
     {
         private Mock<IRemoveSuperVipRepository> _removeSuperRequestRepository;
+        private Mock<IVipService> _vipService;
 
         private RemoveSuperVipCommand _subject;
 
@@ -17,8 +19,9 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         public void Setup()
         {
             _removeSuperRequestRepository = new Mock<IRemoveSuperVipRepository>();
+            _vipService = new Mock<IVipService>();
 
-            _subject = new RemoveSuperVipCommand(_removeSuperRequestRepository.Object);
+            _subject = new RemoveSuperVipCommand(_removeSuperRequestRepository.Object, _vipService.Object);
         }
 
         [Test, AutoData]

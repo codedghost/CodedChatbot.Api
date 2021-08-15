@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
@@ -24,7 +25,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
         private void SetUserHasVip(bool hasVip)
         {
-            _vipService.Setup(v => v.UseVip(It.IsAny<string>())).Returns(hasVip);
+            _vipService.Setup(v => v.UseVip(It.IsAny<string>())).ReturnsAsync(hasVip);
         }
 
         private void SetReturnSongId(int songId)
@@ -43,14 +44,14 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase(true, 0, PromoteRequestResult.UnSuccessful, TestName = "UnSuccessfulReturned_WhenReturnedSongRequestIdIsInvalid")]
         [TestCase(true, -1, PromoteRequestResult.UnSuccessful, TestName = "UnSuccessfulReturned_WhenReturnedSongRequestIdIsInvalid")]
         [TestCase(true, 50, PromoteRequestResult.Successful, TestName = "SuccessfulReturned_WhenReturnedSongRequestIdIsVvalid")]
-        public void Test(bool userHasVip, int returnedRequestId, PromoteRequestResult expectedResult)
+        public async Task Test(bool userHasVip, int returnedRequestId, PromoteRequestResult expectedResult)
         {
             SetUserHasVip(userHasVip);
             SetReturnSongId(returnedRequestId);
 
             SetUpSubject();
 
-            var result = _subject.PromoteUsersRegularRequest(It.IsAny<string>(), It.IsAny<int>());
+            var result = await _subject.PromoteUsersRegularRequest(It.IsAny<string>(), It.IsAny<int>());
 
             Assert.AreEqual(expectedResult, result.PromoteRequestResult);
         }

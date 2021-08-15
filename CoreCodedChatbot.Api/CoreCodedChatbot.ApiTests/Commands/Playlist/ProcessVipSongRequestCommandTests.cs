@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -31,7 +32,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
         private void SetUserHasVip(bool hasVip)
         {
-            _vipService.Setup(v => v.UseVip(It.IsAny<string>())).Returns(hasVip);
+            _vipService.Setup(v => v.UseVip(It.IsAny<string>())).ReturnsAsync(hasVip);
         }
 
         private void SetUpSubject()
@@ -40,23 +41,23 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test]
-        public void SuccessWhen_UserHasVip()
+        public async Task SuccessWhen_UserHasVip()
         {
             SetUserHasVip(true);
             SetUpSubject();
 
-            var result = _subject.Process("Username", "Request Text");
+            var result = await _subject.Process("Username", "Request Text");
 
             Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
         }
 
         [Test]
-        public void FailureWhen_UserHasNoVips()
+        public async Task FailureWhen_UserHasNoVips()
         {
             SetUserHasVip(false);
             SetUpSubject();
 
-            var result = _subject.Process("Username", "Request Text");
+            var result = await _subject.Process("Username", "Request Text");
 
             Assert.AreEqual(AddRequestResult.NotEnoughVips, result.AddRequestResult);
         }

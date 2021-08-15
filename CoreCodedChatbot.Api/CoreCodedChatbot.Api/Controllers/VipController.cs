@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Vip;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
@@ -29,11 +30,13 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult GiftVip([FromBody] GiftVipRequest giftVipModel)
+        public async Task<IActionResult> GiftVip([FromBody] GiftVipRequest giftVipModel)
         {
             try
             {
-                if (_vipService.GiftVip(giftVipModel.DonorUsername, giftVipModel.ReceiverUsername, giftVipModel.NumberOfVips)) return Ok();
+                if (await _vipService
+                    .GiftVip(giftVipModel.DonorUsername, giftVipModel.ReceiverUsername, giftVipModel.NumberOfVips)
+                    .ConfigureAwait(false)) return Ok();
             }
             catch (Exception e)
             {
@@ -44,11 +47,12 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult ModGiveVip([FromBody] ModGiveVipRequest modGiveVipModel)
+        public async Task<IActionResult> ModGiveVip([FromBody] ModGiveVipRequest modGiveVipModel)
         {
             try
             {
-                if (_vipService.ModGiveVip(modGiveVipModel.ReceivingUsername, modGiveVipModel.VipsToGive)) return Ok();
+                if (await _vipService.ModGiveVip(modGiveVipModel.ReceivingUsername, modGiveVipModel.VipsToGive)
+                    .ConfigureAwait(false)) return Ok();
             }
             catch (Exception e)
             {
@@ -164,7 +168,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult GiveSubscriptionVips([FromBody] GiveSubscriptionVipsRequest request)
+        public async Task<IActionResult> GiveSubscriptionVips([FromBody] GiveSubscriptionVipsRequest request)
         {
             try
             {
@@ -175,7 +179,7 @@ namespace CoreCodedChatbot.Api.Controllers
                     _logger.LogInformation(
                         $"{sub.Username} - {sub.SubStreak} substreak - {sub.TotalSubMonths} total months - {sub.SubscriptionTier} subtier");
                 }
-                _vipService.GiveSubscriptionVips(request.UserSubDetails);
+                await _vipService.GiveSubscriptionVips(request.UserSubDetails).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -203,11 +207,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConvertBytes([FromBody] ConvertVipsRequest request)
+        public async Task<IActionResult> ConvertBytes([FromBody] ConvertVipsRequest request)
         {
             try
             {
-                var convertedBytes = _vipService.ConvertBytes(request.Username, request.NumberOfBytes);
+                var convertedBytes = await _vipService.ConvertBytes(request.Username, request.NumberOfBytes).ConfigureAwait(false);
 
                 return new JsonResult(new ByteConversionResponse
                 {
@@ -223,11 +227,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConvertAllBytes([FromBody] ConvertAllVipsRequest request)
+        public async Task<IActionResult> ConvertAllBytes([FromBody] ConvertAllVipsRequest request)
         {
             try
             {
-                var convertedBytes = _vipService.ConvertAllBytes(request.Username);
+                var convertedBytes = await _vipService.ConvertAllBytes(request.Username).ConfigureAwait(false);
 
                 return new JsonResult(new ByteConversionResponse
                 {

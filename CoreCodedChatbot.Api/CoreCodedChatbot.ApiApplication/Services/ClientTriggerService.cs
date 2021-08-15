@@ -27,7 +27,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             await _backgroundSongHubContext.Clients.All.SendAsync("BackgroundSongCheck", username);
         }
 
-        public async void SendSongToChat(string username, string title, string artist, string url)
+        public void SendSongToChat(string username, string title, string artist, string url)
         {
             var streamerChannelName = _configService.Get<string>("StreamerChannel");
             var twitchClient = _twitchClientFactory.Get();

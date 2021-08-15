@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
@@ -25,7 +26,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
             _processSongRequestCommand.Setup(p =>
                     p.ProcessAddingSongRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SongRequestType>()))
-                .Returns(new AddSongResult
+                .ReturnsAsync(new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.Success
                 });
@@ -70,13 +71,13 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase(PlaylistState.Open, "", "", SongRequestType.Any, AddRequestResult.NoRequestEntered, TestName = "NoRequestEnteredWhen_PlaylistIsOpen_UserNameNotProvided_SongProvided_AnyRequest")]
         [TestCase(PlaylistState.Closed, "", "", SongRequestType.Any, AddRequestResult.NoRequestEntered, TestName = "NoRequestEnteredWhen_PlaylistIsClosed_UsernameNotProvided_SongProvided_AnyRequest")]
         [TestCase(PlaylistState.VeryClosed, "", "", SongRequestType.Any, AddRequestResult.NoRequestEntered, TestName = "NoRequestEnteredWhen_PlaylistIsVeryClosed_UsernameNotProvided_SongProvided_AnyRequest")]
-        public void Test(PlaylistState state, string username, string requestText, SongRequestType requestType, AddRequestResult expectedResult)
+        public async Task Test(PlaylistState state, string username, string requestText, SongRequestType requestType, AddRequestResult expectedResult)
         {
             // Arrange
             SetupTest(state);
 
             // Act
-            var result = _subject.AddSongRequest(username, requestText, requestType);
+            var result = await _subject.AddSongRequest(username, requestText, requestType);
 
             // Assert
             Assert.AreEqual(expectedResult, result.AddRequestResult);

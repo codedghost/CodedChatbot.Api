@@ -14,17 +14,19 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public void ArchiveRequest(int requestId)
+        public string ArchiveRequest(int requestId)
         {
             using (var context = _chatbotContextFactory.Create())
             {
                 var request = context.SongRequests.Find(requestId);
 
-                if (request == null) return;
+                if (request == null) return string.Empty;
 
                 request.Played = true;
 
                 context.SaveChanges();
+
+                return request.RequestUsername;
             }
         }
     }

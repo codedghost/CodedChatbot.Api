@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
@@ -62,25 +63,25 @@ namespace CoreCodedChatbot.Api.Controllers
             return new JsonResult(requestsResult);
         }
 
-        public IActionResult OpenPlaylist()
+        public async Task<IActionResult> OpenPlaylist()
         {
-            if (_playlistService.OpenPlaylist())
+            if (await _playlistService.OpenPlaylist())
                 return Ok();
 
             return BadRequest();
         }
 
-        public IActionResult VeryClosePlaylist()
+        public async Task<IActionResult> VeryClosePlaylist()
         {
-            if (_playlistService.VeryClosePlaylist())
+            if (await _playlistService.VeryClosePlaylist())
                 return Ok();
 
             return BadRequest();
         }
 
-        public IActionResult ClosePlaylist()
+        public async Task<IActionResult> ClosePlaylist()
         {
-            if (_playlistService.ClosePlaylist())
+            if (await _playlistService.ClosePlaylist())
                 return Ok();
 
             return BadRequest();
@@ -105,26 +106,30 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult RemoveRockRequests([FromBody] RemoveSongRequest removeSongRequest)
+        public async Task<IActionResult> RemoveRockRequests([FromBody] RemoveSongRequest removeSongRequest)
         {
-            if (_playlistService.RemoveRockRequests(removeSongRequest.Username, removeSongRequest.CommandText, removeSongRequest.IsMod))
+            if (await _playlistService
+                .RemoveRockRequests(removeSongRequest.Username, removeSongRequest.CommandText, removeSongRequest.IsMod)
+                .ConfigureAwait(false))
                 return Ok();
 
             return BadRequest();
         }
 
         [HttpPost]
-        public IActionResult RemoveSuperVip([FromBody] RemoveSuperVipRequest requestModel)
+        public async Task<IActionResult> RemoveSuperVip([FromBody] RemoveSuperVipRequest requestModel)
         {
-            if (_playlistService.RemoveSuperRequest(requestModel.Username)) return Ok();
+            if (await _playlistService.RemoveSuperRequest(requestModel.Username).ConfigureAwait(false)) return Ok();
 
             return BadRequest();
         }
 
         [HttpPost]
-        public IActionResult AddRequest([FromBody] AddSongRequest requestModel)
+        public async Task<IActionResult> AddRequest([FromBody] AddSongRequest requestModel)
         {
-            var addRequestResult = _playlistService.AddRequest(requestModel.Username, requestModel.CommandText, requestModel.IsVipRequest);
+            var addRequestResult = await _playlistService
+                .AddRequest(requestModel.Username, requestModel.CommandText, requestModel.IsVipRequest)
+                .ConfigureAwait(false);
             return new JsonResult(new AddRequestResponse
             {
                 Result = addRequestResult.Item1,
@@ -133,7 +138,7 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
+        public async Task<IActionResult> AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
         {
             try
             {
@@ -146,7 +151,8 @@ namespace CoreCodedChatbot.Api.Controllers
                     IsSuperVip = addWebSongRequest.IsSuperVip
                 };
 
-                var result = _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username);
+                var result = await _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username)
+                    .ConfigureAwait(false);
 
                 var responseModel = new AddRequestResponse
                 {
@@ -164,12 +170,12 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
+        public async Task<IActionResult> AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
         {
             try
             {
                 var addSuperVipResult =
-                    _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText);
+                    await _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText).ConfigureAwait(false);
 
                 return new JsonResult(new AddRequestResponse
                 {

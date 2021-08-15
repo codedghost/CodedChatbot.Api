@@ -2,6 +2,6 @@
 {
     public interface IArchiveRequestRepository
     {
-        void ArchiveRequest(int requestId);
+        string ArchiveRequest(int requestId);
     }
 }

@@ -6,6 +6,7 @@ using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Commands.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
@@ -18,6 +19,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
@@ -30,6 +32,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Factories;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Quote;
@@ -40,6 +43,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
@@ -54,6 +58,7 @@ using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Queries.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Quote;
@@ -64,6 +69,7 @@ using CoreCodedChatbot.ApiApplication.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Repositories.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Repositories.ClientId;
 using CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
@@ -88,6 +94,7 @@ namespace CoreCodedChatbot.ApiApplication
         {
             services.AddSingleton<IAzureDevOpsService, AzureDevOpsService>();
             services.AddSingleton<IChannelRewardsService, ChannelRewardsService>();
+            services.AddSingleton<IClientIdService, ClientIdService>();
             services.AddSingleton<IClientTriggerService, ClientTriggerService>();
             services.AddSingleton<IChatCommandService, ChatCommandService>();
             services.AddSingleton<IChatService, ChatService>();
@@ -121,6 +128,9 @@ namespace CoreCodedChatbot.ApiApplication
             // Chat Command
             services.AddSingleton<IGetCommandHelpTextByKeywordQuery, GetCommandHelpTextByKeywordQuery>();
             services.AddSingleton<IGetCommandTextByKeywordQuery, GetCommandTextByKeywordQuery>();
+
+            // Client Ids
+            services.AddSingleton<IGetClientIdsQuery, GetClientIdsQuery>();
 
             // Guessing Game
             services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
@@ -184,6 +194,10 @@ namespace CoreCodedChatbot.ApiApplication
 
             // Chat Command
             services.AddSingleton<IAddChatCommandCommand, AddChatCommandCommand>();
+
+            // ClientId Command
+            services.AddSingleton<IStoreClientIdCommand, StoreClientIdCommand>();
+            services.AddSingleton<IRemoveClientIdCommand, RemoveClientIdCommand>();
 
             // Guessing Game
             services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
@@ -255,6 +269,11 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IAddChatCommandRepository, AddChatCommandRepository>();
             services.AddSingleton<IGetCommandHelpTextByKeywordRepository, GetCommandHelpTextByKeywordRepository>();
             services.AddSingleton<IGetCommandTextByKeywordRepository, GetCommandTextByKeywordRepository>();
+
+            // ClientId
+            services.AddSingleton<IStoreClientIdRepository, StoreClientIdRepository>();
+            services.AddSingleton<IRemoveClientIdRepository, RemoveClientIdRepository>();
+            services.AddSingleton<IGetClientIdsRepository, GetClientIdsRepository>();
 
             // Guessing Game
             services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();

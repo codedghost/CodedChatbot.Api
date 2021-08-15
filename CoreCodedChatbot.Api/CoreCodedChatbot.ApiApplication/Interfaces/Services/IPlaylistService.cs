@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
@@ -9,17 +10,17 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
     public interface IPlaylistService
     {
         PlaylistItem GetRequestById(int songId);
-        (AddRequestResult, int) AddRequest(string username, string commandText, bool vipRequest = false);
-        AddRequestResult AddSuperVipRequest(string username, string commandText);
-        AddRequestResult AddWebRequest(AddWebSongRequest requestSongViewModel, string username);
+        Task<(AddRequestResult, int)> AddRequest(string username, string commandText, bool vipRequest = false);
+        Task<AddRequestResult> AddSuperVipRequest(string username, string commandText);
+        Task<AddRequestResult> AddWebRequest(AddWebSongRequest requestSongViewModel, string username);
         PlaylistState GetPlaylistState();
-        PromoteSongResponse PromoteRequest(string username, int songId);
+        Task<PromoteSongResponse> PromoteRequest(string username, int songId);
         void UpdateFullPlaylist(bool updateCurrent = false);
         void ArchiveCurrentRequest(int songId = 0);
         string GetUserRequests(string username);
         GetAllSongsResponse GetAllSongs();
-        void ClearRockRequests();
-        bool RemoveRockRequests(string username, string commandText, bool isMod);
+        Task ClearRockRequests();
+        Task<bool> RemoveRockRequests(string username, string commandText, bool isMod);
 
         bool EditRequest(string username, string commandText, bool isMod, out string songRequestText,
             out bool syntaxError);
@@ -28,13 +29,13 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 
         bool AddSongToDrive(int songId);
 
-        bool OpenPlaylist();
-        bool ClosePlaylist();
-        bool ArchiveRequestById(int songId);
-        bool VeryClosePlaylist();
+        Task<bool> OpenPlaylist();
+        Task<bool> ClosePlaylist();
+        Task<bool> ArchiveRequestById(int songId);
+        Task<bool> VeryClosePlaylist();
         int GetMaxUserRequests();
         bool EditSuperVipRequest(string username, string songText);
-        bool RemoveSuperRequest(string username);
+        Task<bool> RemoveSuperRequest(string username);
         bool IsSuperVipRequestInQueue();
         PlaylistItem GetCurrentSongRequest();
         List<PlaylistItem> GetTopTenPlaylistItems();
