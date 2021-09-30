@@ -26,6 +26,10 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         public void SetUp()
         {
             _archiveRequestRepository = new Mock<IArchiveRequestRepository>();
+            _getSongRequestByIdQuery = new Mock<IGetSongRequestByIdQuery>();
+            _refundVipCommand = new Mock<IRefundVipCommand>();
+            _vipService = new Mock<IVipService>();
+            _configService = new Mock<IConfigService>();
 
             _subject = new ArchiveRequestCommand(_archiveRequestRepository.Object, _getSongRequestByIdQuery.Object,
                 _refundVipCommand.Object, _vipService.Object, _configService.Object);
