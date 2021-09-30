@@ -86,6 +86,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
         }
 
+        public async Task UpdateClientBytes(string username)
+        {
+            var bytes = _getUserByteCountQuery.Get(username);
+
+            var clientIds = _clientIdService.GetClientIds(username, "SongList");
+            
+            await _signalRService.UpdateBytes(clientIds, bytes).ConfigureAwait(false);
+        }
+
         public async Task<bool> GiftVip(string donorUsername, string receiverUsername, int numberOfVips)
         {
             var success = _giftVipCommand.GiftVip(donorUsername, receiverUsername, numberOfVips);
@@ -267,6 +276,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var bytesConverted = _convertBytesCommand.Convert(username, requestedVips);
 
             await UpdateClientVips(username).ConfigureAwait(false);
+            await UpdateClientBytes(username).ConfigureAwait(false);
 
             return bytesConverted;
         }
@@ -276,13 +286,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var bytesConverted = _convertAllBytesCommand.Convert(username);
 
             await UpdateClientVips(username).ConfigureAwait(false);
+            await UpdateClientBytes(username).ConfigureAwait(false);
 
             return bytesConverted;
         }
 
-        public void GiveGiftSubBytes(string username)
+        public async void GiveGiftSubBytes(string username)
         {
             _giveGiftSubBytesCommand.Give(username);
+            await UpdateClientBytes(username).ConfigureAwait(false);
         }
     }
 }

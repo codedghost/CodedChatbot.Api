@@ -100,5 +100,21 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 VipTotal = totalVips
             });
         }
+
+        public Task UpdateBytes(IEnumerable<string> clientIds, string totalBytes)
+        {
+            var connection = GetCurrentConnection(APIHubConstants.SongListHubPath);
+
+            if (connection == null) return Task.CompletedTask;
+
+            var psk = _secretService.GetSecret<string>("SignalRKey");
+
+            return connection.InvokeAsync("UpdateBytes", new ByteTotalUpdateModel
+            {
+                ClientIds = clientIds,
+                TotalBytes = totalBytes,
+                psk = psk
+            });
+        }
     }
 }
