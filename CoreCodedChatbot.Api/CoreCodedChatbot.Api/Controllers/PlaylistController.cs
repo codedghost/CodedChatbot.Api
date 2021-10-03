@@ -209,12 +209,12 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult PromoteRequest([FromBody] PromoteSongRequest promoteSongRequest)
+        public async Task<IActionResult> PromoteRequest([FromBody] PromoteSongRequest promoteSongRequest)
         {
             try
             {
                 var result =
-                    _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId);
+                    await _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId).ConfigureAwait(false);
 
                 return new JsonResult(result);
             }
