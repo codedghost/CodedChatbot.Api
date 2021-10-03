@@ -444,7 +444,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 _editRequestCommand.Edit(editWebRequestRequestModel);
 
                 UpdateFullPlaylist();
-                // TODO SignalR Update
 
                 return EditRequestResult.Success;
             }

@@ -276,11 +276,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpDelete]
-        public IActionResult ArchiveRequestById(int songId)
+        public async Task<IActionResult> ArchiveRequestById(int songId)
         {
             try
             {
-                var result = _playlistService.ArchiveRequestById(songId);
+                var result = await _playlistService.ArchiveRequestById(songId).ConfigureAwait(false);
 
                 return new JsonResult(result);
             }
