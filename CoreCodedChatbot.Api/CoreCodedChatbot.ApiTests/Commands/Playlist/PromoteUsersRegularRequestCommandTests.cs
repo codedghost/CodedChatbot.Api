@@ -13,14 +13,16 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
     {
         private Mock<IPromoteUserRequestRepository> _promoteUserRequestRepository;
         private Mock<IVipService> _vipService;
+        private Mock<IGetSongRequestByIdRepository> _getSongRequestByIdRepository;
 
-        private PromoteUsersRegularRequestCommand _subject;
+        private PromoteRequestCommand _subject;
 
         [SetUp]
         public void SetUp()
         {
             _promoteUserRequestRepository = new Mock<IPromoteUserRequestRepository>();
             _vipService = new Mock<IVipService>();
+            _getSongRequestByIdRepository = new Mock<IGetSongRequestByIdRepository>();
         }
 
         private void SetUserHasVip(bool hasVip)
@@ -36,7 +38,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
         private void SetUpSubject()
         {
-            _subject = new PromoteUsersRegularRequestCommand(_promoteUserRequestRepository.Object, _vipService.Object);
+            _subject = new PromoteRequestCommand(_promoteUserRequestRepository.Object, _vipService.Object, _getSongRequestByIdRepository.Object);
         }
 
         [TestCase(false, 50, PromoteRequestResult.NoVipAvailable, TestName = "NoVipAvailableReturned_WhenUserHasNoVips")]
@@ -51,7 +53,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
             SetUpSubject();
 
-            var result = await _subject.PromoteUsersRegularRequest(It.IsAny<string>(), It.IsAny<int>());
+            var result = await _subject.Promote(It.IsAny<string>(), false, It.IsAny<int>());
 
             Assert.AreEqual(expectedResult, result.PromoteRequestResult);
         }

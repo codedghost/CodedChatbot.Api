@@ -2,6 +2,6 @@
 {
     public interface IUseSuperVipCommand
     {
-        void UseSuperVip(string username);
+        void UseSuperVip(string username, int discount);
     }
 }

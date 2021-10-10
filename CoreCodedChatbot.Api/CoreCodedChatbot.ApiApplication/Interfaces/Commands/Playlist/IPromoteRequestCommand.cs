@@ -3,8 +3,8 @@ using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
 {
-    public interface IPromoteUsersRegularRequestCommand
+    public interface IPromoteRequestCommand
     {
-        Task<PromoteRequestIntermediate> PromoteUsersRegularRequest(string username, int songRequestId = 0);
+        Task<PromoteRequestIntermediate> Promote(string username, bool useSuperVip, int songRequestId = 0);
     }
 }

@@ -33,7 +33,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     AddRequestResult = AddRequestResult.OnlyOneSuper
                 };
 
-            if (!await _vipService.UseSuperVip(username).ConfigureAwait(false))
+            if (!await _vipService.UseSuperVip(username, 0).ConfigureAwait(false))
                 return new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.NotEnoughVips

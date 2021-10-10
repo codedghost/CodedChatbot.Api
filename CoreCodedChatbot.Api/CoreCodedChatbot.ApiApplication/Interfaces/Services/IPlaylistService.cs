@@ -14,7 +14,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task<AddRequestResult> AddSuperVipRequest(string username, string commandText);
         Task<AddRequestResult> AddWebRequest(AddWebSongRequest requestSongViewModel, string username);
         PlaylistState GetPlaylistState();
-        Task<PromoteSongResponse> PromoteRequest(string username, int songId);
+        Task<PromoteSongResponse> PromoteRequest(string username, int songId, bool useSuperVip);
         void UpdateFullPlaylist(bool updateCurrent = false);
         void ArchiveCurrentRequest(int songId = 0);
         string GetUserRequests(string username);

@@ -219,7 +219,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
             services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
             services.AddSingleton<IProcessVipSongRequestCommand, ProcessVipSongRequestCommand>();
-            services.AddSingleton<IPromoteUsersRegularRequestCommand, PromoteUsersRegularRequestCommand>();
+            services.AddSingleton<IPromoteRequestCommand, PromoteRequestCommand>();
             services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
             services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
             services.AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();

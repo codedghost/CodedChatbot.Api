@@ -18,9 +18,9 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Vip
             _configService = configService;
         }
 
-        public void UseSuperVip(string username)
+        public void UseSuperVip(string username, int discount)
         {
-            var vipsToUse = _configService.Get<int>("SuperVipCost");
+            var vipsToUse = _configService.Get<int>("SuperVipCost") - discount;
 
             _useSuperVipRepository.UseSuperVip(username, vipsToUse, 1);
         }

@@ -214,7 +214,7 @@ namespace CoreCodedChatbot.Api.Controllers
             try
             {
                 var result =
-                    await _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId).ConfigureAwait(false);
+                    await _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId, promoteSongRequest.UseSuperVip).ConfigureAwait(false);
 
                 return new JsonResult(result);
             }

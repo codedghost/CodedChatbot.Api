@@ -26,7 +26,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGetSongRequestByIdQuery _getSongRequestByIdQuery;
         private readonly IGetPlaylistStateQuery _getPlaylistStateQuery;
         private readonly IAddSongRequestCommand _addSongRequestCommand;
-        private readonly IPromoteUsersRegularRequestCommand _promoteUsersRegularRequestCommand;
+        private readonly IPromoteRequestCommand _promoteRequestCommand;
         private readonly IArchiveRequestCommand _archiveRequestCommand;
         private readonly IRemoveAndRefundAllRequestsCommand _removeAndRefundAllRequestsCommand;
         private readonly IGetCurrentRequestsQuery _getCurrentRequestsQuery;
@@ -59,7 +59,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IGetSongRequestByIdQuery getSongRequestByIdQuery,
             IGetPlaylistStateQuery getPlaylistStateQuery,
             IAddSongRequestCommand addSongRequestCommand,
-            IPromoteUsersRegularRequestCommand promoteUsersRegularRequestCommand,
+            IPromoteRequestCommand promoteRequestCommand,
             IArchiveRequestCommand archiveRequestCommand,
             IRemoveAndRefundAllRequestsCommand removeAndRefundAllRequestsCommand,
             IGetCurrentRequestsQuery getCurrentRequestsQuery,
@@ -86,7 +86,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
             _getPlaylistStateQuery = getPlaylistStateQuery;
             _addSongRequestCommand = addSongRequestCommand;
-            _promoteUsersRegularRequestCommand = promoteUsersRegularRequestCommand;
+            _promoteRequestCommand = promoteRequestCommand;
             _archiveRequestCommand = archiveRequestCommand;
             _removeAndRefundAllRequestsCommand = removeAndRefundAllRequestsCommand;
             _getCurrentRequestsQuery = getCurrentRequestsQuery;
@@ -187,9 +187,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return playlistState;
         }
 
-        public async Task<PromoteSongResponse> PromoteRequest(string username, int songId)
+        public async Task<PromoteSongResponse> PromoteRequest(string username, int songId, bool useSuperVip)
         {
-            var result = await _promoteUsersRegularRequestCommand.PromoteUsersRegularRequest(username, songId)
+            var result = await _promoteRequestCommand.Promote(username, useSuperVip, songId)
                 .ConfigureAwait(false);
 
             UpdateFullPlaylist();
@@ -204,7 +204,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async Task<PromoteRequestResult> PromoteWebRequest(int songId, string username)
         {
-            var result = await _promoteUsersRegularRequestCommand.PromoteUsersRegularRequest(username, songId).ConfigureAwait(false);
+            var result = await _promoteRequestCommand.Promote(username, false, songId).ConfigureAwait(false);
 
             UpdateFullPlaylist();
             // TODO SignalR Update

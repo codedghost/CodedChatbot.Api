@@ -88,7 +88,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                var hasSuperVip = _vipService.HasSuperVip(username);
+                var hasSuperVip = _vipService.HasSuperVip(username, 0);
 
                 var responseModel = new DoesUserHaveSuperVipResponseModel
                 {

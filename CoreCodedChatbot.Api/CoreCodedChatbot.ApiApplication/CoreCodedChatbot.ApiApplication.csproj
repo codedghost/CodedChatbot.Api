@@ -9,7 +9,7 @@
     <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.748" />
     <PackageReference Include="CodedGhost.Config" Version="1.0.549" />
     <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.812" />
-    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.879" />
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.908" />
     <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.867" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.733" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />

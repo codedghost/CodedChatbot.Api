@@ -31,7 +31,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Vip
         [Test, AutoData]
         public void EnsureRepositoryIsCalledCorrectly(string username)
         {
-            _subject.UseSuperVip(username);
+            _subject.UseSuperVip(username, 0);
 
             _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Once);
             _useSuperVipRepository.Verify(s => s.UseSuperVip(username, _superVipCost, 1));

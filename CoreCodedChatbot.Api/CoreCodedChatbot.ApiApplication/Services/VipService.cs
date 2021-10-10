@@ -184,11 +184,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return true;
         }
 
-        public bool HasSuperVip(string username)
+        public bool HasSuperVip(string username, int discount = 0)
         {
             try
             {
-                var userHasVips = _checkUserHasVipsQuery.CheckUserHasVips(username, _configService.Get<int>("SuperVipCost"));
+                var userHasVips = _checkUserHasVipsQuery.CheckUserHasVips(username, _configService.Get<int>("SuperVipCost") - discount);
 
                 return userHasVips;
             }
@@ -199,13 +199,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
         }
 
-        public async Task<bool> UseSuperVip(string username)
+        public async Task<bool> UseSuperVip(string username, int discount = 0)
         {
             try
             {
-                if (!HasSuperVip(username)) return false;
+                if (!HasSuperVip(username, discount)) return false;
 
-                _useSuperVipCommand.UseSuperVip(username);
+                _useSuperVipCommand.UseSuperVip(username, discount);
 
                 await UpdateClientVips(username).ConfigureAwait(false);
             }

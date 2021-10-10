@@ -11,8 +11,8 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task<bool> RefundSuperVip(string username, bool deferSave = false);
         bool HasVip(string username);
         Task<bool> UseVip(string username);
-        bool HasSuperVip(string username);
-        Task<bool> UseSuperVip(string username);
+        bool HasSuperVip(string username, int discount);
+        Task<bool> UseSuperVip(string username, int discount);
         Task<bool> ModGiveVip(string username, int numberOfVips);
         int GetUsersGiftedVips(string username);
         int GetUserVipCount(string username);
