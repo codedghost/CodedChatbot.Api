@@ -142,7 +142,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
 
             UpdateFullPlaylist();
-            //TODO SignalR Update
 
 
             return (result.AddRequestResult, result.SongIndex);
@@ -175,7 +174,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             if (result.AddRequestResult == AddRequestResult.Success)
                 UpdateFullPlaylist();
-            //TODO SignalR Update
 
             return result.AddRequestResult;
         }
@@ -193,7 +191,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 .ConfigureAwait(false);
 
             UpdateFullPlaylist();
-            //TODO SignalR Update
 
             return new PromoteSongResponse
             {
@@ -207,7 +204,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var result = await _promoteRequestCommand.Promote(username, false, songId).ConfigureAwait(false);
 
             UpdateFullPlaylist();
-            // TODO SignalR Update
 
             return result.PromoteRequestResult;
         }
@@ -222,7 +218,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _archiveRequestCommand.ArchiveRequest(currentRequest.songRequestId, false);
 
             UpdateFullPlaylist(true);
-            // TODO SignalR Update
         }
 
         public GetAllSongsResponse GetAllSongs()
@@ -262,7 +257,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             await _archiveRequestCommand.ArchiveRequest(songId, true).ConfigureAwait(false);
 
             UpdateFullPlaylist();
-            // TODO SignalR Update
 
             return true;
         }
@@ -272,7 +266,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             await _removeAndRefundAllRequestsCommand.RemoveAndRefundAllRequests();
             
             UpdateFullPlaylist();
-            // TODO SignalR Update
         }
 
         public async Task<bool> RemoveRockRequests(string username, string commandText, bool isMod)
@@ -301,8 +294,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.SuperVip, _currentRequest.songRequestId).ConfigureAwait(false);
                 }
 
-                // TODO SignalR Update
-
                 return success;
             }
 
@@ -311,7 +302,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             success = await _removeUsersRequestByPlaylistIndexCommand.Remove(username, playlistIndex).ConfigureAwait(false);
 
             UpdateFullPlaylist();
-            // TODO SignalR Update
 
             return success;
         }
@@ -462,7 +452,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var result = _addSongToDriveCommand.AddSongToDrive(songId);
 
             UpdateFullPlaylist();
-            // TODO SignalR update
 
             return result;
         }
@@ -524,7 +513,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
 
             UpdateFullPlaylist();
-            //TODO SignalR Update
 
             return result.AddRequestResult;
         }
@@ -534,7 +522,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var songId = _editSuperVipCommand.Edit(username, songText);
 
             UpdateFullPlaylist();
-            // TODO SignalR Update - Use returned SongId to target update (may need more info)
 
             return songId > 0;
         }
@@ -546,7 +533,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
             await _removeSuperVipCommand.Remove(username).ConfigureAwait(false);
 
             UpdateFullPlaylist();
-            // TODO SignalR Update
 
             return true;
         }

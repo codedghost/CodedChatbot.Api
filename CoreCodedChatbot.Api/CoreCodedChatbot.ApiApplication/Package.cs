@@ -105,7 +105,6 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IQuoteService, QuoteService>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<ISolrService, SolrService>();
             services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IStreamLabsService, StreamLabsService>();
             services.AddSingleton<IVipService, VipService>();
@@ -371,7 +370,7 @@ namespace CoreCodedChatbot.ApiApplication
                     new AuthenticationHeaderValue("Basic", credentialsBase64);
             });
 
-            services.AddSingleton<ISolrService, SolrService>();
+            services.AddScoped<ISolrService, SolrService>();
             services.AddSingleton<IDownloadChartService, DownloadChartService>();
 
             return services;
