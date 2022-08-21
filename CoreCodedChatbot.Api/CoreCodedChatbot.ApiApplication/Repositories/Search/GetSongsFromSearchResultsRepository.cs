@@ -5,7 +5,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Search
@@ -42,7 +41,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                         Instruments = song.ChartedPaths?.Split(",").ToList(),
                         IsOfficial = song.IsOfficial,
                         IsLinkDead = !song.Urls.All(u => u.Url.StartsWith("http")),
-                        IsDownloaded = false
+                        IsDownloaded = false,
+                        DownloadUrl = song.Urls.OrderByDescending(u => u.Version).FirstOrDefault()?.Url
                     });
                 }
             }
