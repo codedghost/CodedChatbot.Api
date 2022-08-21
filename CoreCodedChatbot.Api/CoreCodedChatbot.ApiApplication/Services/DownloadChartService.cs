@@ -3,7 +3,7 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Secrets;
 using My.JDownloader.Api;
-using My.JDownloader.Api.Models.LinkgrabberV2;
+using My.JDownloader.Api.Models.LinkgrabberV2.Request;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
@@ -34,7 +34,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             var handler = jdownloader.GetDeviceHandler(mainDevice, true);
 
-            handler.LinkgrabberV2.AddLinks(new AddLinkRequestObject
+            handler.LinkgrabberV2.AddLinks(new AddLinkRequest
             {
                 DestinationFolder = directoryId.ToString(),
                 AutoExtract = true,

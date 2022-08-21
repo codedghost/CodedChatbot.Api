@@ -29,7 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             if (string.IsNullOrWhiteSpace(input))
                 return null;
 
-            var terms = GetStringFuzzySearchTerms(input);
+            var terms = GetStringSearchTerms(input);
 
             AbstractSolrQuery query = null;
 
@@ -61,8 +61,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             if (string.IsNullOrWhiteSpace(artist) && string.IsNullOrWhiteSpace(songName))
                 return null;
 
-            var songTerms = GetStringFuzzySearchTerms(songName);
-            var artistTerms = GetStringFuzzySearchTerms(artist);
+            var songTerms = GetStringSearchTerms(songName);
+            var artistTerms = GetStringSearchTerms(artist);
 
             var songQuery = new SolrQueryInList(SolrSearchConstants.SongName, songTerms) { Quoted = false };
             var artistQuery = new SolrQueryInList(SolrSearchConstants.ArtistName, artistTerms) { Quoted = false };
@@ -90,12 +90,12 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return getBasicSongSearchResults;
         }
 
-        private static List<string> GetStringFuzzySearchTerms(string searchTerm)
+        private static List<string> GetStringSearchTerms(string searchTerm)
         {
             return string.IsNullOrWhiteSpace(searchTerm) ? null : 
                 searchTerm.Split(" ")
                     .Where(s => !string.IsNullOrWhiteSpace(s))
-                    .Select(s => $"{s}~2")
+                    .Select(s => $"{s}")
                     .ToList();
         }
     }
