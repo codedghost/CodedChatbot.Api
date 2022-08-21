@@ -2,6 +2,7 @@
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using Moq;
 using NUnit.Framework;
@@ -25,6 +26,13 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _getSongRequestByIdRepository = new Mock<IGetSongRequestByIdRepository>();
         }
 
+        private void SetSongRequest()
+        {
+            _getSongRequestByIdRepository.Setup(s => s.GetRequest(It.IsAny<int>())).Returns(new SongRequestIntermediate
+            {
+                IsVip = false
+            });
+        }
         private void SetUserHasVip(bool hasVip)
         {
             _vipService.Setup(v => v.UseVip(It.IsAny<string>())).ReturnsAsync(hasVip);
@@ -45,9 +53,10 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase(false, 0, PromoteRequestResult.NoVipAvailable, TestName = "NoVipAvailableReturned_WhenUserHasNoVips")]
         [TestCase(true, 0, PromoteRequestResult.UnSuccessful, TestName = "UnSuccessfulReturned_WhenReturnedSongRequestIdIsInvalid")]
         [TestCase(true, -1, PromoteRequestResult.UnSuccessful, TestName = "UnSuccessfulReturned_WhenReturnedSongRequestIdIsInvalid")]
-        [TestCase(true, 50, PromoteRequestResult.Successful, TestName = "SuccessfulReturned_WhenReturnedSongRequestIdIsVvalid")]
+        [TestCase(true, 50, PromoteRequestResult.Successful, TestName = "SuccessfulReturned_WhenReturnedSongRequestIdIsValid")]
         public async Task Test(bool userHasVip, int returnedRequestId, PromoteRequestResult expectedResult)
         {
+            SetSongRequest();
             SetUserHasVip(userHasVip);
             SetReturnSongId(returnedRequestId);
 
