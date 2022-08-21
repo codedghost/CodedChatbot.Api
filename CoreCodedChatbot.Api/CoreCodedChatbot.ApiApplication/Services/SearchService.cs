@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
@@ -27,9 +28,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return _saveSearchSynonymRequestCommand.Save(request.SearchSynonymRequest, request.Username);
         }
 
-        public void DownloadSongToOneDrive(int requestSongId)
+        public async Task DownloadSongToOneDrive(int requestSongId)
         {
-            var song = _getSongBySearchIdQuery.Get(requestSongId);
+            var song = await _getSongBySearchIdQuery.Get(requestSongId).ConfigureAwait(false);
 
             _downloadChartService.Download(song.DownloadUrl, song.SongId);
         }

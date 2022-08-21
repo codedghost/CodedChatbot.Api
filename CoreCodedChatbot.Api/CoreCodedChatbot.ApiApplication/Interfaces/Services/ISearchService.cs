@@ -1,10 +1,11 @@
-﻿using CoreCodedChatbot.ApiContract.RequestModels.Search;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiContract.RequestModels.Search;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
 {
     public interface ISearchService
     {
         bool SaveSearchSynonymRequest(SaveSearchSynonymRequest request);
-        void DownloadSongToOneDrive(int requestSongId);
+        Task DownloadSongToOneDrive(int requestSongId);
     }
 }

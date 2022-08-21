@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
@@ -17,9 +18,9 @@ namespace CoreCodedChatbot.ApiApplication.Queries.Search
             _getSongsFromSearchResultsRepository = getSongsFromSearchResultsRepository;
         }
 
-        public List<BasicSongSearchResult> Get(List<SongSearch> searchResults)
+        public async Task<List<BasicSongSearchResult>> Get(List<SongSearch> searchResults)
         {
-            return _getSongsFromSearchResultsRepository.Get(searchResults);
+            return await _getSongsFromSearchResultsRepository.Get(searchResults).ConfigureAwait(false);
         }
     }
 }

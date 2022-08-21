@@ -47,11 +47,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 query = query || new SolrQueryByField(SolrSearchConstants.ArtistName, term) { Quoted = false };
             }
 
-            var result = await _songSearchOperations.QueryAsync(query, new QueryOptions{ Rows = 50 });
+            var result = await _songSearchOperations.QueryAsync(query, new QueryOptions{ Rows = 50 }).ConfigureAwait(false);
 
             var resultList = result.ToList();
 
-            var basicSongSearchResults = _getSongsFromSearchResultsQuery.Get(resultList);
+            var basicSongSearchResults = await _getSongsFromSearchResultsQuery.Get(resultList).ConfigureAwait(false);
 
             return basicSongSearchResults;
         }
@@ -85,7 +85,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             var resultList = result.ToList();
 
-            var getBasicSongSearchResults= _getSongsFromSearchResultsQuery.Get(resultList);
+            var getBasicSongSearchResults= await _getSongsFromSearchResultsQuery.Get(resultList).ConfigureAwait(false);
 
             return getBasicSongSearchResults;
         }

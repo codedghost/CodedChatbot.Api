@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Search
 {
@@ -18,14 +21,15 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public List<BasicSongSearchResult> Get(List<SongSearch> searchResults)
+        public async Task<List<BasicSongSearchResult>> Get(List<SongSearch> searchResults)
         {
             var results = new List<BasicSongSearchResult>();
             using (var context = _chatbotContextFactory.Create())
             {
                 foreach (var result in searchResults)
                 {
-                    var song = context.Songs.Find(result.SongId);
+                    var song = await context.Songs.Include(s => s.Urls)
+                        .FirstOrDefaultAsync(s => s.SongId == result.SongId).ConfigureAwait(false);
 
                     if (song == null) continue;
 
@@ -37,7 +41,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                         CharterUsername = song.UploaderUsername,
                         Instruments = song.ChartedPaths?.Split(",").ToList(),
                         IsOfficial = song.IsOfficial,
-                        IsLinkDead = !song.DownloadUrl.StartsWith("http"),
+                        IsLinkDead = !song.Urls.All(u => u.Url.StartsWith("http")),
                         IsDownloaded = false
                     });
                 }

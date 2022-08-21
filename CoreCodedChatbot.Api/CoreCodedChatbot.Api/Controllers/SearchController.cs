@@ -80,11 +80,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPut]
-        public IActionResult DownloadToOneDrive([FromBody] DownloadToOneDriveRequest request)
+        public async Task<IActionResult> DownloadToOneDrive([FromBody] DownloadToOneDriveRequest request)
         {
             try
             {
-                _searchService.DownloadSongToOneDrive(request.SongId);
+                await _searchService.DownloadSongToOneDrive(request.SongId).ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception e)

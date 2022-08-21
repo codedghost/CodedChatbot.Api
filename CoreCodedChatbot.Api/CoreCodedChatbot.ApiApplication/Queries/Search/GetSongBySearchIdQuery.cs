@@ -1,4 +1,5 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
@@ -13,9 +14,9 @@ namespace CoreCodedChatbot.ApiApplication.Queries.Search
             _getSongBySearchIdRepository = getSongBySearchIdRepository;
         }
 
-        public SongSearchIntermediate Get(int songId)
+        public async Task<SongSearchIntermediate> Get(int songId)
         {
-            var songRequest = _getSongBySearchIdRepository.Get(songId);
+            var songRequest = await _getSongBySearchIdRepository.Get(songId).ConfigureAwait(false);
 
             return songRequest;
         }
