@@ -39,7 +39,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
         private void SetUserHasSuperVip(bool userHasSuperVip)
         {
-            _vipService.Setup(v => v.UseSuperVip(It.IsAny<string>())).ReturnsAsync(userHasSuperVip);
+            _vipService.Setup(v => v.UseSuperVip(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(userHasSuperVip);
         }
 
         private void SetUpSubject()
