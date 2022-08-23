@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
@@ -35,9 +37,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                     results.Add(new BasicSongSearchResult
                     {
                         SongId = song.SongId,
-                        SongName = song.SongName,
-                        ArtistName = song.SongArtist,
-                        CharterUsername = song.UploaderUsername,
+                        SongName = HttpUtility.HtmlDecode(song.SongName),
+                        ArtistName = HttpUtility.HtmlDecode(song.SongArtist),
+                        CharterUsername = HttpUtility.HtmlDecode(song.UploaderUsername),
                         Instruments = song.ChartedPaths?.Split(",").ToList(),
                         IsOfficial = song.IsOfficial,
                         IsLinkDead = !song.Urls.All(u => u.Url.StartsWith("http")),
