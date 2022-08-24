@@ -8,5 +8,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
     {
         Task<List<BasicSongSearchResult>> Search(string input);
         Task<List<BasicSongSearchResult>> Search(string artist, string songName);
+        Task<List<BasicSongSearchResult>> SearchExact(string artist, string songName);
+        Task<List<BasicSongSearchResult>> SearchWithFallback(string artist, string songName);
     }
 }

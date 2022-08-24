@@ -65,7 +65,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                var searchResults = await _solrService.Search(request.ArtistName, request.SongName);
+                var searchResults = await _solrService.SearchWithFallback(request.ArtistName, request.SongName);
 
                 return new JsonResult(new SongSearchResponse
                 {

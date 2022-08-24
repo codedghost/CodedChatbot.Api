@@ -5,6 +5,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
+using PrintfulLib.Models.WebhookResponses;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 
@@ -63,7 +64,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             var songTerms = GetStringSearchTerms(songName);
             var artistTerms = GetStringSearchTerms(artist);
-
+            
             var songQuery = new SolrQueryInList(SolrSearchConstants.SongName, songTerms) { Quoted = false };
             var artistQuery = new SolrQueryInList(SolrSearchConstants.ArtistName, artistTerms) { Quoted = false };
             AbstractSolrQuery query;
@@ -90,13 +91,78 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return getBasicSongSearchResults;
         }
 
+        public async Task<List<BasicSongSearchResult>> SearchExact(string artist, string songName)
+        {
+            if (string.IsNullOrWhiteSpace(artist) && string.IsNullOrWhiteSpace(songName))
+                return null;
+
+            var songQuery = GetSolrQueryForTerms(SolrSearchConstants.SongName, songName);
+            var artistQuery = GetSolrQueryForTerms(SolrSearchConstants.ArtistName, artist);
+            
+            AbstractSolrQuery query;
+
+            if (songQuery != null && artistQuery!= null)
+            {
+                query = songQuery && artistQuery;
+            }
+            else if (songQuery != null && artistQuery == null)
+            {
+                query = songQuery;
+            }
+            else
+            {
+                query = artistQuery;
+            }
+
+            var result = await _songSearchOperations.QueryAsync(query);
+
+            var resultList = result.ToList();
+
+            var getBasicSongSearchResults = await _getSongsFromSearchResultsQuery.Get(resultList).ConfigureAwait(false);
+
+            return getBasicSongSearchResults;
+        }
+
+        public async Task<List<BasicSongSearchResult>> SearchWithFallback(string artist, string songName)
+        {
+            var exactResult = await SearchExact(artist, songName).ConfigureAwait(false);
+
+            if (!exactResult.Any())
+            {
+                exactResult = await Search(artist, songName).ConfigureAwait(false);
+            }
+
+            return exactResult;
+        }
+
         private static List<string> GetStringSearchTerms(string searchTerm)
         {
-            return string.IsNullOrWhiteSpace(searchTerm) ? null : 
-                searchTerm.Split(" ")
+            return string.IsNullOrWhiteSpace(searchTerm) ? null :
+                searchTerm.Split(' ', '\'')
                     .Where(s => !string.IsNullOrWhiteSpace(s))
-                    .Select(s => $"{s}")
                     .ToList();
+        }
+
+        private static AbstractSolrQuery GetSolrQueryForTerms(string field, string searchTerm)
+        {
+            var stringList = GetStringSearchTerms(searchTerm);
+
+            AbstractSolrQuery query = null;
+            var firstRun = true;
+            foreach (var term in stringList ?? new List<string>())
+            {
+                var newTerm = new SolrQueryByField(field, term){Quoted = false};
+                if (firstRun)
+                {
+                    query = newTerm;
+                    firstRun = false;
+                    continue;
+                }
+
+                query = query && newTerm;
+            }
+
+            return query;
         }
     }
 }
