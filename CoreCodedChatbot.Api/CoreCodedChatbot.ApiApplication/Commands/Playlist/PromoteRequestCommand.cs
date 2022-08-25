@@ -73,7 +73,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                 };
             }
 
-            if (songRequest.IsVip)
+            if (songRequest?.IsVip ?? false)
             {
                 return new PromoteRequestIntermediate
                 {
