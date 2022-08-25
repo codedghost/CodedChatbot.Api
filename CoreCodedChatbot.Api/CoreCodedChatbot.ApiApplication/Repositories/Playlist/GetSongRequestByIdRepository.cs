@@ -22,6 +22,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             {
                 var songRequest = context.SongRequests.Find(id);
 
+                if (songRequest == null) return null;
+
                 var intermediate = new SongRequestIntermediate
                 {
                     SongRequestId = songRequest.SongRequestId,
