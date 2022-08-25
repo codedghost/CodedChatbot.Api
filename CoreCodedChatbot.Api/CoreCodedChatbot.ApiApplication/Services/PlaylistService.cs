@@ -8,7 +8,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
-using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using CoreCodedChatbot.ApiContract.RequestModels.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist;
@@ -123,6 +122,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async Task<(AddRequestResult, int)> AddRequest(string username, string commandText, bool vipRequest = false)
         {
+            //TODO
             var result = await _addSongRequestCommand.AddSongRequest(username, commandText,
                 vipRequest ? SongRequestType.Vip : SongRequestType.Regular).ConfigureAwait(false);
 
@@ -131,7 +131,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 _currentRequest = new PlaylistItem
                 {
                     songRequestId = result.SongRequestId,
-                    songRequestText = commandText,
+                    songRequestText = result.FormattedSongText,
                     songRequester = username,
                     isEvenIndex = false,
                     isInChat = true,
@@ -152,6 +152,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var requestText =
                 $"{requestSongViewModel.Artist} - {requestSongViewModel.Title} ({requestSongViewModel.SelectedInstrument})";
 
+            //TODO
             var result = await _addSongRequestCommand.AddSongRequest(username, requestText,
                 requestSongViewModel.IsSuperVip ? SongRequestType.SuperVip :
                 requestSongViewModel.IsVip ? SongRequestType.Vip : SongRequestType.Regular).ConfigureAwait(false);
@@ -162,7 +163,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 _currentRequest = new PlaylistItem
                 {
                     songRequestId = result.SongRequestId,
-                    songRequestText = requestText,
+                    songRequestText = result.FormattedSongText,
                     songRequester = username,
                     isEvenIndex = false,
                     isInChat = true,
@@ -222,6 +223,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public GetAllSongsResponse GetAllSongs()
         {
+            //TODO
             var currentRequests = _getCurrentRequestsQuery.GetCurrentRequests();
 
             var regularRequests = currentRequests.RegularRequests.ToArray();
@@ -308,6 +310,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public string GetUserRequests(string username)
         {
+            //TODO
             var formattedRequests = _getUsersFormattedRequestsQuery.GetUsersFormattedRequests(username);
 
             var requestString = formattedRequests.Any()
@@ -431,6 +434,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             try
             {
+                //TODO
                 _editRequestCommand.Edit(editWebRequestRequestModel);
 
                 UpdateFullPlaylist();
@@ -495,6 +499,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async Task<AddRequestResult> AddSuperVipRequest(string username, string commandText)
         {
+            //TODO
             var result = await _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip);
 
             if (_currentRequest == null)
@@ -519,6 +524,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public bool EditSuperVipRequest(string username, string songText)
         {
+            //TODO - Run through web edit
             var songId = _editSuperVipCommand.Edit(username, songText);
 
             UpdateFullPlaylist();

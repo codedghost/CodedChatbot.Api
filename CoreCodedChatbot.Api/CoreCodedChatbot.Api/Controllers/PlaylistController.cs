@@ -133,7 +133,8 @@ namespace CoreCodedChatbot.Api.Controllers
             return new JsonResult(new AddRequestResponse
             {
                 Result = addRequestResult.Item1,
-                PlaylistPosition = addRequestResult.Item2
+                PlaylistPosition = addRequestResult.Item2,
+                FormattedSongText = requestModel.CommandText
             });
         }
 
@@ -179,7 +180,8 @@ namespace CoreCodedChatbot.Api.Controllers
 
                 return new JsonResult(new AddRequestResponse
                 {
-                    Result = addSuperVipResult
+                    Result = addSuperVipResult,
+                    FormattedSongText = requestModel.CommandText
                 });
             }
             catch (Exception e)
@@ -245,7 +247,8 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                return new JsonResult(_playlistService.GetAllSongs());
+                var getAllSongsResponse = _playlistService.GetAllSongs();
+                return new JsonResult(getAllSongsResponse);
             }
             catch (Exception e)
             {

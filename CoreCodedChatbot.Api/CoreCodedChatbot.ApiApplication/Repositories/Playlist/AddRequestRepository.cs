@@ -44,7 +44,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
                 {
                     AddRequestResult = AddRequestResult.Success,
                     SongRequestId = songRequest.SongRequestId,
-                    SongIndex = playlistIndex
+                    SongIndex = playlistIndex,
+                    FormattedSongText = requestText
                 };
             }
         }

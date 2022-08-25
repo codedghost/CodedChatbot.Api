@@ -8,5 +8,6 @@ namespace CoreCodedChatbot.ApiApplication.Models.Intermediates
         public int SongIndex { get; set; }
         public int SongRequestId { get; set; }
         public int MaximumRegularRequests { get; set; }
+        public string FormattedSongText { get; set; }
     }
 }

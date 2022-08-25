@@ -3,6 +3,7 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var unPlayedRequests = context.SongRequests.Where(sr => !sr.Played);
+                var unPlayedRequests = context.SongRequests
+                    .Include(sr => sr.Song)
+                    .Where(sr => !sr.Played);
 
                 var users = context.Users;
 
@@ -45,10 +48,17 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 
         private BasicSongRequest FormatBasicSongRequest(DbSet<User> users, SongRequest songRequest, int index)
         {
+            var formattedRequest = FormattedRequest.GetFormattedRequest(songRequest.RequestText);
+            var songRequestText = songRequest.Song == null
+                ? songRequest.RequestText
+                : formattedRequest == null
+                    ? $"{songRequest.Song.SongArtist} - {songRequest.Song.SongName}"
+                    : $"{songRequest.Song.SongArtist} - {songRequest.Song.SongName} ({formattedRequest.InstrumentName})";
+
             return new BasicSongRequest
             {
                 SongRequestId = songRequest.SongRequestId,
-                SongRequestText = songRequest.RequestText,
+                SongRequestText = songRequestText,
                 Username = songRequest.RequestUsername,
                 IsUserInChat = (users.SingleOrDefault(u => u.Username == songRequest.RequestUsername)?.TimeLastInChat ??
                                 DateTime.MinValue)
