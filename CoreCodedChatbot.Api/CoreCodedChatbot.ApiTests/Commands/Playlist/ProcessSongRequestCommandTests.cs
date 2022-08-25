@@ -26,11 +26,11 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _processVipSongRequestCommand = new Mock<IProcessVipSongRequestCommand>();
             _processSuperVipSongRequestCommand = new Mock<IProcessSuperVipSongRequestCommand>();
 
-            _processRegularSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
+            _processRegularSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(new AddSongResult {AddRequestResult = AddRequestResult.Success});
-            _processVipSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
+            _processVipSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
                 .ReturnsAsync(new AddSongResult { AddRequestResult = AddRequestResult.Success });
-            _processSuperVipSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
+            _processSuperVipSongRequestCommand.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
                 .ReturnsAsync(new AddSongResult { AddRequestResult = AddRequestResult.Success });
 
             _subject = new ProcessSongRequestCommand(_processRegularSongRequestCommand.Object,
@@ -43,7 +43,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase("Username", "Request Text", SongRequestType.SuperVip, TestName = "SuccessWhen_SuperVipRequest")]
         public async Task SuccessTest(string username, string requestText, SongRequestType requestType)
         {
-            var result = await _subject.ProcessAddingSongRequest(username, requestText, requestType);
+            var result = await _subject.ProcessAddingSongRequest(username, requestText, requestType, It.IsAny<int>());
 
             Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
         }
@@ -51,7 +51,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         [TestCase("Username", "Request Text", SongRequestType.Any, TestName = "ExceptionWhen_AnyRequestType")]
         public void ExceptionTest(string username, string requestText, SongRequestType requestType)
         { 
-            Assert.ThrowsAsync<Exception>(async () => await _subject.ProcessAddingSongRequest(username, requestText, requestType));
+            Assert.ThrowsAsync<Exception>(async () => await _subject.ProcessAddingSongRequest(username, requestText, requestType, It.IsAny<int>()));
         }
     }
 }

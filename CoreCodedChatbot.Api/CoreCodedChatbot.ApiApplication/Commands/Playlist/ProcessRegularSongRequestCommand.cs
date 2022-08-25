@@ -24,7 +24,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _addRequestRepository = addRequestRepository;
         }
 
-        public AddSongResult Process(string username, string requestText)
+        public AddSongResult Process(string username, string requestText, int searchSongId)
         {
             var maxRegulars = _configService.Get<int>("MaxRegularSongsPerUser");
 
@@ -35,7 +35,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     MaximumRegularRequests = maxRegulars
                 };
 
-            return _addRequestRepository.AddRequest(requestText, username, false, false);
+            return _addRequestRepository.AddRequest(requestText, username, false, false, searchSongId);
         }
     }
 }

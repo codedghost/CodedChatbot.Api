@@ -15,13 +15,13 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _editRequestRepository = editRequestRepository;
         }
 
-        public void Edit(EditWebRequestRequestModel model)
+        public void Edit(EditWebRequestRequestModel model, int songId)
         {
             _editRequestRepository.Edit(model.SongRequestId,
                 string.IsNullOrWhiteSpace(model.Artist) && string.IsNullOrWhiteSpace(model.SelectedInstrument) ?
                     model.Title :
                 $"{model.Artist} - {model.Title} ({model.SelectedInstrument})",
-                model.Username, model.IsMod);
+                model.Username, model.IsMod, songId);
         }
     }
 }

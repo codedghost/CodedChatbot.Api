@@ -2,6 +2,6 @@
 {
     public interface IEditSuperVipRequestRepository
     {
-        int Edit(string username, string newText);
+        int Edit(string username, string newText, int songId);
     }
 }

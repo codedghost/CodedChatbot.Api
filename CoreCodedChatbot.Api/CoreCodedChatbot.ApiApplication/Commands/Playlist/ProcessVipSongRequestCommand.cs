@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _addRequestRepository = addRequestRepository;
         }
 
-        public async Task<AddSongResult> Process(string username, string requestText)
+        public async Task<AddSongResult> Process(string username, string requestText, int searchSongId)
         {
             if (!await _vipService.UseVip(username))
                 return new AddSongResult
@@ -29,7 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     AddRequestResult = AddRequestResult.NotEnoughVips
                 };
 
-            return _addRequestRepository.AddRequest(requestText, username, true, false);
+            return _addRequestRepository.AddRequest(requestText, username, true, false, searchSongId);
         }
     }
 }

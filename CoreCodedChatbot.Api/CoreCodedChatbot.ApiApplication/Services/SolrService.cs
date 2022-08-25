@@ -15,14 +15,17 @@ namespace CoreCodedChatbot.ApiApplication.Services
     {
         private readonly ISolrOperations<SongSearch> _songSearchOperations;
         private readonly IGetSongsFromSearchResultsQuery _getSongsFromSearchResultsQuery;
+        private readonly IGetPriorityChartFromSearchResultsQuery _getPriorityChartFromSearchResultsQuery;
 
         public SolrService(
             ISolrOperations<SongSearch> songSearchOperations,
-            IGetSongsFromSearchResultsQuery getSongsFromSearchResultsQuery
+            IGetSongsFromSearchResultsQuery getSongsFromSearchResultsQuery,
+            IGetPriorityChartFromSearchResultsQuery getPriorityChartFromSearchResultsQuery
             )
         {
             _songSearchOperations = songSearchOperations;
             _getSongsFromSearchResultsQuery = getSongsFromSearchResultsQuery;
+            _getPriorityChartFromSearchResultsQuery = getPriorityChartFromSearchResultsQuery;
         }
 
         public async Task<List<BasicSongSearchResult>> Search(string input)
@@ -57,7 +60,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return basicSongSearchResults;
         }
 
-        public async Task<List<BasicSongSearchResult>> Search(string artist, string songName)
+        private async Task<List<SongSearch>> Search(string artist, string songName)
         {
             if (string.IsNullOrWhiteSpace(artist) && string.IsNullOrWhiteSpace(songName))
                 return null;
@@ -84,14 +87,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             var result = await _songSearchOperations.QueryAsync(query);
 
-            var resultList = result.ToList();
-
-            var getBasicSongSearchResults= await _getSongsFromSearchResultsQuery.Get(resultList).ConfigureAwait(false);
-
-            return getBasicSongSearchResults;
+            return result.ToList();
         }
 
-        public async Task<List<BasicSongSearchResult>> SearchExact(string artist, string songName)
+        private async Task<List<SongSearch>> SearchExact(string artist, string songName)
         {
             if (string.IsNullOrWhiteSpace(artist) && string.IsNullOrWhiteSpace(songName))
                 return null;
@@ -116,23 +115,45 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             var result = await _songSearchOperations.QueryAsync(query);
 
-            var resultList = result.ToList();
-
-            var getBasicSongSearchResults = await _getSongsFromSearchResultsQuery.Get(resultList).ConfigureAwait(false);
-
-            return getBasicSongSearchResults;
+            return result.ToList();
         }
 
         public async Task<List<BasicSongSearchResult>> SearchWithFallback(string artist, string songName)
         {
-            var exactResult = await SearchExact(artist, songName).ConfigureAwait(false);
+            var solrResult = await SolrSearchWithFallback(artist, songName).ConfigureAwait(false);
 
-            if (!exactResult.Any())
+            var getBasicSongSearchResults = await _getSongsFromSearchResultsQuery.Get(solrResult).ConfigureAwait(false);
+
+            return getBasicSongSearchResults;
+        }
+
+        private async Task<List<SongSearch>> SolrSearchWithFallback(string artist, string songName)
+        {
+            var solrResult = await SearchExact(artist, songName).ConfigureAwait(false);
+
+            if (!solrResult.Any())
             {
-                exactResult = await Search(artist, songName).ConfigureAwait(false);
+                solrResult = await Search(artist, songName).ConfigureAwait(false);
             }
 
-            return exactResult;
+            return solrResult;
+        }
+
+        public async Task<BasicSongSearchResult> SearchSingleWithFallback(string artist, string songName)
+        {
+            var exact = true;
+            var solrResult = await SearchExact(artist, songName).ConfigureAwait(false);
+
+            if (!solrResult.Any())
+            {
+                exact = false;
+                solrResult = await Search(artist, songName).ConfigureAwait(false);
+            }
+
+            if (!solrResult.Any()) return null;
+            var priorityChart = await _getPriorityChartFromSearchResultsQuery.Get(solrResult, exact).ConfigureAwait(false);
+
+            return priorityChart;
         }
 
         private static List<string> GetStringSearchTerms(string searchTerm)

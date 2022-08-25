@@ -22,16 +22,16 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         }
 
         [Test, AutoData]
-        public void EnsureThat_RepositoryIsCalled(string username, string newText, int songId)
+        public void EnsureThat_RepositoryIsCalled(string username, string newText, int songRequestId, int songId)
         {
-            _editSuperVipRequestRepository.Setup(e => e.Edit(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(songId);
+            _editSuperVipRequestRepository.Setup(e => e.Edit(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
+                .Returns(songRequestId);
 
-            var result = _subject.Edit(username, newText);
+            var result = _subject.Edit(username, newText, songId);
 
-            _editSuperVipRequestRepository.Verify(e => e.Edit(username, newText));
+            _editSuperVipRequestRepository.Verify(e => e.Edit(username, newText,songId));
 
-            Assert.AreEqual(songId, result);
+            Assert.AreEqual(songRequestId, result);
         }
     }
 }

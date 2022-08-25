@@ -14,11 +14,11 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _editSuperVipRequestRepository = editSuperVipRequestRepository;
         }
 
-        public int Edit(string username, string newText)
+        public int Edit(string username, string newText, int songId)
         {
-            var songId = _editSuperVipRequestRepository.Edit(username, newText);
+            var songRequestId = _editSuperVipRequestRepository.Edit(username, newText, songId);
 
-            return songId;
+            return songRequestId;
         }
     }
 }

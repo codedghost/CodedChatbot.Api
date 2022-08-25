@@ -7,6 +7,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
     public interface IProcessSongRequestCommand
     {
         Task<AddSongResult> ProcessAddingSongRequest(string username, string requestText,
-            SongRequestType songRequestType);
+            SongRequestType songRequestType, int searchSongId);
     }
 }

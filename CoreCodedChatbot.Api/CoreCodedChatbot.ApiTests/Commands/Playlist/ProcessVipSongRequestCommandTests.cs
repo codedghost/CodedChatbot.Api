@@ -23,7 +23,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _vipService = new Mock<IVipService>();
             _addRequestRepository = new Mock<IAddRequestRepository>();
 
-            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), true, false)).Returns(
+            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), true, false, It.IsAny<int>())).Returns(
                 new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.Success
@@ -46,7 +46,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             SetUserHasVip(true);
             SetUpSubject();
 
-            var result = await _subject.Process("Username", "Request Text");
+            var result = await _subject.Process("Username", "Request Text", It.IsAny<int>());
 
             Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
         }
@@ -57,7 +57,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             SetUserHasVip(false);
             SetUpSubject();
 
-            var result = await _subject.Process("Username", "Request Text");
+            var result = await _subject.Process("Username", "Request Text", It.IsAny<int>());
 
             Assert.AreEqual(AddRequestResult.NotEnoughVips, result.AddRequestResult);
         }

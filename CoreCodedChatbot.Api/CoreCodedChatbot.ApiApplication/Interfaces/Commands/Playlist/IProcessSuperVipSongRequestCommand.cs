@@ -5,6 +5,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
 {
     public interface IProcessSuperVipSongRequestCommand
     {
-        Task<AddSongResult> Process(string username, string requestText);
+        Task<AddSongResult> Process(string username, string requestText, int searchSongId);
     }
 }

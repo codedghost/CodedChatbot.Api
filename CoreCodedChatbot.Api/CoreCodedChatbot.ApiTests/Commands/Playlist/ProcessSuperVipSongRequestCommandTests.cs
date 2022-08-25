@@ -26,7 +26,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _vipService = new Mock<IVipService>();
             _addRequestRepository = new Mock<IAddRequestRepository>();
 
-            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, true)).Returns(new AddSongResult
+            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, true, It.IsAny<int>())).Returns(new AddSongResult
             {
                 AddRequestResult = AddRequestResult.Success
             });
@@ -61,7 +61,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
             SetUpSubject();
 
-            var result = await _subject.Process("Username", "Request Text");
+            var result = await _subject.Process("Username", "Request Text", 0);
 
             Assert.AreEqual(expectedResult, result.AddRequestResult);
         }

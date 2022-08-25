@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _processSongRequestCommand = processSongRequestCommand;
         }
 
-        public async Task<AddSongResult> AddSongRequest(string username, string requestText, SongRequestType songRequestType)
+        public async Task<AddSongResult> AddSongRequest(string username, string requestText, SongRequestType songRequestType, int searchSongId)
         {
             if (string.IsNullOrWhiteSpace(requestText))
                 return new AddSongResult
@@ -60,7 +60,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
 
                     break;
             }
-            return await _processSongRequestCommand.ProcessAddingSongRequest(username, requestText, songRequestType).ConfigureAwait(false);
+            return await _processSongRequestCommand.ProcessAddingSongRequest(username, requestText, songRequestType, searchSongId).ConfigureAwait(false);
         }
     }
 }

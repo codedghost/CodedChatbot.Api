@@ -28,7 +28,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _addRequestRepository = new Mock<IAddRequestRepository>();
 
             _configService.Setup(c => c.Get<int>("MaxRegularSongsPerUser")).Returns(maxRegulars);
-            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, false))
+            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsAny<int>()))
                 .Returns(new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.Success,
@@ -55,7 +55,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             SetUserHasMaxRegulars(false);
             SetUpSubject();
 
-            var result = _subject.Process("Username", "Request Text");
+            var result = _subject.Process("Username", "Request Text", It.IsAny<int>());
 
             Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
         }
@@ -68,7 +68,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
             var maxRequests = _configService.Object.Get<int>("MaxRegularSongsPerUser");
 
-            var result = _subject.Process("Username", "Request Text");
+            var result = _subject.Process("Username", "Request Text", It.IsAny<int>());
 
             Assert.AreEqual(AddRequestResult.MaximumRegularRequests, result.AddRequestResult);
             Assert.AreEqual(maxRequests, result.MaximumRegularRequests);

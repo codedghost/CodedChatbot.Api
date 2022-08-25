@@ -32,17 +32,18 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditRequest([FromBody] EditSongRequest editSongRequest)
+        public async Task<IActionResult> EditRequest([FromBody] EditSongRequest editSongRequest)
         {
-            var success = _playlistService.EditRequest(editSongRequest.Username, editSongRequest.CommandText, editSongRequest.IsMod, 
-                out string songRequestText, out bool syntaxError);
+            var result = await _playlistService
+                .EditRequest(editSongRequest.Username, editSongRequest.CommandText, editSongRequest.IsMod)
+                .ConfigureAwait(false);
 
-            if (success)
+            if (result.Success)
             {
                 var editResult = new EditRequestResponse
                 {
-                    SongRequestText = songRequestText,
-                    SyntaxError = syntaxError
+                    SongRequestText = result.SongRequestText,
+                    SyntaxError = result.SyntaxError
                 };
                 return new JsonResult(editResult);
             }
@@ -192,12 +193,13 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditSuperVipRequest([FromBody] EditSuperVipRequest requestModel)
+        public async Task<IActionResult> EditSuperVipRequest([FromBody] EditSuperVipRequest requestModel)
         {
             try
             {
                 var editSuperVipResult =
-                    _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText);
+                    await _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText)
+                        .ConfigureAwait(false);
 
                 if (editSuperVipResult)
                     return Ok();
@@ -332,11 +334,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditWebRequest([FromBody] EditWebRequestRequestModel editWebRequestRequestModel)
+        public async Task<IActionResult> EditWebRequest([FromBody] EditWebRequestRequestModel editWebRequestRequestModel)
         {
             try
             {
-                var result = _playlistService.EditWebRequest(editWebRequestRequestModel);
+                var result = await _playlistService.EditWebRequest(editWebRequestRequestModel).ConfigureAwait(false);
 
                 // Need a new EditWebRequestResponse model to hold the edit result enum
                 var responseModel = new EditWebRequestResponse

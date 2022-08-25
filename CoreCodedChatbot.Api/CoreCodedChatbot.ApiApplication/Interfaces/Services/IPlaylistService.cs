@@ -22,10 +22,9 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task ClearRockRequests();
         Task<bool> RemoveRockRequests(string username, string commandText, bool isMod);
 
-        bool EditRequest(string username, string commandText, bool isMod, out string songRequestText,
-            out bool syntaxError);
+        Task<(bool Success, string SongRequestText, bool SyntaxError)> EditRequest(string username, string commandText, bool isMod);
 
-        EditRequestResult EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel);
+        Task<EditRequestResult> EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel);
 
         bool AddSongToDrive(int songId);
 
@@ -34,7 +33,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task<bool> ArchiveRequestById(int songId);
         Task<bool> VeryClosePlaylist();
         int GetMaxUserRequests();
-        bool EditSuperVipRequest(string username, string songText);
+        Task<bool> EditSuperVipRequest(string username, string songText);
         Task<bool> RemoveSuperRequest(string username);
         bool IsSuperVipRequestInQueue();
         PlaylistItem GetCurrentSongRequest();

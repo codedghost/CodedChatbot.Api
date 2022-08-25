@@ -154,6 +154,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
 
             // Search
+            services.AddSingleton<IGetPriorityChartFromSearchResultsQuery, GetPriorityChartFromSearchResultsQuery>();
             services.AddSingleton<IGetSongBySearchIdQuery, GetSongBySearchIdQuery>();
             services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
 
@@ -314,6 +315,7 @@ namespace CoreCodedChatbot.ApiApplication
             services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
 
             // Search
+            services.AddSingleton<IGetPriorityChartFromSearchResultsRepository, GetPriorityChartFromSearchResultsRepository>();
             services.AddSingleton<IGetSongBySearchIdRepository, GetSongBySearchIdRepository>();
             services.AddSingleton<IGetSongsFromSearchResultsRepository, GetSongsFromSearchResultsRepository>();
             services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();

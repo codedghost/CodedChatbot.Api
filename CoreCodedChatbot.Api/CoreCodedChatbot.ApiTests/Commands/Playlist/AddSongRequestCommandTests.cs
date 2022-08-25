@@ -25,7 +25,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _processSongRequestCommand = new Mock<IProcessSongRequestCommand>();
 
             _processSongRequestCommand.Setup(p =>
-                    p.ProcessAddingSongRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SongRequestType>()))
+                    p.ProcessAddingSongRequest(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SongRequestType>(), It.IsAny<int>()))
                 .ReturnsAsync(new AddSongResult
                 {
                     AddRequestResult = AddRequestResult.Success
@@ -77,7 +77,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             SetupTest(state);
 
             // Act
-            var result = await _subject.AddSongRequest(username, requestText, requestType);
+            var result = await _subject.AddSongRequest(username, requestText, requestType, It.IsAny<int>());
 
             // Assert
             Assert.AreEqual(expectedResult, result.AddRequestResult);

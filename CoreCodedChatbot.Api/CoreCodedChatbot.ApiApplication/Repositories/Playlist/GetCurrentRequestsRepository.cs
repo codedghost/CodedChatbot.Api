@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -52,13 +53,13 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             var songRequestText = songRequest.Song == null
                 ? songRequest.RequestText
                 : formattedRequest == null
-                    ? $"{songRequest.Song.SongArtist} - {songRequest.Song.SongName}"
+                    ? $"{songRequest.Song.SongArtist} - {songRequest.Song.SongName} (guitar)"
                     : $"{songRequest.Song.SongArtist} - {songRequest.Song.SongName} ({formattedRequest.InstrumentName})";
 
             return new BasicSongRequest
             {
                 SongRequestId = songRequest.SongRequestId,
-                SongRequestText = songRequestText,
+                SongRequestText = HttpUtility.HtmlDecode(songRequestText),
                 Username = songRequest.RequestUsername,
                 IsUserInChat = (users.SingleOrDefault(u => u.Username == songRequest.RequestUsername)?.TimeLastInChat ??
                                 DateTime.MinValue)

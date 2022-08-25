@@ -24,16 +24,16 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
         }
 
         public async Task<AddSongResult> ProcessAddingSongRequest(string username, string requestText,
-            SongRequestType songRequestType)
+            SongRequestType songRequestType, int searchSongId)
         {
             switch (songRequestType)
             {
                 case SongRequestType.SuperVip:
-                    return await _processSuperVipSongRequestCommand.Process(username, requestText).ConfigureAwait(false);
+                    return await _processSuperVipSongRequestCommand.Process(username, requestText, searchSongId).ConfigureAwait(false);
                 case SongRequestType.Vip:
-                    return await _processVipSongRequestCommand.Process(username, requestText).ConfigureAwait(false);
+                    return await _processVipSongRequestCommand.Process(username, requestText, searchSongId).ConfigureAwait(false);
                 case SongRequestType.Regular:
-                    return _processRegularSongRequestCommand.Process(username, requestText);
+                    return _processRegularSongRequestCommand.Process(username, requestText, searchSongId);
                 default:
                     throw new Exception(
                         $"Requested a new song of type Any, Username: {username}, RequestText: {requestText}");

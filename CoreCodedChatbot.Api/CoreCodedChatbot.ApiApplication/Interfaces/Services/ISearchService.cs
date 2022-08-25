@@ -7,5 +7,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
     {
         bool SaveSearchSynonymRequest(SaveSearchSynonymRequest request);
         Task DownloadSongToOneDrive(int requestSongId);
+        Task<int> FindChartAndDownload(string requestText);
     }
 }

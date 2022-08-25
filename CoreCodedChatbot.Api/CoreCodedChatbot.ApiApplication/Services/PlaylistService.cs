@@ -47,6 +47,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IConfigService _configService;
         private readonly ISignalRService _signalRService;
         private readonly IRefundVipCommand _refundVipCommand;
+        private readonly ISearchService _searchService;
 
         private PlaylistItem _currentRequest;
         private Random _rand;
@@ -79,7 +80,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
             ISecretService secretService,
             IConfigService configService,
             ISignalRService signalRService,
-            IRefundVipCommand refundVipCommand
+            IRefundVipCommand refundVipCommand,
+            ISearchService searchService
         )
         {
             _getSongRequestByIdQuery = getSongRequestByIdQuery;
@@ -107,6 +109,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _configService = configService;
             _signalRService = signalRService;
             _refundVipCommand = refundVipCommand;
+            _searchService = searchService;
 
             _concurrentVipSongsToPlay = configService.Get<int>("ConcurrentVipSongsToPlay");
 
@@ -122,9 +125,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async Task<(AddRequestResult, int)> AddRequest(string username, string commandText, bool vipRequest = false)
         {
-            //TODO
+            var songId = await _searchService.FindChartAndDownload(commandText).ConfigureAwait(false);
+
             var result = await _addSongRequestCommand.AddSongRequest(username, commandText,
-                vipRequest ? SongRequestType.Vip : SongRequestType.Regular).ConfigureAwait(false);
+                vipRequest ? SongRequestType.Vip : SongRequestType.Regular, songId).ConfigureAwait(false);
 
             if (_currentRequest == null)
             {
@@ -152,10 +156,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
             var requestText =
                 $"{requestSongViewModel.Artist} - {requestSongViewModel.Title} ({requestSongViewModel.SelectedInstrument})";
 
-            //TODO
+            var songId = await _searchService.FindChartAndDownload(requestText).ConfigureAwait(false);
+
             var result = await _addSongRequestCommand.AddSongRequest(username, requestText,
                 requestSongViewModel.IsSuperVip ? SongRequestType.SuperVip :
-                requestSongViewModel.IsVip ? SongRequestType.Vip : SongRequestType.Regular).ConfigureAwait(false);
+                requestSongViewModel.IsVip ? SongRequestType.Vip : SongRequestType.Regular, songId).ConfigureAwait(false);
 
 
             if (_currentRequest == null)
@@ -223,7 +228,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public GetAllSongsResponse GetAllSongs()
         {
-            //TODO
             var currentRequests = _getCurrentRequestsQuery.GetCurrentRequests();
 
             var regularRequests = currentRequests.RegularRequests.ToArray();
@@ -310,7 +314,6 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public string GetUserRequests(string username)
         {
-            //TODO
             var formattedRequests = _getUsersFormattedRequestsQuery.GetUsersFormattedRequests(username);
 
             var requestString = formattedRequests.Any()
@@ -320,13 +323,14 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return requestString;
         }
 
-        public bool EditRequest(string username, string commandText, bool isMod, out string songRequestText, out bool syntaxError)
+        public async Task<(bool Success, string SongRequestText, bool SyntaxError)> EditRequest(string username, string commandText, bool isMod)
         {
+            var songRequestText = string.Empty;
+            var syntaxError = false;
             if (string.IsNullOrWhiteSpace(commandText))
             {
-                songRequestText = string.Empty;
                 syntaxError = true;
-                return false;
+                return (false, songRequestText, syntaxError);
             }
 
             var commandTextTerms = commandText.Trim().Split(" ");
@@ -360,7 +364,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 {
                     songRequestText = string.Empty;
                     syntaxError = true;
-                    return false;
+                    return (false, songRequestText, syntaxError);
                 }
 
                 var formattedRequest =
@@ -379,7 +383,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     IsMod = isMod
                 };
 
-                result = EditWebRequest(editRequestModel);
+                result = await EditWebRequest(editRequestModel).ConfigureAwait(false);
             }
             else
             {
@@ -393,7 +397,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 {
                     syntaxError = true;
                     songRequestText = string.Empty;
-                    return false;
+                    return (false, songRequestText, syntaxError);
                 }
 
                 var formattedRequest =
@@ -410,7 +414,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     IsMod = isMod
                 };
 
-                result = EditWebRequest(editRequestModel);
+                result = await EditWebRequest(editRequestModel).ConfigureAwait(false);
             }
 
             switch (result)
@@ -425,17 +429,23 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     break;
             }
 
-            return result == EditRequestResult.Success;
+            return (result == EditRequestResult.Success, songRequestText, syntaxError);
         }
 
-        public EditRequestResult EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel)
+        public async Task<EditRequestResult> EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel)
         {
             if (editWebRequestRequestModel == null) return EditRequestResult.NoRequestEntered;
 
             try
             {
-                //TODO
-                _editRequestCommand.Edit(editWebRequestRequestModel);
+                var searchTerms =
+                    string.IsNullOrWhiteSpace(editWebRequestRequestModel.Artist) &&
+                    string.IsNullOrWhiteSpace(editWebRequestRequestModel.SelectedInstrument)
+                        ? editWebRequestRequestModel.Title
+                        : $"{editWebRequestRequestModel.Artist} - {editWebRequestRequestModel.Title} ({editWebRequestRequestModel.SelectedInstrument})";
+                var songId = await _searchService.FindChartAndDownload(searchTerms).ConfigureAwait(false);
+
+                _editRequestCommand.Edit(editWebRequestRequestModel, songId);
 
                 UpdateFullPlaylist();
 
@@ -499,8 +509,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public async Task<AddRequestResult> AddSuperVipRequest(string username, string commandText)
         {
-            //TODO
-            var result = await _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip);
+            var songId = await _searchService.FindChartAndDownload(commandText).ConfigureAwait(false);
+
+            var result = await _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip, songId);
 
             if (_currentRequest == null)
             {
@@ -522,14 +533,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return result.AddRequestResult;
         }
 
-        public bool EditSuperVipRequest(string username, string songText)
+        public async Task<bool> EditSuperVipRequest(string username, string songText)
         {
-            //TODO - Run through web edit
-            var songId = _editSuperVipCommand.Edit(username, songText);
+            var songId = await _searchService.FindChartAndDownload(songText).ConfigureAwait(false);
+
+            var songRequestId = _editSuperVipCommand.Edit(username, songText, songId);
 
             UpdateFullPlaylist();
 
-            return songId > 0;
+            return songRequestId > 0;
         }
 
         public async Task<bool> RemoveSuperRequest(string username)

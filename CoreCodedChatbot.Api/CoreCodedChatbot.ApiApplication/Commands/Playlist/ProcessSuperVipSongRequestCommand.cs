@@ -25,7 +25,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
             _addRequestRepository = addRequestRepository;
         }
 
-        public async Task<AddSongResult> Process(string username, string requestText)
+        public async Task<AddSongResult> Process(string username, string requestText, int searchSongId)
         {
             if (_isSuperVipInQueueQuery.IsSuperVipInQueue())
                 return new AddSongResult
@@ -39,7 +39,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     AddRequestResult = AddRequestResult.NotEnoughVips
                 };
 
-            return _addRequestRepository.AddRequest(requestText, username, false, true);
+            return _addRequestRepository.AddRequest(requestText, username, false, true, searchSongId);
         }
     }
 }
