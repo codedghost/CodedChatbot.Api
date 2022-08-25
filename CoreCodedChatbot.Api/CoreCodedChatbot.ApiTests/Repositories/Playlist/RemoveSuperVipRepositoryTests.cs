@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using AutoFixture;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+using CoreCodedChatbot.ApiTests.TestExtensions;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
@@ -41,9 +43,13 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _subject = new RemoveSuperVipRepository(_chatbotContextFactory.Object, _configService.Object);
         }
 
-        [Test, AutoData]
-        public void SaveChangesNotCalledWhen_UserHasNoSuperVip(List<SongRequest> requests, List<User> users)
+        [Test]
+        public void SaveChangesNotCalledWhen_UserHasNoSuperVip()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var requests = fixture.Get<List<SongRequest>>();
+            var users = fixture.Get<List<User>>();
+
             var username = "TestUsername";
 
             var dbSongRequests= MockChatbotContextSetup.SetUpDbSetMock(requests);
@@ -58,9 +64,15 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _context.Verify(s => s.SaveChanges(), Times.Never);
         }
 
-        [Test, AutoData]
-        public void SaveChangesNotCalledWhen_UserHasAPlayedSuperVip(List<SongRequest> requests, List<User> users, SongRequest userRequest, User user)
+        [Test]
+        public void SaveChangesNotCalledWhen_UserHasAPlayedSuperVip()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var requests = fixture.Get<List<SongRequest>>();
+            var users = fixture.Get<List<User>>();
+            var userRequest = fixture.Get<SongRequest>();
+            var user = fixture.Get<User>();
+
             userRequest.RequestUsername = user.Username;
             userRequest.Played = true;
 
@@ -76,10 +88,16 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _context.Verify(s => s.SaveChanges(), Times.Never);
         }
 
-        [Test, AutoData]
-        public void SaveChangesNotCalledWhen_UserOnlyHasNormalVipAndRegular(List<SongRequest> requests,
-            List<User> users, SongRequest userVipRequest, SongRequest userRegularRequest, User user)
+        [Test]
+        public void SaveChangesNotCalledWhen_UserOnlyHasNormalVipAndRegular()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var requests = fixture.Get<List<SongRequest>>();
+            var users = fixture.Get<List<User>>();
+            var userVipRequest = fixture.Get<SongRequest>();
+            var userRegularRequest = fixture.Get<SongRequest>();
+            var user = fixture.Get<User>();
+
             userVipRequest.RequestUsername = user.Username;
             userVipRequest.Played = false;
             userVipRequest.VipRequestTime = DateTime.Now;
@@ -106,9 +124,15 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _context.Verify(s => s.SaveChanges(), Times.Never);
         }
 
-        [Test, AutoData]
-        public void SaveChangesNotCalledWhen_UserRecordDoesNotExist(List<SongRequest> requests, List<User> users, SongRequest songRequest, User user)
+        [Test]
+        public void SaveChangesNotCalledWhen_UserRecordDoesNotExist()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var requests = fixture.Get<List<SongRequest>>();
+            var users = fixture.Get<List<User>>();
+            var songRequest = fixture.Get<SongRequest>();
+            var user = fixture.Get<User>();
+
             songRequest.RequestUsername = user.Username;
             songRequest.Played = false;
             songRequest.VipRequestTime = DateTime.Now;
@@ -128,10 +152,15 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _context.Verify(s => s.SaveChanges(), Times.Never);
         }
 
-        [Test, AutoData]
-        public void SaveChangesCalledWhen_AllIsOk(List<SongRequest> requests, List<User> users, SongRequest userRequest,
-            User user)
+        [Test]
+        public void SaveChangesCalledWhen_AllIsOk()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var requests = fixture.Get<List<SongRequest>>();
+            var users = fixture.Get<List<User>>();
+            var userRequest = fixture.Get<SongRequest>();
+            var user = fixture.Get<User>();
+
             userRequest.RequestUsername = user.Username;
             userRequest.Played = false;
             userRequest.VipRequestTime = DateTime.Now;

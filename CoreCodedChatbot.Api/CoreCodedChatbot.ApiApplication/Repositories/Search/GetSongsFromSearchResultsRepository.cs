@@ -28,7 +28,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
             {
                 foreach (var result in searchResults)
                 {
-                    var song = await context.Songs.Include(s => s.Urls)
+                    var song = await context.Songs
+                        .Include(s => s.Urls)
+                        .Include(s => s.Charter)
                         .FirstOrDefaultAsync(s => s.SongId == result.SongId).ConfigureAwait(false);
 
                     if (song == null) continue;
@@ -38,7 +40,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Search
                         SongId = song.SongId,
                         SongName = HttpUtility.HtmlDecode(song.SongName),
                         ArtistName = HttpUtility.HtmlDecode(song.SongArtist),
-                        CharterUsername = HttpUtility.HtmlDecode(song.UploaderUsername),
+                        CharterUsername = HttpUtility.HtmlDecode(song.Charter.Name),
                         Instruments = song.ChartedPaths?.Split(",").ToList(),
                         IsOfficial = song.IsOfficial,
                         IsLinkDead = !song.Urls.All(u => u.Url.StartsWith("http")),

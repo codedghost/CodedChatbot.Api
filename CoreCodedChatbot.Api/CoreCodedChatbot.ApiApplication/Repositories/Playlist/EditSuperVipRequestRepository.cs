@@ -29,7 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 
                 superVip.RequestText = newText;
 
-                return superVip.SongId;
+                return superVip.SongRequestId;
             }
         }
     }

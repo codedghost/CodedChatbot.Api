@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using AutoFixture;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+using CoreCodedChatbot.ApiTests.TestExtensions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.EntityFrameworkCore;
@@ -34,9 +36,12 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _subject = new ClearRequestsRepository(_chatbotContextFactory.Object);
         }
 
-        [Test, AutoData]
-        public void EnsureMethodExitsWhen_NullItemsToRemove(List<SongRequest> dbList)
+        [Test]
+        public void EnsureMethodExitsWhen_NullItemsToRemove()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var dbList = fixture.Get<List<SongRequest>>();
+
             var dbSet = MockChatbotContextSetup.SetUpDbSetMock(dbList);
 
             SetupSubject(dbSet);
@@ -48,9 +53,12 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             _chatbotContext.Verify(s => s.SaveChanges(), Times.Never);
         }
 
-        [Test, AutoData]
-        public void EnsureMethodExitsWhen_EmptyListOfRequestsToRemove(List<SongRequest> dbList)
+        [Test]
+        public void EnsureMethodExitsWhen_EmptyListOfRequestsToRemove()
         {
+            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+            var dbList = fixture.Get<List<SongRequest>>();
+
             var dbSet = MockChatbotContextSetup.SetUpDbSetMock(dbList);
 
             SetupSubject(dbSet);
