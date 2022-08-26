@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Threading.Tasks;
+using CodedChatbot.ServiceBusContract;
+using CodedGhost.AzureServiceBus.Abstractions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.Logging;
-using My.JDownloader.Api;
-using My.JDownloader.Api.Models.LinkgrabberV2.Request;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
@@ -22,36 +21,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _logger = logger;
         }
 
-        public void Download(string downloadUrl, int directoryId)
+        public async Task Download(string downloadUrl, int directoryId)
         {
-            if (string.Equals(downloadUrl, "ubisoft", StringComparison.InvariantCultureIgnoreCase)) return;
-            var jdownloaderUsername = _secretService.GetSecret<string>("JDownloaderUsername");
-            var jdownloaderPassword = _secretService.GetSecret<string>("JDownloaderPassword");
-            var jdownloaderAppKey = _secretService.GetSecret<string>("JDownloaderAppKey");
+            var sender = new CodedServiceBusSender<ChartDownload>(_secretService);
 
-            var jdownloader = new JDownloaderHandler(jdownloaderUsername, jdownloaderPassword, jdownloaderAppKey);
-
-            var devices = jdownloader.GetDevices();
-
-            var mainDevice = devices.FirstOrDefault();
-
-            if (mainDevice == null)
+            await sender.SendMessageAsync(new ChartDownload
             {
-                _logger.LogError("JDownloader instance not running or not discoverable");
-                return;
-            }
-
-            var handler = jdownloader.GetDeviceHandler(mainDevice, true);
-
-            handler.LinkgrabberV2.AddLinks(new AddLinkRequest
-            {
-                DestinationFolder = directoryId.ToString(),
-                AutoExtract = true,
-                AutoStart = true,
-                Links = downloadUrl
-            });
-
-            handler.DownloadController.Start();
+                DownloadUrl = downloadUrl,
+                DirectoryName = directoryId.ToString()
+            }).ConfigureAwait(false);
         }
     }
 }

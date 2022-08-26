@@ -39,7 +39,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             var song = await _getSongBySearchIdQuery.Get(requestSongId).ConfigureAwait(false);
 
-            _downloadChartService.Download(song.DownloadUrl, song.SongId);
+            await _downloadChartService.Download(song.DownloadUrl, song.SongId).ConfigureAwait(false);
         }
 
         public async Task<int> FindChartAndDownload(string requestText)
@@ -59,7 +59,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
             if (result == null) return 0;
 
-            _downloadChartService.Download(result.DownloadUrl, result.SongId);
+            await _downloadChartService.Download(result.DownloadUrl, result.SongId).ConfigureAwait(false);
 
             return result.SongId;
         }

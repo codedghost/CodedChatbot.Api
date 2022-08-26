@@ -6,7 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="CodedChatbot.MerchContract" Version="1.0.815" />
+    <PackageReference Include="CodedChatbot.ServiceBusContract" Version="1.0.996" />
     <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.952" />
+    <PackageReference Include="CodedGhost.AzureServiceBus" Version="1.0.995" />
     <PackageReference Include="CodedGhost.Config" Version="1.0.549" />
     <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.812" />
     <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.986" />
@@ -16,7 +18,6 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.8" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
-    <PackageReference Include="My.JDownloader.Api" Version="2.4.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PrintfulLib" Version="1.0.830" />
     <PackageReference Include="SolrNet" Version="1.1.1" />
