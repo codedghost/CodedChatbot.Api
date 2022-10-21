@@ -17,29 +17,17 @@ steps:
     projects: '**/*.csproj'
     feedsToUse: 'select'
     vstsFeed: '087f7b3b-2160-4d35-8fb9-36edb3d5651b'
-- task: DownloadSecureFile@1
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
-    secureFile: 'prodApiHosting.json'
-- task: CmdLine@2
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  inputs:
-    script: 'cp $(Agent.TempDirectory)/prodApiHosting.json $(Build.Repository.LocalPath)/CoreCodedChatbot.Api/hosting.json'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/*.csproj'
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'test'
-    projects: '**/*Tests/*.csproj'
-- task: DotNetCoreCLI@2
-  inputs:
     command: 'publish'
     publishWebProjects: true
     arguments: '--output $(build.artifactstagingdirectory) -r linux-x64'
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: ApiAppDrop'
+  displayName: 'Publish Artifact: MerchApiAppDrop'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
-    ArtifactName: ApiAppDrop
+    ArtifactName: MerchApiAppDrop
