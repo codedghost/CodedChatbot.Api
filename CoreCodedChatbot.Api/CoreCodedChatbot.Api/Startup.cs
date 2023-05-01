@@ -128,9 +128,17 @@ namespace CoreCodedChatbot.Api
 
             streamLabsService.Initialise();
             chatterService.Initialise();
-            var setupWebhookTask = printfulFactory.SetupPrintfulWebhook();
 
-            Task.WaitAll(setupWebhookTask);
+            try
+            {
+                var setupWebhookTask = printfulFactory.SetupPrintfulWebhook();
+                Task.WaitAll(setupWebhookTask);
+            }
+            catch (Exception _)
+            {
+                Console.WriteLine("Failed to set up prinful webhook");
+            }
+            
         }
     }
 }
