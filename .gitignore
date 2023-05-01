@@ -19,3 +19,5 @@
 /CoreCodedChatbot.Api/CoreCodedChatbot.ApiApplication/obj
 /CoreCodedChatbot.Api/CoreCodedChatbot.ApiApplication/bin/Debug
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/netcoreapp3.1
+/CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/net7.0
+/CoreCodedChatbot.Api/CoreCodedChatbot.ApiTests/bin/Debug/net7.0

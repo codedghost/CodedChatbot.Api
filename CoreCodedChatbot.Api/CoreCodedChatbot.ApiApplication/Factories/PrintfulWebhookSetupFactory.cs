@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Factories;
 using CoreCodedChatbot.Config;
 using PrintfulLib.Interfaces.ExternalClients;
-using PrintfulLib.Models.ApiRequest;
+using PrintfulLib.Models.ApiRequest.WebhookSetup;
 using PrintfulLib.Models.WebhookResponses;
 
 namespace CoreCodedChatbot.ApiApplication.Factories

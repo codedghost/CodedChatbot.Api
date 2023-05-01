@@ -148,7 +148,7 @@ namespace CoreCodedChatbot.Api.Controllers
 
 
         [HttpGet]
-        public IActionResult GetUserVipCount(string username)
+        public IActionResult GetUserVipCount([FromQuery] string username)
         {
             try
             {

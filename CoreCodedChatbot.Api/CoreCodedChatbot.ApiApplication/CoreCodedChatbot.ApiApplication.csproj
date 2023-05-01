@@ -1,30 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodedChatbot.MerchContract" Version="1.0.815" />
-    <PackageReference Include="CodedChatbot.ServiceBusContract" Version="1.0.996" />
-    <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.952" />
-    <PackageReference Include="CodedGhost.AzureServiceBus" Version="1.0.995" />
-    <PackageReference Include="CodedGhost.Config" Version="1.0.549" />
-    <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.812" />
-    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.986" />
-    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.982" />
-    <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.733" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.28" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.1.8" />
-    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.153.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PrintfulLib" Version="1.0.830" />
+    <PackageReference Include="CodedChatbot.MerchContract" Version="1.0.1080" />
+    <PackageReference Include="CodedChatbot.ServiceBusContract" Version="1.0.1092" />
+    <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.1094" />
+    <PackageReference Include="CodedGhost.AzureServiceBus" Version="1.0.1095" />
+    <PackageReference Include="CodedGhost.Config" Version="1.0.1065" />
+    <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.1087" />
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1077" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1102" />
+    <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.1067" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PrintfulLib" Version="1.0.1068" />
     <PackageReference Include="SolrNet" Version="1.1.1" />
     <PackageReference Include="SolrNet.Core" Version="1.1.1" />
     <PackageReference Include="SolrNet.Microsoft.DependencyInjection" Version="1.1.1" />
-    <PackageReference Include="TwitchLib" Version="3.1.1" />
-    <PackageReference Include="TwitchLib.Client" Version="3.1.5" />
+    <PackageReference Include="TwitchLib" Version="3.5.3" />
+    <PackageReference Include="TwitchLib.Client" Version="3.3.1" />
   </ItemGroup>
 
 </Project>
