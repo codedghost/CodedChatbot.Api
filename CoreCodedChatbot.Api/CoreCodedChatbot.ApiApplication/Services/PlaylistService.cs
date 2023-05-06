@@ -217,7 +217,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public void ArchiveCurrentRequest(int songId = 0)
         {
             var currentRequest = songId == 0 ? _currentRequest :
-                songId == _currentRequest.songRequestId ? _currentRequest : null;
+                songId == _currentRequest?.songRequestId ? _currentRequest : null;
 
             if (currentRequest == null) return;
 
