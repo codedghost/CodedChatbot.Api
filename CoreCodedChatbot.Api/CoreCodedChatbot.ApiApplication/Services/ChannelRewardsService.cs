@@ -63,11 +63,11 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _createOrUpdateChannelRewardCommand.CreateOrUpdate(rewardId, rewardTitle, rewardDescription);
         }
 
-        public void Store(Guid channelRewardId, string redeemedBy)
+        public ApiContract.Enums.ChannelRewards.CommandTypes Store(Guid channelRewardId, string redeemedBy)
         {
             var channelReward = _getChannelRewardQuery.GetChannelReward(channelRewardId);
 
-            if (channelReward == null) return;
+            if (channelReward == null) return ApiContract.Enums.ChannelRewards.CommandTypes.None;
 
             switch (channelReward.CommandType)
             {
@@ -77,12 +77,12 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     _vipService.GiveChannelPointsVip(redeemedBy);
                     break;
                 default:
-                    return;
+                    return ApiContract.Enums.ChannelRewards.CommandTypes.None;
             }
 
             _storeChannelRewardRedemptionCommand.Store(channelRewardId, redeemedBy);
+
+            return Enum.Parse<ApiContract.Enums.ChannelRewards.CommandTypes>(channelReward.CommandType.ToString());
         }
-
-
     }
 }

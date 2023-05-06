@@ -1,6 +1,7 @@
 ﻿using System;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.ChannelRewards;
+using CoreCodedChatbot.ApiContract.ResponseModels.ChannelRewards;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,9 +47,12 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                _channelRewardsService.Store(request.ChannelRewardId, request.RedeemedBy);
+                var result = _channelRewardsService.Store(request.ChannelRewardId, request.RedeemedBy);
 
-                return Ok();
+                return Ok(new StoreRedemptionResponse
+                {
+                    CommandType = result
+                });
             }
             catch (Exception e)
             {
