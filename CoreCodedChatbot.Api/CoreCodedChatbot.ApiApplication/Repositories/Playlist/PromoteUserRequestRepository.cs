@@ -18,7 +18,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public int PromoteUserRequest(string username, int songRequestId)
+        public int PromoteUserRequest(string username, int songRequestId, bool useSuperVip = false)
         {
             using (var context = _chatbotContextFactory.Create())
             {
@@ -36,6 +36,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 
                 request.VipRequestTime = DateTime.UtcNow;
 
+                if (useSuperVip) request.SuperVipRequestTime = DateTime.UtcNow;
+                
                 context.SaveChanges();
 
                 var newSongIndex = context.SongRequests.Where(sr => !sr.Played).OrderRequests()

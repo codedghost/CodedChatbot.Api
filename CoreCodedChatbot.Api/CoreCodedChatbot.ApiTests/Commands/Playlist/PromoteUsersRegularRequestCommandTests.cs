@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -15,6 +16,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
         private Mock<IPromoteUserRequestRepository> _promoteUserRequestRepository;
         private Mock<IVipService> _vipService;
         private Mock<IGetSongRequestByIdRepository> _getSongRequestByIdRepository;
+        private Mock<IIsSuperVipInQueueQuery> _isSuperVipInQueueQuery;
 
         private PromoteRequestCommand _subject;
 
@@ -24,6 +26,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             _promoteUserRequestRepository = new Mock<IPromoteUserRequestRepository>();
             _vipService = new Mock<IVipService>();
             _getSongRequestByIdRepository = new Mock<IGetSongRequestByIdRepository>();
+            _isSuperVipInQueueQuery = new Mock<IIsSuperVipInQueueQuery>();
         }
 
         private void SetSongRequest()
@@ -40,13 +43,22 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
 
         private void SetReturnSongId(int songId)
         {
-            _promoteUserRequestRepository.Setup(p => p.PromoteUserRequest(It.IsAny<string>(), It.IsAny<int>()))
+            _promoteUserRequestRepository.Setup(p => p.PromoteUserRequest(It.IsAny<string>(), It.IsAny<int>(), false))
                 .Returns(songId);
+        }
+
+        private void SetIsSuperVipInQueue(bool isSuperVipInQueue)
+        {
+            _isSuperVipInQueueQuery.Setup(p => p.IsSuperVipInQueue()).Returns(false);
         }
 
         private void SetUpSubject()
         {
-            _subject = new PromoteRequestCommand(_promoteUserRequestRepository.Object, _vipService.Object, _getSongRequestByIdRepository.Object);
+            _subject = new PromoteRequestCommand(
+                _promoteUserRequestRepository.Object,
+                _vipService.Object,
+                _getSongRequestByIdRepository.Object,
+                _isSuperVipInQueueQuery.Object);
         }
 
         [TestCase(false, 50, PromoteRequestResult.NoVipAvailable, TestName = "NoVipAvailableReturned_WhenUserHasNoVips")]
@@ -59,6 +71,7 @@ namespace CoreCodedChatbot.ApiTests.Commands.Playlist
             SetSongRequest();
             SetUserHasVip(userHasVip);
             SetReturnSongId(returnedRequestId);
+            SetIsSuperVipInQueue(false);
 
             SetUpSubject();
 

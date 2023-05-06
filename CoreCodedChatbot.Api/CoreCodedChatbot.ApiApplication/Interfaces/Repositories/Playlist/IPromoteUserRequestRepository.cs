@@ -2,6 +2,6 @@
 {
     public interface IPromoteUserRequestRepository
     {
-        int PromoteUserRequest(string username, int songRequestId);
+        int PromoteUserRequest(string username, int songRequestId, bool useSuperVip = false);
     }
 }

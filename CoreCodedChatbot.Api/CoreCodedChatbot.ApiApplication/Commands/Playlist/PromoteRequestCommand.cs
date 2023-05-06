@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -12,16 +13,19 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
         private readonly IPromoteUserRequestRepository _promoteUserRequestRepository;
         private readonly IVipService _vipService;
         private readonly IGetSongRequestByIdRepository _getSongRequestByIdRepository;
+        private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
 
         public PromoteRequestCommand(
             IPromoteUserRequestRepository promoteUserRequestRepository,
             IVipService vipService,
-            IGetSongRequestByIdRepository getSongRequestByIdRepository
+            IGetSongRequestByIdRepository getSongRequestByIdRepository,
+            IIsSuperVipInQueueQuery isSuperVipInQueueQuery
             )
         {
             _promoteUserRequestRepository = promoteUserRequestRepository;
             _vipService = vipService;
             _getSongRequestByIdRepository = getSongRequestByIdRepository;
+            _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
         }
 
         public async Task<PromoteRequestIntermediate> Promote(string username, bool useSuperVip, int songRequestId = 0)
@@ -65,6 +69,16 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                         PromoteRequestResult = PromoteRequestResult.NoVipAvailable
                     };
                 }
+
+                if (_isSuperVipInQueueQuery.IsSuperVipInQueue())
+                {
+                    return new PromoteRequestIntermediate
+                    {
+                        PromoteRequestResult = PromoteRequestResult.AlreadyVip
+                    };
+                }
+
+                _promoteUserRequestRepository.PromoteUserRequest(username, songRequestId, true);
 
                 return new PromoteRequestIntermediate
                 {
