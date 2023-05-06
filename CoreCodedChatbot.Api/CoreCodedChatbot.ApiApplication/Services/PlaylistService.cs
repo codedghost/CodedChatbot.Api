@@ -571,12 +571,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
 
             // Should refresh the current song object to ensure any changes (like in-drive) are respected
-            var current = requests.RegularList.SingleOrDefault(r => r.songRequestId == _currentRequest.songRequestId);
-            _currentRequest = current ?? requests.VipList.SingleOrDefault(r => r.songRequestId == _currentRequest.songRequestId);
+            var songRequestId = _currentRequest?.songRequestId ?? 0;
+            var current = requests.RegularList.SingleOrDefault(r => r.songRequestId == songRequestId);
+            _currentRequest = current ?? requests.VipList.SingleOrDefault(r => r.songRequestId == songRequestId);
 
-            requests.RegularList = requests.RegularList.Where(r => r.songRequestId != _currentRequest.songRequestId)
+            requests.RegularList = requests.RegularList.Where(r => r.songRequestId != songRequestId)
                 .ToArray();
-            requests.VipList = requests.VipList.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
+            requests.VipList = requests.VipList.Where(r => r.songRequestId != songRequestId).ToArray();
 
             await connection.InvokeAsync<SongListHubModel>("SendAll",
                 new SongListHubModel
