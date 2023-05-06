@@ -4,17 +4,13 @@ using System.Threading;
 using CodedChatbot.TwitchFactories.Interfaces;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Api.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
-    public interface IChatService
-    {
-        void Initialise();
-    }
-
     public class ChatService : IChatService
     {
         private readonly IGiveViewershipBytesCommand _giveViewershipBytesCommand;
@@ -56,8 +52,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
                 if (streamStatus)
                 {
-                    var authToken = await _twitchApi.Helix.Users.GetUsersAsync();
-                    var chattersResponse = await _twitchApi.Helix.Chat.GetChattersAsync(authToken.Users.FirstOrDefault()?.Id, authToken.Users.FirstOrDefault()?.Id, 1000);
+                    var loggedInUser = await _twitchApi.Helix.Users.GetUsersAsync();
+                    var chattersResponse = await _twitchApi.Helix.Chat.GetChattersAsync(loggedInUser.Users.FirstOrDefault()?.Id, loggedInUser.Users.FirstOrDefault()?.Id, 1000);
 
                     if (!chattersResponse.Data.Any()) return;
 

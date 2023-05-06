@@ -6,6 +6,7 @@ using CoreCodedChatbot.ApiApplication;
 using CoreCodedChatbot.ApiApplication.Factories;
 using CoreCodedChatbot.ApiApplication.Hubs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Factories;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Services;
 using CoreCodedChatbot.ApiContract.SignalRHubModels.API;
 using CoreCodedChatbot.Config;
@@ -124,11 +125,13 @@ namespace CoreCodedChatbot.Api
 
             var streamLabsService = (StreamLabsService) serviceProvider.GetService<IStreamLabsService>();
             var chatterService = (ChatService) serviceProvider.GetService<IChatService>();
+            var channelRewardsService = (ChannelRewardsService) serviceProvider.GetService<IChannelRewardsService>();
             var printfulFactory =
                 (PrintfulWebhookSetupFactory) serviceProvider.GetService<IPrintfulWebhookSetupFactory>();
 
             streamLabsService.Initialise();
             chatterService.Initialise();
+            channelRewardsService.Initialise();
 
             try
             {
