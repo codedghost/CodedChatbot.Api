@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Extensions;
+﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;

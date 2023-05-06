@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Extensions;
+﻿using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId;
-using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.ClientId
 {

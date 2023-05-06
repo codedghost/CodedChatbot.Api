@@ -5,7 +5,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
-using PrintfulLib.Models.WebhookResponses;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 

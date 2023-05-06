@@ -7,9 +7,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Database.Context.Interfaces;
 using Microsoft.Extensions.Logging;
-using TwitchLib.Client;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {

@@ -1,11 +1,8 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
-using CoreCodedChatbot.ApiContract.Enums.VIP;
 using CoreCodedChatbot.ApiContract.RequestModels.Vip.ChildModels;
 using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Database.Context.Interfaces;
-using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Vip
 {

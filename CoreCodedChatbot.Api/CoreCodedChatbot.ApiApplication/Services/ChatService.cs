@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Net.Http;
+using System.Linq;
 using System.Threading;
+using CodedChatbot.TwitchFactories.Interfaces;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
-using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using TwitchLib.Api.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
@@ -20,6 +20,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IGiveViewershipBytesCommand _giveViewershipBytesCommand;
         private readonly IGetStreamStatusQuery _getStreamStatusQuery;
         private readonly IConfigService _configService;
+        private readonly ITwitchAPI _twitchApi;
         private readonly ILogger<IChatService> _logger;
         private Timer _checkChatTimer;
 
@@ -27,11 +28,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IGiveViewershipBytesCommand giveViewershipBytesCommand,
             IGetStreamStatusQuery getStreamStatusQuery,
             IConfigService configService,
+            ITwitchApiFactory twitchApiFactory,
             ILogger<IChatService> logger)
         {
             _giveViewershipBytesCommand = giveViewershipBytesCommand;
             _getStreamStatusQuery = getStreamStatusQuery;
             _configService = configService;
+            _twitchApi = twitchApiFactory.Get();
             _logger = logger;
         }
 
@@ -53,24 +56,14 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
                 if (streamStatus)
                 {
+                    var authToken = await _twitchApi.Helix.Users.GetUsersAsync();
+                    var chattersResponse = await _twitchApi.Helix.Chat.GetChattersAsync(authToken.Users.FirstOrDefault()?.Id, authToken.Users.FirstOrDefault()?.Id, 1000);
 
-                    var client = new HttpClient();
+                    if (!chattersResponse.Data.Any()) return;
 
-                    var currentChatters =
-                        await client.GetAsync($"https://tmi.twitch.tv/group/user/{streamerChannel}/chatters");
-
-                    if (currentChatters.IsSuccessStatusCode)
-                    {
-                        var chattersModel =
-                            JsonConvert.DeserializeObject<TmiChattersIntermediate>(currentChatters.Content
-                                .ReadAsStringAsync().Result);
-
-                        _giveViewershipBytesCommand.Give(chattersModel.ChattersIntermediate);
-                    }
-                    else
-                    {
-                        _logger.LogError("Could not retrieve Chatters JSON from TMI service");
-                    }
+                    var chatters = chattersResponse.Data.Select(d => d.UserLogin).ToList();
+                    
+                    _giveViewershipBytesCommand.Give(chatters);
                 }
             }
             catch (Exception e)

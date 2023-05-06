@@ -1,6 +1,5 @@
 ﻿using System;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
-using CoreCodedChatbot.Database.Context;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 

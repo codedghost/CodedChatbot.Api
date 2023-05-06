@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
-using CoreCodedChatbot.ApiContract.SignalRHubModels.Website.ClientSpecific;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services

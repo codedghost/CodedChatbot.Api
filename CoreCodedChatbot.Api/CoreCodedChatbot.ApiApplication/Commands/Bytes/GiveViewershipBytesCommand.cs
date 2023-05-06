@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
-using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Bytes
 {
@@ -16,19 +15,9 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Bytes
             _giveViewershipBytesRepository = giveViewershipBytesRepository;
         }
 
-        public void Give(ChattersIntermediate chatters)
+        public void Give(List<string> chatters)
         {
-            var usernames = new List<string>();
-
-            usernames.AddRange(chatters.Broadcasters);
-            usernames.AddRange(chatters.Mods);
-            usernames.AddRange(chatters.Staff);
-            usernames.AddRange(chatters.Admins);
-            usernames.AddRange(chatters.GlobalMods);
-            usernames.AddRange(chatters.Vips);
-            usernames.AddRange(chatters.Viewers);
-
-            _giveViewershipBytesRepository.Give(usernames);
+            _giveViewershipBytesRepository.Give(chatters);
         }
     }
 }

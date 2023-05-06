@@ -2,7 +2,6 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.ClientId
 {

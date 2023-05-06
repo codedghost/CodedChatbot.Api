@@ -1,5 +1,4 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Settings

@@ -1,9 +1,9 @@
-﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+﻿using System.Collections.Generic;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes
 {
     public interface IGiveViewershipBytesCommand
     {
-        void Give(ChattersIntermediate chatters);
+        void Give(List<string> chatters);
     }
 }
