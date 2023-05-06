@@ -12,7 +12,7 @@
     <PackageReference Include="CodedGhost.Config" Version="1.0.1065" />
     <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.1087" />
     <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1077" />
-    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1102" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1123" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.1067" />
     <PackageReference Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
@@ -25,6 +25,11 @@
     <PackageReference Include="SolrNet.Microsoft.DependencyInjection" Version="1.1.1" />
     <PackageReference Include="TwitchLib" Version="3.5.3" />
     <PackageReference Include="TwitchLib.Client" Version="3.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\Queries\ChannelRewards\" />
+    <Folder Include="Queries\ChannelRewards\" />
   </ItemGroup>
 
 </Project>

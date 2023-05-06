@@ -23,5 +23,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task<int> ConvertAllBytes(string username);
         void GiveGiftSubBytes(string username);
         Task UpdateClientVips(string username);
+        void GiveChannelPointsVip(string username);
     }
 }

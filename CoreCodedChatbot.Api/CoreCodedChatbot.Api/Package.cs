@@ -1,5 +1,8 @@
 ﻿using CodedChatbot.TwitchFactories;
-using CoreCodedChatbot.ApiApplication;
+using CoreCodedChatbot.ApiApplication.Commands;
+using CoreCodedChatbot.ApiApplication.Queries;
+using CoreCodedChatbot.ApiApplication.Repositories;
+using CoreCodedChatbot.ApiApplication.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreCodedChatbot.Api

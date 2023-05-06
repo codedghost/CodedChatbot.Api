@@ -29,6 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IConvertBytesCommand _convertBytesCommand;
         private readonly IConvertAllBytesCommand _convertAllBytesCommand;
         private readonly IGiveGiftSubBytesCommand _giveGiftSubBytesCommand;
+        private readonly IGiveChannelPointsVipCommand _giveChannelPointsVipCommand;
         private readonly IConfigService _configService;
         private readonly ISignalRService _signalRService;
         private readonly IClientIdService _clientIdService;
@@ -49,6 +50,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IConvertBytesCommand convertBytesCommand,
             IConvertAllBytesCommand convertAllBytesCommand,
             IGiveGiftSubBytesCommand giveGiftSubBytesCommand,
+            IGiveChannelPointsVipCommand giveChannelPointsVipCommand,
             IConfigService configService,
             ISignalRService signalRService,
             IClientIdService clientIdService,
@@ -68,6 +70,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _convertBytesCommand = convertBytesCommand;
             _convertAllBytesCommand = convertAllBytesCommand;
             _giveGiftSubBytesCommand = giveGiftSubBytesCommand;
+            _giveChannelPointsVipCommand = giveChannelPointsVipCommand;
             _configService = configService;
             _signalRService = signalRService;
             _clientIdService = clientIdService;
@@ -84,6 +87,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
             {
                 await _signalRService.UpdateVips(clientId, vips);
             }
+        }
+
+        public async void GiveChannelPointsVip(string username)
+        {
+            _giveChannelPointsVipCommand.GiveChannelPointsVip(username);
+
+            await UpdateClientVips(username).ConfigureAwait(false);
         }
 
         public async Task UpdateClientBytes(string username)

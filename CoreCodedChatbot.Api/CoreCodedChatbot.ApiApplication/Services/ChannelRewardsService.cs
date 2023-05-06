@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading;
 using CodedChatbot.TwitchFactories.Interfaces;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards;
+using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.Database.Context.Enums;
 using TwitchLib.Api;
 
 namespace CoreCodedChatbot.ApiApplication.Services
@@ -12,6 +14,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
     {
         private readonly ICreateOrUpdateChannelRewardCommand _createOrUpdateChannelRewardCommand;
         private readonly IStoreChannelRewardRedemptionCommand _storeChannelRewardRedemptionCommand;
+        private readonly IGetChannelRewardQuery _getChannelRewardQuery;
+        private readonly IVipService _vipService;
 
         private Timer _updateChannelRewardsTimer;
         private readonly TwitchAPI _twitchApi;
@@ -19,11 +23,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
         public ChannelRewardsService(
             ICreateOrUpdateChannelRewardCommand createOrUpdateChannelRewardCommand,
             IStoreChannelRewardRedemptionCommand storeChannelRewardRedemptionCommand,
-            ITwitchApiFactory twitchApiFactory
-            )
+            IGetChannelRewardQuery getChannelRewardQuery,
+            ITwitchApiFactory twitchApiFactory,
+            IVipService vipService
+        )
         {
             _createOrUpdateChannelRewardCommand = createOrUpdateChannelRewardCommand;
             _storeChannelRewardRedemptionCommand = storeChannelRewardRedemptionCommand;
+            _getChannelRewardQuery = getChannelRewardQuery;
+            _vipService = vipService;
 
             _twitchApi = twitchApiFactory.Get();
         }
@@ -57,6 +65,21 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public void Store(Guid channelRewardId, string redeemedBy)
         {
+            var channelReward = _getChannelRewardQuery.GetChannelReward(channelRewardId);
+
+            if (channelReward == null) return;
+
+            switch (channelReward.CommandType)
+            {
+                case CommandTypes.None:
+                    break;
+                case CommandTypes.ConvertToVip:
+                    _vipService.GiveChannelPointsVip(redeemedBy);
+                    break;
+                default:
+                    return;
+            }
+
             _storeChannelRewardRedemptionCommand.Store(channelRewardId, redeemedBy);
         }
 
