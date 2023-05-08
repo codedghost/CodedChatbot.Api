@@ -79,7 +79,7 @@ namespace CoreCodedChatbot.Api.Controllers
             }
         }
 
-        [HttpGet("{quoteId:int?}")]
+        [HttpGet]
         public async Task<IActionResult> GetQuote(int? quoteId)
         {
             try
@@ -98,12 +98,12 @@ namespace CoreCodedChatbot.Api.Controllers
             }
         }
 
-        [HttpGet("{page:int}/{pageSize:int}")]
-        public async Task<IActionResult> GetQuotes(int page, int pageSize)
+        [HttpGet]
+        public async Task<IActionResult> GetQuotes(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, string? filterByValue)
         {
             try
             {
-                var quotes = await _quoteService.GetQuotes(page, pageSize);
+                var quotes = await _quoteService.GetQuotes(page, pageSize, orderByColumnName, desc, filterByColumn, filterByValue);
 
                 return Json(new GetQuotesResponse
                 {

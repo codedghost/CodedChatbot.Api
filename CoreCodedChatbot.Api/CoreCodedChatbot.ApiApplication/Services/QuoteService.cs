@@ -60,9 +60,9 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return _mapper.Map<ApiQuote>(quote);
         }
         
-        public async Task<List<ApiQuote>> GetQuotes(int page, int pageSize)
+        public async Task<List<ApiQuote>> GetQuotes(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue)
         {
-            var quotes = await _quoteRepository.GetAllPagedAsync(page, pageSize);
+            var quotes = await _quoteRepository.GetAllPagedAsync(page, pageSize, orderByColumnName, desc, filterByColumn, filterValue);
 
             return _mapper.Map<List<ApiQuote>>(quotes);
         }

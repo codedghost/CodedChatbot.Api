@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +16,7 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
     {
         _context = chatbotContextFactory.Create();
 
-        if (!typeof(TDbEntity).GetInterfaces()
-                .Any(i => i.Name == nameof(IEntity)))
+        if (typeof(TDbEntity).GetInterfaces().All(i => i.Name != nameof(IEntity)))
         {
             throw new ArgumentException(
                 $"Given TDbSet Type: {nameof(TDbEntity)} does not implement the required IEntity interface");
@@ -30,17 +30,27 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
         return dbSet;
     }
 
-    public async Task<List<TDbEntity>> GetAllPagedAsync(int page = 0, int pageSize = 50, string orderByColumnName = "",
-        bool desc = false)
+    public async Task<List<TDbEntity>> GetAllPagedAsync(
+        int? page,
+        int? pageSize,
+        string? orderByColumnName,
+        bool? desc,
+        string? filterByColumn,
+        object? filterValue)
     {
+        var pageValue = page ?? 0;
+        var pageSizeValue = pageSize ?? 50;
+        var descValue = desc ?? false;
+
         var dbSet = _context.Set<TDbEntity>();
 
         if (string.IsNullOrWhiteSpace(orderByColumnName))
             orderByColumnName = DbSetExtensions.GetKeyField(typeof(TDbEntity));
 
-        var query = !desc ? dbSet.OrderBy(orderByColumnName) : dbSet.OrderByDescending(orderByColumnName);
+        var query = filterByColumn == null ? dbSet.AsQueryable() : dbSet.FilterBy(filterByColumn, filterValue);
+        //query = !descValue ? query.OrderBy(orderByColumnName) : query.OrderByDescending(orderByColumnName);
 
-        query = dbSet.Skip(page * pageSize).Take(pageSize);
+        query = query.Skip(pageValue * pageSizeValue).Take(pageSizeValue);
 
         return await query.ToListAsync();
     }

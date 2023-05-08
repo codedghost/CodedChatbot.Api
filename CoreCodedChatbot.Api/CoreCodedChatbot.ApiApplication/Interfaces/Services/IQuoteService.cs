@@ -11,6 +11,6 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
         Task EditQuote(int quoteId, string quoteText, string username, bool editRequestIsMod);
         Task RemoveQuote(int quoteId, string username, bool isMod);
         Task<Quote> GetQuote(int? quoteId);
-        Task<List<Quote>> GetQuotes(int page, int pageSize);
+        Task<List<Quote>> GetQuotes(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue);
     }
 }

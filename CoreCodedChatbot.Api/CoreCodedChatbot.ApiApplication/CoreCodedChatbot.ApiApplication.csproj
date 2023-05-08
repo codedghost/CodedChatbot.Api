@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +15,7 @@
     <PackageReference Include="CodedGhost.Config" Version="1.0.1065" />
     <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.1087" />
     <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1127" />
-    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1135" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1141" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.1067" />
     <PackageReference Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
