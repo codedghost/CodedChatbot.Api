@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             {
                 var usersRegularRequests = context.SongRequests.SingleOrDefault(sr =>
                     !sr.Played &&
-                    sr.RequestUsername == username &&
+                    sr.Username == username &&
                     sr.VipRequestTime == null &&
                     sr.SuperVipRequestTime == null
                 );

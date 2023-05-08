@@ -20,7 +20,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
             using (var context = _chatbotContextFactory.Create())
             {
                 var vips = context.SongRequests.Count(sr =>
-                    !sr.Played && sr.RequestUsername == username && sr.VipRequestTime != null &&
+                    !sr.Played && sr.Username == username && sr.VipRequestTime != null &&
                     sr.SuperVipRequestTime == null);
 
                 return vips;

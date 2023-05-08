@@ -26,7 +26,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
                 var superVip = context.SongRequests.SingleOrDefault(sr =>
                     !sr.Played &&
                     sr.SuperVipRequestTime != null &&
-                    sr.RequestUsername == username
+                    sr.Username == username
                 );
                 
                 if (superVip == null) return;

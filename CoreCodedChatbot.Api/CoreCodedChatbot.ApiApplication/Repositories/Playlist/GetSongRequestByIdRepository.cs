@@ -28,7 +28,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
                 {
                     SongRequestId = songRequest.SongRequestId,
                     SongRequestText = songRequest.RequestText,
-                    SongRequestUsername = songRequest.RequestUsername,
+                    SongRequestUsername = songRequest.Username,
                     IsRecentRequest = songRequest.RequestTime.AddMinutes(5) >= DateTime.UtcNow,
                     IsVip = songRequest.VipRequestTime != null,
                     IsRecentVip = (songRequest.VipRequestTime ?? DateTime.MinValue).AddMinutes(5) >= DateTime.UtcNow,

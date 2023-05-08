@@ -25,7 +25,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
                 SongRequest request;
                 if (songRequestId == 0)
                     request = context.SongRequests.SingleOrDefault(sr =>
-                        sr.RequestUsername == username && !sr.Played && sr.VipRequestTime == null &&
+                        sr.Username == username && !sr.Played && sr.VipRequestTime == null &&
                         sr.SuperVipRequestTime == null);
                 else
                     request = context.SongRequests.SingleOrDefault(sr =>

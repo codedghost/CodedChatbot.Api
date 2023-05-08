@@ -5,7 +5,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
@@ -17,7 +16,6 @@ using CoreCodedChatbot.ApiApplication.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
-using CoreCodedChatbot.ApiApplication.Queries.Quote;
 using CoreCodedChatbot.ApiApplication.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Queries.StreamStatus;
@@ -66,11 +64,6 @@ namespace CoreCodedChatbot.ApiApplication.Queries
             services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
             services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
             services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
-
-            // Quote
-            services.AddSingleton<IGetQuoteQuery, GetQuoteQuery>();
-            services.AddSingleton<IGetQuotesQuery, GetQuotesQuery>();
-            services.AddSingleton<IGetRandomQuoteQuery, GetRandomQuoteQuery>();
 
             // Search
             services.AddSingleton<IGetPriorityChartFromSearchResultsQuery, GetPriorityChartFromSearchResultsQuery>();

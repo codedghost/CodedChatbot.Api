@@ -1,62 +1,81 @@
-﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Quote;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.Database.Context.Models;
+using Microsoft.EntityFrameworkCore;
+using ApiQuote = CoreCodedChatbot.ApiContract.ResponseModels.Quotes.ChildModels.Quote;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
     public class QuoteService : IQuoteService
     {
-        private readonly IAddQuoteCommand _addQuoteCommand;
-        private readonly IEditQuoteCommand _editQuoteCommand;
-        private readonly IRemoveQuoteCommand _removeQuoteCommand;
-        private readonly IGetQuoteQuery _getQuoteQuery;
-        private readonly IGetQuotesQuery _getQuotesQuery;
-        private readonly IGetRandomQuoteQuery _getRandomQuoteQuery;
+        private readonly IQuoteRepository _quoteRepository;
+        private readonly IMapper _mapper;
+        private readonly Random _random;
 
         public QuoteService(
-            IAddQuoteCommand addQuoteCommand,
-            IEditQuoteCommand editQuoteCommand,
-            IRemoveQuoteCommand removeQuoteCommand,
-            IGetQuoteQuery getQuoteQuery,
-            IGetQuotesQuery getQuotesQuery,
-            IGetRandomQuoteQuery getRandomQuoteQuery
-        )
+            IQuoteRepository quoteRepository,
+            IMapper mapper)
         {
-            _addQuoteCommand = addQuoteCommand;
-            _editQuoteCommand = editQuoteCommand;
-            _removeQuoteCommand = removeQuoteCommand;
-            _getQuoteQuery = getQuoteQuery;
-            _getQuotesQuery = getQuotesQuery;
-            _getRandomQuoteQuery = getRandomQuoteQuery;
+            _quoteRepository = quoteRepository;
+            _mapper = mapper;
+
+            _random = new Random();
         }
 
-        public int AddQuote(string username, string quoteText)
+        public async Task<int> AddQuote(string username, string quoteText)
         {
-            var quoteId = _addQuoteCommand.AddQuote(username, quoteText);
+            var newEntity = new Quote
+            {
+                Username = username,
+                QuoteText = quoteText,
+                Enabled = true,
+                LastEdited = DateTime.UtcNow
+            };
 
-            return quoteId;
+            await _quoteRepository.CreateAsync(newEntity);
+
+            return newEntity.QuoteId;
         }
 
-        public void EditQuote(int quoteId, string quoteText, string username, bool isMod)
+        public async Task EditQuote(int quoteId, string quoteText, string username, bool isMod)
         {
-            _editQuoteCommand.EditQuote(quoteId, quoteText, username, isMod);
+            await _quoteRepository.Edit(quoteId, quoteText, username, isMod);
         }
 
-        public void RemoveQuote(int quoteId, string username, bool isMod)
+        public async Task RemoveQuote(int quoteId, string username, bool isMod)
         {
-            _removeQuoteCommand.RemoveQuote(quoteId, username, isMod);
+            await _quoteRepository.Archive(quoteId, username, isMod);
         }
 
-        public QuoteIntermediate GetQuote(int? quoteId)
+        public async Task<ApiQuote> GetQuote(int? quoteId)
         {
-            return quoteId == null ? _getRandomQuoteQuery.GetRandomQuote() : _getQuoteQuery.GetQuote(quoteId.Value);
+            var quote = quoteId == null ? await GetRandomQuote() : await _quoteRepository.GetByIdAsync(quoteId.Value);
+
+            return _mapper.Map<ApiQuote>(quote);
+        }
+        
+        public async Task<List<ApiQuote>> GetQuotes(int page, int pageSize)
+        {
+            var quotes = await _quoteRepository.GetAllPagedAsync(page, pageSize);
+
+            return _mapper.Map<List<ApiQuote>>(quotes);
         }
 
-        public List<QuoteIntermediate> GetQuotes()
+        private async Task<Quote> GetRandomQuote()
         {
-            return _getQuotesQuery.Get();
+            var quotesQuery = _quoteRepository.GetAll().Where(q => q.Enabled).OrderBy(q => q.QuoteId);
+
+            var count = quotesQuery.Count();
+
+            var randomInt = _random.Next(count);
+
+            return await quotesQuery.Skip(randomInt).Take(1).FirstOrDefaultAsync();
         }
     }
 }

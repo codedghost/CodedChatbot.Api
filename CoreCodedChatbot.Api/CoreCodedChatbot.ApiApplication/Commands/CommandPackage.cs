@@ -6,7 +6,6 @@ using CoreCodedChatbot.ApiApplication.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
@@ -18,7 +17,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
@@ -88,11 +86,6 @@ namespace CoreCodedChatbot.ApiApplication.Commands
             services
                 .AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
             services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
-
-            // Quote
-            services.AddSingleton<IAddQuoteCommand, AddQuoteCommand>();
-            services.AddSingleton<IEditQuoteCommand, EditQuoteCommand>();
-            services.AddSingleton<IRemoveQuoteCommand, RemoveQuoteCommand>();
 
             // Search
             services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();

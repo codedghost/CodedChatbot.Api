@@ -89,12 +89,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories
             services.AddSingleton<IRemoveSuperVipRepository, RemoveSuperVipRepository>();
 
             // Quote
-            services.AddSingleton<IAddQuoteRepository, AddQuoteRepository>();
-            services.AddSingleton<IEditQuoteRepository, EditQuoteRepository>();
-            services.AddSingleton<IGetQuoteIdsRepository, GetQuoteIdsRepository>();
-            services.AddSingleton<IGetQuoteRepository, GetQuoteRepository>();
-            services.AddSingleton<IGetQuotesRepository, GetQuotesRepository>();
-            services.AddSingleton<IRemoveQuoteRepository, RemoveQuoteRepository>();
+            services.AddTransient<IQuoteRepository, QuoteRepository>();
 
             // Search
             services

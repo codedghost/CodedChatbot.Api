@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Quotes;
 using CoreCodedChatbot.ApiContract.ResponseModels.Quotes;
@@ -28,11 +29,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPut]
-        public IActionResult AddQuote([FromBody] AddQuoteRequest addRequest)
+        public async Task<IActionResult> AddQuote([FromBody] AddQuoteRequest addRequest)
         {
             try
             {
-                var quoteId = _quoteService.AddQuote(addRequest.Username, addRequest.QuoteText);
+                var quoteId = await _quoteService.AddQuote(addRequest.Username, addRequest.QuoteText);
 
                 return Json(new AddQuoteResponse
                 {
@@ -47,11 +48,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditQuote([FromBody] EditQuoteRequest editRequest)
+        public async Task<IActionResult> EditQuote([FromBody] EditQuoteRequest editRequest)
         {
             try
             {
-                _quoteService.EditQuote(editRequest.QuoteId, editRequest.QuoteText, editRequest.Username, editRequest.IsMod);
+                await _quoteService.EditQuote(editRequest.QuoteId, editRequest.QuoteText, editRequest.Username, editRequest.IsMod);
 
                 return Ok();
             }
@@ -63,11 +64,11 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult RemoveQuote([FromBody] RemoveQuoteRequest removeRequest)
+        public async Task<IActionResult> RemoveQuote([FromBody] RemoveQuoteRequest removeRequest)
         {
             try
             {
-                _quoteService.RemoveQuote(removeRequest.QuoteId, removeRequest.Username, removeRequest.IsMod);
+                await _quoteService.RemoveQuote(removeRequest.QuoteId, removeRequest.Username, removeRequest.IsMod);
 
                 return Ok();
             }
@@ -78,20 +79,16 @@ namespace CoreCodedChatbot.Api.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult GetQuote(int? quoteId)
+        [HttpGet("{quoteId:int?}")]
+        public async Task<IActionResult> GetQuote(int? quoteId)
         {
             try
             {
-                var quote = _quoteService.GetQuote(quoteId);
+                var quote = await _quoteService.GetQuote(quoteId);
 
                 return Json(new GetQuoteResponse
                 { 
-                    Quote = new Quote
-                    {
-                        QuoteId = quote.QuoteId,
-                        QuoteText = quote.QuoteText
-                    }
+                    Quote = quote
                 });
             }
             catch (Exception e)
@@ -101,24 +98,16 @@ namespace CoreCodedChatbot.Api.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult GetQuotes()
+        [HttpGet("{page:int}/{pageSize:int}")]
+        public async Task<IActionResult> GetQuotes(int page, int pageSize)
         {
             try
             {
-                var quotes = _quoteService.GetQuotes();
+                var quotes = await _quoteService.GetQuotes(page, pageSize);
 
                 return Json(new GetQuotesResponse
                 {
-                    Quotes = quotes.Select(q => new Quote
-                    {
-                        QuoteId = q.QuoteId,
-                        QuoteText = q.QuoteText,
-                        CreatedBy = q.CreatedBy,
-                        Disabled = q.Disabled,
-                        LastEditedBy = q.EditedBy,
-                        EditedAt = q.EditedAt
-                    }).ToList()
+                    Quotes = quotes
                 });
             }
             catch (Exception e)

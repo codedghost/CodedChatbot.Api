@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var songRequests = context.SongRequests.Where(sr => sr.RequestUsername == username && !sr.Played);
+                var songRequests = context.SongRequests.Where(sr => sr.Username == username && !sr.Played);
 
                 SongRequest singleRequest = null;
 

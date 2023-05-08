@@ -73,7 +73,7 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             var userRequest = fixture.Get<SongRequest>();
             var user = fixture.Get<User>();
 
-            userRequest.RequestUsername = user.Username;
+            userRequest.Username = user.Username;
             userRequest.Played = true;
 
             var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
@@ -98,12 +98,12 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             var userRegularRequest = fixture.Get<SongRequest>();
             var user = fixture.Get<User>();
 
-            userVipRequest.RequestUsername = user.Username;
+            userVipRequest.Username = user.Username;
             userVipRequest.Played = false;
             userVipRequest.VipRequestTime = DateTime.Now;
             userVipRequest.SuperVipRequestTime = null;
 
-            userRegularRequest.RequestUsername = user.Username;
+            userRegularRequest.Username = user.Username;
             userVipRequest.Played = false;
             userRegularRequest.VipRequestTime = null;
             userRegularRequest.SuperVipRequestTime = null;
@@ -133,7 +133,7 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             var songRequest = fixture.Get<SongRequest>();
             var user = fixture.Get<User>();
 
-            songRequest.RequestUsername = user.Username;
+            songRequest.Username = user.Username;
             songRequest.Played = false;
             songRequest.VipRequestTime = DateTime.Now;
             songRequest.SuperVipRequestTime = DateTime.Now;
@@ -161,7 +161,7 @@ namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
             var userRequest = fixture.Get<SongRequest>();
             var user = fixture.Get<User>();
 
-            userRequest.RequestUsername = user.Username;
+            userRequest.Username = user.Username;
             userRequest.Played = false;
             userRequest.VipRequestTime = DateTime.Now;
             userRequest.SuperVipRequestTime = DateTime.Now;

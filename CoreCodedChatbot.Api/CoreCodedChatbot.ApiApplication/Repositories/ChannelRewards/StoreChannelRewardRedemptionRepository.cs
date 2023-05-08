@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards
                 var redemption = new ChannelRewardRedemption
                 {
                     ChannelRewardId = channelRewardId,
-                    RedeemedBy = redeemedBy,
+                    Username = redeemedBy,
                     RedeemedAt = DateTime.Now,
                     Processed = false
                 };

@@ -19,7 +19,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var requests = context.SongRequests.Count(sr => !sr.Played && sr.RequestUsername == username);
+                var requests = context.SongRequests.Count(sr => !sr.Played && sr.Username == username);
 
                 return requests;
             }

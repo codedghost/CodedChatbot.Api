@@ -60,8 +60,8 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             {
                 SongRequestId = songRequest.SongRequestId,
                 SongRequestText = HttpUtility.HtmlDecode(songRequestText),
-                Username = songRequest.RequestUsername,
-                IsUserInChat = (users.SingleOrDefault(u => u.Username == songRequest.RequestUsername)?.TimeLastInChat ??
+                Username = songRequest.Username,
+                IsUserInChat = (users.SingleOrDefault(u => u.Username == songRequest.Username)?.TimeLastInChat ??
                                 DateTime.MinValue)
                                .AddMinutes(2) >= DateTime.UtcNow ||
                                (songRequest.VipRequestTime ?? DateTime.MinValue).AddMinutes(5) >= DateTime.UtcNow,

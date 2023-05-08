@@ -21,7 +21,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             {
                 var songRequest = context.SongRequests.Find(songRequestId);
 
-                if (songRequest.RequestUsername != username && !isMod)
+                if (songRequest.Username != username && !isMod)
                     throw new UnauthorizedAccessException(
                         $"{username} attempted to edit a request which was not theirs: {songRequestId}");
 

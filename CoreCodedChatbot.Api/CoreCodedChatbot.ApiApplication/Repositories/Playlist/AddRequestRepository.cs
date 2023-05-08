@@ -29,7 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
                 var songRequest = new SongRequest
                 {
                     RequestText = requestText,
-                    RequestUsername = username,
+                    Username = username,
                     Played = false,
                     RequestTime = DateTime.UtcNow,
                     VipRequestTime = isVip || isSuperVip ? DateTime.UtcNow : (DateTime?) null,

@@ -50,6 +50,7 @@ namespace CoreCodedChatbot.Api
                 .AddChatbotNLog()
                 .AddTwitchServices()
                 .AddApplicationServices()
+                .AddAutoMapper()
                 .AddSolr(secretService)
                 .AddRabbitConnectionServices()
                 .AddPrintfulClient(secretService)
@@ -71,7 +72,6 @@ namespace CoreCodedChatbot.Api
             services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
                 .Configure<ISecretService>((options, secrets) =>
                 {
-
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,

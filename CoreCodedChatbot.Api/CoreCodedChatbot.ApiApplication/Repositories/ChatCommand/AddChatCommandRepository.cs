@@ -29,7 +29,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.ChatCommand
                 {
                     InfoText = "{0}" + informationText,
                     InfoHelpText = "Hey @{0}! " + helpText,
-                    AddedByUser = username
+                    Username = username
                 };
 
                 context.InfoCommands.Add(infoCommand);

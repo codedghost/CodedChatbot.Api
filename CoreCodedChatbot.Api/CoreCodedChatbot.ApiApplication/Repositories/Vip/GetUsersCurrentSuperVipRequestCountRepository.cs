@@ -19,7 +19,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
             using (var context = _chatbotContextFactory.Create())
             {
                 var superVips = context.SongRequests.Count(sr =>
-                    !sr.Played && sr.RequestUsername == username && sr.SuperVipRequestTime != null);
+                    !sr.Played && sr.Username == username && sr.SuperVipRequestTime != null);
 
                 return superVips;
             }

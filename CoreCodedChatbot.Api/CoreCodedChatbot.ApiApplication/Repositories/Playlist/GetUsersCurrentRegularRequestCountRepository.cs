@@ -20,7 +20,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
             using (var context = _chatbotContextFactory.Create())
             {
                 var regularRequestCount = context.SongRequests.Count(sr =>
-                    !sr.Played && sr.RequestUsername == username && sr.VipRequestTime == null &&
+                    !sr.Played && sr.Username == username && sr.VipRequestTime == null &&
                     sr.SuperVipRequestTime == null);
 
                 return regularRequestCount;

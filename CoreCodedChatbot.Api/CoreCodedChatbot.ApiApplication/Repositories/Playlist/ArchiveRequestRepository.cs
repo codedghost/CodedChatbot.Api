@@ -26,7 +26,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
 
                 context.SaveChanges();
 
-                return request.RequestUsername;
+                return request.Username;
             }
         }
     }
