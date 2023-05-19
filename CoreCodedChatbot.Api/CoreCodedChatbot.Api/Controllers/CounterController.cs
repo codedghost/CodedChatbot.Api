@@ -86,8 +86,8 @@ namespace CoreCodedChatbot.Api.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateCounter([FromQuery] string counterName)
+        [HttpGet]
+        public async Task<IActionResult> UpdateCounter(string counterName)
         {
             try
             {
