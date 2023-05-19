@@ -2,6 +2,7 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Counter;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
@@ -16,6 +17,7 @@ using CoreCodedChatbot.ApiApplication.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Repositories.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Repositories.ClientId;
+using CoreCodedChatbot.ApiApplication.Repositories.Counter;
 using CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Repositories.Moderation;
 using CoreCodedChatbot.ApiApplication.Repositories.Playlist;
@@ -54,6 +56,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories
             services.AddSingleton<IStoreClientIdRepository, StoreClientIdRepository>();
             services.AddSingleton<IRemoveClientIdRepository, RemoveClientIdRepository>();
             services.AddSingleton<IGetClientIdsRepository, GetClientIdsRepository>();
+
+            // Counters
+            services.AddSingleton<ICounterRepository, CounterRepository>();
 
             // Guessing Game
             services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();

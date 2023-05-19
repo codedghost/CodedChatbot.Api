@@ -9,7 +9,7 @@ public interface IBaseRepository<TDbEntity> : IDisposable where TDbEntity : clas
 {
     IQueryable<TDbEntity> GetAll();
     Task<List<TDbEntity>> GetAllPagedAsync(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue);
-    Task<TDbEntity> GetByIdAsync<TKeyType>(TKeyType id) where TKeyType : notnull;
+    Task<TDbEntity?> GetByIdAsync<TKeyType>(TKeyType id) where TKeyType : notnull;
     Task CreateAsync(TDbEntity entity);
     Task DeleteAsync<TKey>(TKey id);
 }

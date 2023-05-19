@@ -13,6 +13,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             services.AddSingleton<IClientTriggerService, ClientTriggerService>();
             services.AddSingleton<IChatCommandService, ChatCommandService>();
             services.AddSingleton<IChatService, ChatService>();
+            services.AddSingleton<ICounterService, CounterService>();
             services.AddSingleton<IDownloadChartService, DownloadChartService>();
             services.AddSingleton<IGuessingGameService, GuessingGameService>();
             services.AddSingleton<IModerationService, ModerationService>();

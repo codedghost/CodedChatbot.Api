@@ -1,0 +1,48 @@
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Counter;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
+using CoreCodedChatbot.Database.Context.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace CoreCodedChatbot.ApiApplication.Repositories.Counter
+{
+    public class CounterRepository : BaseRepository<Database.Context.Models.Counter>, ICounterRepository
+    {
+        public CounterRepository(IChatbotContextFactory chatbotContextFactory) : base(chatbotContextFactory)
+        {
+        }
+
+        public async Task<Database.Context.Models.Counter> UpdateCounter(string counterName)
+        {
+            var counter = await GetByIdAsync(counterName);
+            if (counter != null)
+            {
+                counter.CounterValue++;
+                await _context.SaveChangesAsync();
+                return counter;
+            }
+
+            var newCounter = new Database.Context.Models.Counter
+            {
+                CounterName = counterName,
+                CounterSuffix = "Oofs",
+                CounterValue = 1
+            };
+
+            await CreateAsync(newCounter);
+
+            return newCounter;
+        }
+
+        public async Task<Database.Context.Models.Counter?> GetCounter(string counterName)
+        {
+            var counter = await _context.Counters.FirstOrDefaultAsync(c =>
+                string.Equals(c.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase));
+
+            return counter;
+
+        }
+    }
+}
