@@ -58,7 +58,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories
             services.AddSingleton<IGetClientIdsRepository, GetClientIdsRepository>();
 
             // Counters
-            services.AddSingleton<ICounterRepository, CounterRepository>();
+            services.AddTransient<ICounterRepository, CounterRepository>();
 
             // Guessing Game
             services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();
