@@ -55,13 +55,18 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
         return await query.ToListAsync();
     }
 
-    public async Task<TDbEntity?> GetByIdAsync<TKeyType>(TKeyType id) where TKeyType : notnull
+    public async Task<TDbEntity> GetByIdAsync<TKeyType>(TKeyType id) where TKeyType : notnull
+    {
+        return await GetByIdOrNullAsync(id) ?? throw new KeyNotFoundException($"{nameof(TDbEntity)}Entity not found with id: {id}");
+    }
+
+    public async Task<TDbEntity?> GetByIdOrNullAsync<TKeyType>(TKeyType id) where TKeyType : notnull
     {
         var dbSet = _context.Set<TDbEntity>();
 
         var result = await dbSet.FindAsync(id);
 
-        return result ?? throw new KeyNotFoundException($"{nameof(TDbEntity)}Entity not found with id: {id}");
+        return result;
     }
 
     public async Task CreateAsync(TDbEntity entity)

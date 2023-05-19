@@ -17,7 +17,7 @@ public class QuoteRepository : BaseRepository<Database.Context.Models.Quote>, IQ
     {
         var quote = await GetByIdAsync(quoteId);
 
-        CheckCanModify(quote, username, isMod);
+        CheckCanModify(quote, quoteId, username, isMod);
 
         quote.Enabled = false;
         quote.LastEditedBy = username;
@@ -30,7 +30,7 @@ public class QuoteRepository : BaseRepository<Database.Context.Models.Quote>, IQ
     {
         var quote = await GetByIdAsync(quoteId);
 
-        CheckCanModify(quote, username, isMod);
+        CheckCanModify(quote, quoteId, username, isMod);
 
         quote.QuoteText = quoteText;
 
@@ -40,7 +40,7 @@ public class QuoteRepository : BaseRepository<Database.Context.Models.Quote>, IQ
         await _context.SaveChangesAsync();
     }
 
-    private void CheckCanModify(Database.Context.Models.Quote quote, string username, bool isMod)
+    private void CheckCanModify(Database.Context.Models.Quote? quote, int quoteId, string username, bool isMod)
     {
         if (!isMod && !string.Equals(quote.Username, username, StringComparison.InvariantCultureIgnoreCase))
             throw new UnauthorizedAccessException(

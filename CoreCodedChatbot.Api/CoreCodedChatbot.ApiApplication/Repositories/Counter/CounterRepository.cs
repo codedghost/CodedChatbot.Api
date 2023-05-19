@@ -16,7 +16,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Counter
 
         public async Task<Database.Context.Models.Counter> UpdateCounter(string counterName)
         {
-            var counter = await GetByIdAsync(counterName);
+            var counter = await GetByIdOrNullAsync(counterName);
             if (counter != null)
             {
                 counter.CounterValue++;
@@ -34,15 +34,6 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Counter
             await CreateAsync(newCounter);
 
             return newCounter;
-        }
-
-        public async Task<Database.Context.Models.Counter?> GetCounter(string counterName)
-        {
-            var counter = await _context.Counters.FirstOrDefaultAsync(c =>
-                string.Equals(c.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase));
-
-            return counter;
-
         }
     }
 }
