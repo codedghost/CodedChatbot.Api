@@ -115,12 +115,6 @@ namespace CoreCodedChatbot.Api
             app.UseRouting();
 
             app.UseAuthentication();
-
-            app.UseCors(policy => policy
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
