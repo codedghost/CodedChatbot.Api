@@ -11,7 +11,7 @@ namespace CoreCodedChatbot.Api
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hosting.json", optional: true)
+                .AddJsonFile("hosting.json", optional: true, reloadOnChange: false)
                 .Build();
 
             CreateHostBuilder(args, config).Run();
