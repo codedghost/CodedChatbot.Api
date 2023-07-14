@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
@@ -155,10 +156,10 @@ namespace CoreCodedChatbot.ApiApplication.Services
             return priorityChart;
         }
 
-        private static List<string> GetStringSearchTerms(string searchTerm)
+        private static List<string>? GetStringSearchTerms(string searchTerm)
         {
             return string.IsNullOrWhiteSpace(searchTerm) ? null :
-                searchTerm.Split(' ', '\'')
+                searchTerm.ReplaceSpecialChars().Split(' ', '\'')
                     .Where(s => !string.IsNullOrWhiteSpace(s))
                     .ToList();
         }

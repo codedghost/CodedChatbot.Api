@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
+    <Folder Include="Extensions\SolrQuery\" />
     <Folder Include="TestExtensions\" />
     <Folder Include="Queries\" />
     <Folder Include="Services\" />
