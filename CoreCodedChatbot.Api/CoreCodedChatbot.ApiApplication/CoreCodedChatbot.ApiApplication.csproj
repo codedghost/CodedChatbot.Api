@@ -12,7 +12,7 @@
     <PackageReference Include="CodedChatbot.ServiceBusContract" Version="1.0.1092" />
     <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.1188" />
     <PackageReference Include="CodedGhost.AzureServiceBus" Version="1.0.1189" />
-    <PackageReference Include="CodedGhost.Config" Version="1.0.1182" />
+    <PackageReference Include="CodedGhost.Config" Version="1.0.1191" />
     <PackageReference Include="CodedGhost.RabbitMQTools" Version="1.0.1087" />
     <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1150" />
     <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1174" />
