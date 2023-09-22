@@ -25,13 +25,13 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards
                 if (includeNonCommandTypes)
                 {
                     return await context.ChannelRewardRedemptions
-                        .Where(crr => crr.Processed == false).ToListAsync();
+                        .Where(crr => !crr.Processed).ToListAsync();
                 }
 
                 var commandRewards = await context.ChannelRewards.Where(cr => cr.CommandType != 0).Select(cr => cr.ChannelRewardId).ToListAsync();
 
                 return await context.ChannelRewardRedemptions
-                    .Where(crr => crr.Processed && commandRewards.Contains(crr.ChannelRewardId))
+                    .Where(crr => !crr.Processed && commandRewards.Contains(crr.ChannelRewardId))
                     .ToListAsync();
             }
         }
