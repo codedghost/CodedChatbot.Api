@@ -47,7 +47,7 @@ namespace CoreCodedChatbot.Api.Controllers
         {
             try
             {
-                var result = _channelRewardsService.Store(request.ChannelRewardId, request.RedeemedBy);
+                var result = _channelRewardsService.Store(request.ChannelRewardId, request.RedeemedBy, Guid.Empty);
 
                 return Ok(new StoreRedemptionResponse
                 {

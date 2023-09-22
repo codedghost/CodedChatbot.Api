@@ -46,6 +46,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories
             services.AddSingleton<ICreateOrUpdateChannelRewardRepository, CreateOrUpdateChannelRewardRepository>();
             services.AddSingleton<IStoreChannelRewardRedemptionRepository, StoreChannelRewardRedemptionRepository>();
             services.AddSingleton<IGetChannelRewardRepository, GetChannelRewardRepository>();
+            services.AddSingleton<IGetChannelRewardRedemptionsRepository, GetChannelRewardRedemptionsRepository>();
 
             // Chat Command
             services.AddSingleton<IAddChatCommandRepository, AddChatCommandRepository>();

@@ -14,19 +14,25 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public void Store(Guid channelRewardId, string redeemedBy)
+        public void Store(Guid channelRewardsRedemptionId, Guid channelRewardId, string redeemedBy, bool processed)
         {
             using (var context = _chatbotContextFactory.Create())
             {
-                var redemption = new ChannelRewardRedemption
+                var redemption = context.ChannelRewardRedemptions.Find(channelRewardsRedemptionId);
+
+                if (redemption == null)
                 {
-                    ChannelRewardId = channelRewardId,
-                    Username = redeemedBy,
-                    RedeemedAt = DateTime.Now,
-                    Processed = false
+                    redemption = new ChannelRewardRedemption
+                    {
+                        ChannelRewardId = channelRewardId,
+                        Username = redeemedBy,
+                        RedeemedAt = DateTime.Now
+                    };
+
+                    context.ChannelRewardRedemptions.Add(redemption);
                 };
 
-                context.ChannelRewardRedemptions.Add(redemption);
+                redemption.Processed = processed;
 
                 context.SaveChanges();
             }

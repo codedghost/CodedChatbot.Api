@@ -13,9 +13,9 @@ namespace CoreCodedChatbot.ApiApplication.Commands.ChannelRewards
             _storeChannelRewardRedemptionRepository = storeChannelRewardRedemptionRepository;
         }
 
-        public void Store(Guid channelRewardId, string redeemedBy)
+        public void Store(Guid channelRewardsRedemptionId, Guid channelRewardId, string redeemedBy, bool processed)
         {
-            _storeChannelRewardRedemptionRepository.Store(channelRewardId, redeemedBy);
+            _storeChannelRewardRedemptionRepository.Store(channelRewardsRedemptionId, channelRewardId, redeemedBy, processed);
         }
     }
 }
