@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Counter;
 using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Counter
 {

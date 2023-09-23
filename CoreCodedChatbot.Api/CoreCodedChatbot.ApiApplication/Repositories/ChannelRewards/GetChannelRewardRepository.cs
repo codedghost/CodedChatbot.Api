@@ -2,7 +2,6 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards
 {

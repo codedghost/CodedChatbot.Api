@@ -24,6 +24,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             services.AddSingleton<ISignalRService, SignalRService>();
             services.AddSingleton<IStreamLabsService, StreamLabsService>();
             services.AddSingleton<IVipService, VipService>();
+            services.AddSingleton<IWatchTimeService, WatchTimeService>();
 
             return services;
         }

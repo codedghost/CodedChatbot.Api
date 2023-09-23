@@ -47,7 +47,6 @@ namespace CoreCodedChatbot.ApiApplication.Commands
             services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
             services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
             services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
-            services.AddSingleton<IGiveViewershipBytesCommand, GiveViewershipBytesCommand>();
 
             // Channel Rewards
             services.AddSingleton<ICreateOrUpdateChannelRewardCommand, CreateOrUpdateChannelRewardCommand>();

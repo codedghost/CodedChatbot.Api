@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
-using AutoMapper;
 using CodedGhost.RabbitMQTools;
 using CoreCodedChatbot.ApiApplication.Factories;
 using CoreCodedChatbot.ApiApplication.Interfaces.Factories;

@@ -138,6 +138,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories
             services.AddSingleton<IGiveChannelPointsVipRepository, GiveChannelPointsVipRepository>();
 
             // WatchTime
+            services.AddSingleton<IGetWatchTimeRepository, GetWatchTimeRepository>();
             services.AddSingleton<IUpdateWatchTimeRepository, UpdateWatchTimeRepository>();
 
             return services;
