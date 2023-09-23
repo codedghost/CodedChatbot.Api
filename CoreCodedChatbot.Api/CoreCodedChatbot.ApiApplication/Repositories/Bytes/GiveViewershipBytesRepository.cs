@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
@@ -15,7 +16,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes
             _chatbotContextFactory = chatbotContextFactory;
         }
 
-        public void Give(List<string> usernames)
+        public async Task Give(List<string> usernames)
         {
             using (var context = _chatbotContextFactory.Create())
             {
@@ -27,7 +28,7 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes
                     user.TimeLastInChat = DateTime.UtcNow;
                 }
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

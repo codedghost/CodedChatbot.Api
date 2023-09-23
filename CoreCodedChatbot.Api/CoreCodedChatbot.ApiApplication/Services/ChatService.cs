@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using CodedChatbot.TwitchFactories.Interfaces;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.WatchTime;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Config;
 using Microsoft.Extensions.Logging;
@@ -13,7 +16,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
 {
     public class ChatService : IChatService
     {
-        private readonly IGiveViewershipBytesCommand _giveViewershipBytesCommand;
+        private readonly IGiveViewershipBytesRepository _giveViewershipBytesRepository;
+        private readonly IUpdateWatchTimeRepository _updateWatchTimeRepository;
         private readonly IGetStreamStatusQuery _getStreamStatusQuery;
         private readonly IConfigService _configService;
         private readonly ITwitchAPI _twitchApi;
@@ -21,13 +25,15 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private Timer _checkChatTimer;
 
         public ChatService(
-            IGiveViewershipBytesCommand giveViewershipBytesCommand,
+            IGiveViewershipBytesRepository giveViewershipBytesRepository,
+            IUpdateWatchTimeRepository updateWatchTimeRepository,
             IGetStreamStatusQuery getStreamStatusQuery,
             IConfigService configService,
             ITwitchApiFactory twitchApiFactory,
             ILogger<IChatService> logger)
         {
-            _giveViewershipBytesCommand = giveViewershipBytesCommand;
+            _giveViewershipBytesRepository = giveViewershipBytesRepository;
+            _updateWatchTimeRepository = updateWatchTimeRepository;
             _getStreamStatusQuery = getStreamStatusQuery;
             _configService = configService;
             _twitchApi = twitchApiFactory.Get();
@@ -36,13 +42,13 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
         public void Initialise()
         {
-            _checkChatTimer = new Timer(e => { CheckChat(); },
+            _checkChatTimer = new Timer(e => { CheckChat().Wait(); },
                 null,
                 TimeSpan.Zero,
                 TimeSpan.FromMinutes(1));
         }
 
-        private async void CheckChat()
+        private async Task CheckChat()
         {
             try
             {
@@ -59,7 +65,8 @@ namespace CoreCodedChatbot.ApiApplication.Services
 
                     var chatters = chattersResponse.Data.Select(d => d.UserLogin).ToList();
                     
-                    _giveViewershipBytesCommand.Give(chatters);
+                    await _giveViewershipBytesRepository.Give(chatters);
+                    await _updateWatchTimeRepository.Update(chatters);
                 }
             }
             catch (Exception e)

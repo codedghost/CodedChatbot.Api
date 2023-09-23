@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes
 {
     public interface IGiveViewershipBytesRepository
     {
-        void Give(List<string> usernames);
+        Task Give(List<string> usernames);
     }
 }

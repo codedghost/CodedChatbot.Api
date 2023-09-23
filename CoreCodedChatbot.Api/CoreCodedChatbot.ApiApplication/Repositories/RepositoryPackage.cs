@@ -12,6 +12,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.WatchTime;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
@@ -27,6 +28,7 @@ using CoreCodedChatbot.ApiApplication.Repositories.Settings;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Repositories.Vip;
+using CoreCodedChatbot.ApiApplication.Repositories.WatchTime;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories
@@ -134,6 +136,9 @@ namespace CoreCodedChatbot.ApiApplication.Repositories
             services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
             services.AddSingleton<IUseVipRepository, UseVipRepository>();
             services.AddSingleton<IGiveChannelPointsVipRepository, GiveChannelPointsVipRepository>();
+
+            // WatchTime
+            services.AddSingleton<IUpdateWatchTimeRepository, UpdateWatchTimeRepository>();
 
             return services;
         }
