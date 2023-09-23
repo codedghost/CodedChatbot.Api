@@ -14,7 +14,7 @@
     <PackageReference Include="CodedGhost.AzureServiceBus" Version="1.0.1189" />
     <PackageReference Include="CodedGhost.Config" Version="1.0.1191" />
     <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1150" />
-    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1194" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1203" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.1067" />
     <PackageReference Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
@@ -35,6 +35,7 @@
     <Folder Include="Queries\ChannelRewards\" />
     <Folder Include="Repositories\Abstractions\" />
     <Folder Include="Repositories\Counter\" />
+    <Folder Include="Repositories\WatchTime\" />
   </ItemGroup>
 
 </Project>
