@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +29,7 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
         return dbSet;
     }
 
-    public async Task<List<TDbEntity>> GetAllPagedAsync(
+    public async Task<PagedResult<TDbEntity>> GetAllPagedAsync(
         int? page,
         int? pageSize,
         string? orderByColumnName,
@@ -48,11 +47,17 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
             orderByColumnName = DbSetExtensions.GetKeyField(typeof(TDbEntity));
 
         var query = filterByColumn == null ? dbSet.AsQueryable() : dbSet.FilterBy(filterByColumn, filterValue);
-        //query = !descValue ? query.OrderBy(orderByColumnName) : query.OrderByDescending(orderByColumnName);
+        query = !descValue ? query.OrderBy(orderByColumnName) : query.OrderByDescending(orderByColumnName);
+
+        var total = await query.CountAsync();
 
         query = query.Skip(pageValue * pageSizeValue).Take(pageSizeValue);
 
-        return await query.ToListAsync();
+        return new PagedResult<TDbEntity>
+        {
+            Result = await query.ToListAsync(),
+            Total = total
+        };
     }
 
     public async Task<TDbEntity> GetByIdAsync<TKeyType>(TKeyType id) where TKeyType : notnull

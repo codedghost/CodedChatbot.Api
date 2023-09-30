@@ -99,20 +99,33 @@ namespace CoreCodedChatbot.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetQuotes(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, string? filterByValue)
+        public async Task<IActionResult> GetQuotes(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumnName, string? filterByValue)
         {
             try
             {
-                var quotes = await _quoteService.GetQuotes(page, pageSize, orderByColumnName, desc, filterByColumn, filterByValue);
+                var quotesResponse = await _quoteService.GetQuotes(page, pageSize, orderByColumnName, desc, filterByColumnName, filterByValue);
 
-                return Json(new GetQuotesResponse
-                {
-                    Quotes = quotes
-                });
+                return Json(quotesResponse);
             }
             catch (Exception e)
             {
                 _logger.Log(LogLevel.Error, e, "Error when retrieving quote list");
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendQuoteToChat([FromBody] SendQuoteToChatRequest request)
+        {
+            try
+            {
+                var success = await _quoteService.SendQuoteToChat(request.QuoteId, request.Username);
+
+                return Json(success);
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error when sending message to chat");
                 return BadRequest();
             }
         }

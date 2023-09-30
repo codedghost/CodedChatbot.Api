@@ -2,12 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CodedChatbot.ServiceBusContract;
 using CodedChatbot.TwitchFactories.Interfaces;
+using CodedGhost.AzureServiceBus.Abstractions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.WatchTime;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Api.Interfaces;
 
@@ -19,6 +22,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
         private readonly IUpdateWatchTimeRepository _updateWatchTimeRepository;
         private readonly IGetStreamStatusQuery _getStreamStatusQuery;
         private readonly IConfigService _configService;
+        private readonly ISecretService _secretService;
         private readonly ITwitchAPI _twitchApi;
         private readonly ILogger<IChatService> _logger;
         private Timer _checkChatTimer;
@@ -28,6 +32,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             IUpdateWatchTimeRepository updateWatchTimeRepository,
             IGetStreamStatusQuery getStreamStatusQuery,
             IConfigService configService,
+            ISecretService secretService,
             ITwitchApiFactory twitchApiFactory,
             ILogger<IChatService> logger)
         {
@@ -35,6 +40,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             _updateWatchTimeRepository = updateWatchTimeRepository;
             _getStreamStatusQuery = getStreamStatusQuery;
             _configService = configService;
+            _secretService = secretService;
             _twitchApi = twitchApiFactory.Get();
             _logger = logger;
         }
@@ -45,6 +51,19 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 null,
                 TimeSpan.Zero,
                 TimeSpan.FromMinutes(1));
+        }
+
+        public async Task<bool> SendMessage(string message)
+        {
+            var sender = new CodedServiceBusSender<TwitchChat>(_secretService);
+
+            await sender.SendMessageAsync(new TwitchChat
+            {
+                SendingApplication = "CodedChatbot.Api",
+                Message = message
+            });
+
+            return true;
         }
 
         private async Task CheckChat()

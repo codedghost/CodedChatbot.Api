@@ -1,7 +1,6 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
-using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 
