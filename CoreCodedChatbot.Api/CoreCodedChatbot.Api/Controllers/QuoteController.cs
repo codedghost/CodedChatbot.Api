@@ -129,5 +129,21 @@ namespace CoreCodedChatbot.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteQuote(int quoteId, string username)
+        {
+            try
+            {
+                await _quoteService.RemoveQuote(quoteId, username, true);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.Log(LogLevel.Error, e, "Error when archiving quote");
+                return BadRequest();
+            }
+        }
     }
 }
