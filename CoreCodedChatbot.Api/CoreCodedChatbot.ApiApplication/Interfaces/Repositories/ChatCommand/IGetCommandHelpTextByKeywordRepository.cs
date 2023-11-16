@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
+
+public interface IGetCommandHelpTextByKeywordRepository
 {
-    public interface IGetCommandHelpTextByKeywordRepository
-    {
-        string Get(string keyword);
-    }
+    string Get(string keyword);
 }

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
+
+public interface IGetDevOpsWorkItemIdsFromQueryId
 {
-    public interface IGetDevOpsWorkItemIdsFromQueryId
-    {
-        Task<List<int>> Get(WorkItemTrackingHttpClient client, Guid queryId);
-    }
+    Task<List<int>> Get(WorkItemTrackingHttpClient client, Guid queryId);
 }

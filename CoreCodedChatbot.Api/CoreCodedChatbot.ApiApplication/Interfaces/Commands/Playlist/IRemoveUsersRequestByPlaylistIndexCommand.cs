@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IRemoveUsersRequestByPlaylistIndexCommand
 {
-    public interface IRemoveUsersRequestByPlaylistIndexCommand
-    {
-        Task<bool> Remove(string username, int playlistPosition);
-    }
+    Task<bool> Remove(string username, int playlistPosition);
 }

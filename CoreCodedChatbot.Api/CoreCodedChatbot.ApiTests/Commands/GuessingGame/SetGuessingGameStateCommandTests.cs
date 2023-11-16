@@ -5,31 +5,30 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame
+namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame;
+
+[TestFixture]
+public class SetGuessingGameStateCommandTests
 {
-    [TestFixture]
-    public class SetGuessingGameStateCommandTests
+    private Mock<ISetOrCreateSettingRepository> _setOrCreateSettingRepository;
+
+    private SetGuessingGameStateCommand _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<ISetOrCreateSettingRepository> _setOrCreateSettingRepository;
+        _setOrCreateSettingRepository = new Mock<ISetOrCreateSettingRepository>();
 
-        private SetGuessingGameStateCommand _subject;
+        _subject = new SetGuessingGameStateCommand(_setOrCreateSettingRepository.Object);
+    }
 
-        [SetUp]
-        public void Setup()
-        {
-            _setOrCreateSettingRepository = new Mock<ISetOrCreateSettingRepository>();
+    [Test, AutoData]
+    public void SuccessWhen_SettingRepositoryCalledWithCorrectValue(bool value)
+    {
+        var text = value.ToString().ToLower();
 
-            _subject = new SetGuessingGameStateCommand(_setOrCreateSettingRepository.Object);
-        }
+        _subject.Set(value);
 
-        [Test, AutoData]
-        public void SuccessWhen_SettingRepositoryCalledWithCorrectValue(bool value)
-        {
-            var text = value.ToString().ToLower();
-
-            _subject.Set(value);
-
-            _setOrCreateSettingRepository.Verify(s => s.Set(SettingsKeys.GuessingGameStateSettingKey, text));
-        }
+        _setOrCreateSettingRepository.Verify(s => s.Set(SettingsKeys.GuessingGameStateSettingKey, text));
     }
 }

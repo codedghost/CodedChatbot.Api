@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+
+public interface IGiveChannelPointsVipCommand
 {
-    public interface IGiveChannelPointsVipCommand
-    {
-        void GiveChannelPointsVip(string username);
-    }
+    void GiveChannelPointsVip(string username);
 }

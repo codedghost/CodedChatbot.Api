@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
+
+public interface ISaveSearchSynonymRequestCommand
 {
-    public interface ISaveSearchSynonymRequestCommand
-    {
-        bool Save(string synonymRequest, string username);
-    }
+    bool Save(string synonymRequest, string username);
 }

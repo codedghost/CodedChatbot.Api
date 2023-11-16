@@ -1,10 +1,9 @@
 ﻿using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
+
+public interface IMapWorkItemToParentWorkItemCommand
 {
-    public interface IMapWorkItemToParentWorkItemCommand
-    {
-        DevOpsWorkItem Map(WorkItem parentWorkItem);
-    }
+    DevOpsWorkItem Map(WorkItem parentWorkItem);
 }

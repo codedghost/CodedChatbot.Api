@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface IGetUsersFormattedRequestsQuery
 {
-    public interface IGetUsersFormattedRequestsQuery
-    {
-        List<string> GetUsersFormattedRequests(string username);
-    }
+    List<string> GetUsersFormattedRequests(string username);
 }

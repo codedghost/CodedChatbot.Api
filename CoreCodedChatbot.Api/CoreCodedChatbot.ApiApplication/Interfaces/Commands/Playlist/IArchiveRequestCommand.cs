@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IArchiveRequestCommand
 {
-    public interface IArchiveRequestCommand
-    {
-        Task ArchiveRequest(int requestId, bool refundVip);
-    }
+    Task ArchiveRequest(int requestId, bool refundVip);
 }

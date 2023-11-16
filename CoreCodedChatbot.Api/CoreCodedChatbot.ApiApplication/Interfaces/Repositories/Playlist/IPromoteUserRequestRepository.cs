@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IPromoteUserRequestRepository
 {
-    public interface IPromoteUserRequestRepository
-    {
-        int PromoteUserRequest(string username, int songRequestId, bool useSuperVip = false);
-    }
+    int PromoteUserRequest(string username, int songRequestId, bool useSuperVip = false);
 }

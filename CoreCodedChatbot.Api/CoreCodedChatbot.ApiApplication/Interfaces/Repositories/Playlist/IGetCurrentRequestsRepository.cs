@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IGetCurrentRequestsRepository
 {
-    public interface IGetCurrentRequestsRepository
-    {
-        CurrentRequestsIntermediate GetCurrentRequests();
-    }
+    CurrentRequestsIntermediate GetCurrentRequests();
 }

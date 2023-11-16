@@ -2,22 +2,21 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Queries.Playlist;
+
+public class GetSingleSongRequestIdQuery : IGetSingleSongRequestIdQuery
 {
-    public class GetSingleSongRequestIdQuery : IGetSingleSongRequestIdQuery
+    private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
+
+    public GetSingleSongRequestIdQuery(
+        IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository
+    )
     {
-        private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
+        _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
+    }
 
-        public GetSingleSongRequestIdQuery(
-            IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository
-            )
-        {
-            _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
-        }
-
-        public int Get(string username, SongRequestType songRequestType)
-        {
-            return _getSingleSongRequestIdRepository.Get(username, songRequestType);
-        }
+    public int Get(string username, SongRequestType songRequestType)
+    {
+        return _getSingleSongRequestIdRepository.Get(username, songRequestType);
     }
 }

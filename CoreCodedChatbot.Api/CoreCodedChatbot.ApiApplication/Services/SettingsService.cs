@@ -1,20 +1,19 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
-namespace CoreCodedChatbot.ApiApplication.Services
+namespace CoreCodedChatbot.ApiApplication.Services;
+
+public class SettingsService : ISettingsService
 {
-    public class SettingsService : ISettingsService
+    private readonly IUpdateSettingsCommand _updateSettingsCommand;
+
+    public SettingsService(IUpdateSettingsCommand updateSettingsCommand)
     {
-        private readonly IUpdateSettingsCommand _updateSettingsCommand;
+        _updateSettingsCommand = updateSettingsCommand;
+    }
 
-        public SettingsService(IUpdateSettingsCommand updateSettingsCommand)
-        {
-            _updateSettingsCommand = updateSettingsCommand;
-        }
-
-        public void Update(string key, string value)
-        {
-            _updateSettingsCommand.Update(key, value);
-        }
+    public void Update(string key, string value)
+    {
+        _updateSettingsCommand.Update(key, value);
     }
 }

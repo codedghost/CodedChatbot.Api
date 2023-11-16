@@ -1,24 +1,23 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.ChatCommand
+namespace CoreCodedChatbot.ApiApplication.Queries.ChatCommand;
+
+public class GetCommandHelpTextByKeywordQuery : IGetCommandHelpTextByKeywordQuery
 {
-    public class GetCommandHelpTextByKeywordQuery : IGetCommandHelpTextByKeywordQuery
+    private readonly IGetCommandHelpTextByKeywordRepository _getCommandHelpTextByKeywordRepository;
+
+    public GetCommandHelpTextByKeywordQuery(
+        IGetCommandHelpTextByKeywordRepository getCommandHelpTextByKeywordRepository
+    )
     {
-        private readonly IGetCommandHelpTextByKeywordRepository _getCommandHelpTextByKeywordRepository;
+        _getCommandHelpTextByKeywordRepository = getCommandHelpTextByKeywordRepository;
+    }
 
-        public GetCommandHelpTextByKeywordQuery(
-            IGetCommandHelpTextByKeywordRepository getCommandHelpTextByKeywordRepository
-            )
-        {
-            _getCommandHelpTextByKeywordRepository = getCommandHelpTextByKeywordRepository;
-        }
+    public string Get(string keyword)
+    {
+        var helpText = _getCommandHelpTextByKeywordRepository.Get(keyword);
 
-        public string Get(string keyword)
-        {
-            var helpText = _getCommandHelpTextByKeywordRepository.Get(keyword);
-
-            return helpText;
-        }
+        return helpText;
     }
 }

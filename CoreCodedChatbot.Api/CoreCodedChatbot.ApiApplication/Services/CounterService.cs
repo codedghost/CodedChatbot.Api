@@ -6,53 +6,52 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.Database.Context.Models;
 using ApiCounter = CoreCodedChatbot.ApiContract.ResponseModels.Counters.ChildModels.Counter;
 
-namespace CoreCodedChatbot.ApiApplication.Services
+namespace CoreCodedChatbot.ApiApplication.Services;
+
+public class CounterService : ICounterService
 {
-    public class CounterService : ICounterService
+    private readonly ICounterRepository _counterRepository;
+    private readonly IMapper _mapper;
+
+    public CounterService(
+        ICounterRepository counterRepository,
+        IMapper mapper)
     {
-        private readonly ICounterRepository _counterRepository;
-        private readonly IMapper _mapper;
+        _counterRepository = counterRepository;
+        _mapper = mapper;
+    }
 
-        public CounterService(
-            ICounterRepository counterRepository,
-            IMapper mapper)
+    public async Task CreateCounter(string counterName, string? counterPreText, int? initialCountValue)
+    {
+        var newEntity = new Counter
         {
-            _counterRepository = counterRepository;
-            _mapper = mapper;
-        }
+            CounterName = counterName,
+            CounterSuffix = counterPreText ?? "Oofs",
+            CounterValue = initialCountValue ?? 0
+        };
 
-        public async Task CreateCounter(string counterName, string? counterPreText, int? initialCountValue)
-        {
-            var newEntity = new Counter
-            {
-                CounterName = counterName,
-                CounterSuffix = counterPreText ?? "Oofs",
-                CounterValue = initialCountValue ?? 0
-            };
+        await _counterRepository.CreateAsync(newEntity);
+    }
 
-            await _counterRepository.CreateAsync(newEntity);
-        }
+    public async Task<ApiCounter> GetCounter(string counterName)
+    {
+        var counter = await _counterRepository.GetByIdAsync(counterName);
 
-        public async Task<ApiCounter> GetCounter(string counterName)
-        {
-            var counter = await _counterRepository.GetByIdAsync(counterName);
+        return _mapper.Map<ApiCounter>(counter);
+    }
 
-            return _mapper.Map<ApiCounter>(counter);
-        }
+    public async Task<List<ApiCounter>> GetCounters(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue)
+    {
+        var counters = await _counterRepository.GetAllPagedAsync(page, pageSize, orderByColumnName, desc,
+            filterByColumn, filterValue);
 
-        public async Task<List<ApiCounter>> GetCounters(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue)
-        {
-            var counters = await _counterRepository.GetAllPagedAsync(page, pageSize, orderByColumnName, desc,
-                filterByColumn, filterValue);
+        return _mapper.Map<List<ApiCounter>>(counters);
+    }
 
-            return _mapper.Map<List<ApiCounter>>(counters);
-        }
+    public async Task<ApiCounter> UpdateCounter(string counterName)
+    {
+        var counter = await _counterRepository.UpdateCounter(counterName);
 
-        public async Task<ApiCounter> UpdateCounter(string counterName)
-        {
-            var counter = await _counterRepository.UpdateCounter(counterName);
-
-            return _mapper.Map<ApiCounter>(counter);
-        }
+        return _mapper.Map<ApiCounter>(counter);
     }
 }

@@ -5,32 +5,31 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
+
+public class GetAllBacklogWorkItemsQuery : IGetAllBacklogWorkItemsQuery
 {
-    public class GetAllBacklogWorkItemsQuery : IGetAllBacklogWorkItemsQuery
+    private readonly IAzureDevOpsService _azureDevOpsService;
+    private readonly IMapWorkItemToParentWorkItemCommand _mapWorkItemToParentWorkItemCommand;
+
+    public GetAllBacklogWorkItemsQuery(
+        IAzureDevOpsService azureDevOpsService,
+        IMapWorkItemToParentWorkItemCommand mapWorkItemToParentWorkItemCommand
+    )
     {
-        private readonly IAzureDevOpsService _azureDevOpsService;
-        private readonly IMapWorkItemToParentWorkItemCommand _mapWorkItemToParentWorkItemCommand;
+        _azureDevOpsService = azureDevOpsService;
+        _mapWorkItemToParentWorkItemCommand = mapWorkItemToParentWorkItemCommand;
+    }
 
-        public GetAllBacklogWorkItemsQuery(
-            IAzureDevOpsService azureDevOpsService,
-            IMapWorkItemToParentWorkItemCommand mapWorkItemToParentWorkItemCommand
-            )
+    public async Task<GetAllBacklogWorkItemsResponse> Get()
+    {
+        var backlogItems = await _azureDevOpsService.GetBacklogWorkItems();
+
+        var mappedItems = backlogItems.Select(_mapWorkItemToParentWorkItemCommand.Map);
+
+        return new GetAllBacklogWorkItemsResponse
         {
-            _azureDevOpsService = azureDevOpsService;
-            _mapWorkItemToParentWorkItemCommand = mapWorkItemToParentWorkItemCommand;
-        }
-
-        public async Task<GetAllBacklogWorkItemsResponse> Get()
-        {
-            var backlogItems = await _azureDevOpsService.GetBacklogWorkItems();
-
-            var mappedItems = backlogItems.Select(_mapWorkItemToParentWorkItemCommand.Map);
-
-            return new GetAllBacklogWorkItemsResponse
-            {
-                WorkItems = mappedItems.ToList()
-            };
-        }
+            WorkItems = mappedItems.ToList()
+        };
     }
 }

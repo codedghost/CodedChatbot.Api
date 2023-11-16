@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
+
+public interface IGetWorkItemByIdQuery
 {
-    public interface IGetWorkItemByIdQuery
-    {
-        Task<DevOpsWorkItem> Get(int id);
-    }
+    Task<DevOpsWorkItem> Get(int id);
 }

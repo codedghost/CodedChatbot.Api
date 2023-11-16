@@ -22,66 +22,65 @@ using CoreCodedChatbot.ApiApplication.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoreCodedChatbot.ApiApplication.Queries
+namespace CoreCodedChatbot.ApiApplication.Queries;
+
+public static class QueryPackage
 {
-    public static class QueryPackage
+    public static IServiceCollection AddApiQueries(this IServiceCollection services)
     {
-        public static IServiceCollection AddApiQueries(this IServiceCollection services)
-        {
-            // Azure DevOps
-            services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
-            services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
-            services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
-            services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
-            services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
+        // Azure DevOps
+        services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
+        services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
+        services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
+        services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
+        services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
 
-            // Bytes
-            services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
+        // Bytes
+        services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
 
-            // Channel Points
-            services.AddSingleton<IGetChannelRewardQuery, GetChannelRewardQuery>();
+        // Channel Points
+        services.AddSingleton<IGetChannelRewardQuery, GetChannelRewardQuery>();
 
-            // Chat Command
-            services.AddSingleton<IGetCommandHelpTextByKeywordQuery, GetCommandHelpTextByKeywordQuery>();
-            services.AddSingleton<IGetCommandTextByKeywordQuery, GetCommandTextByKeywordQuery>();
+        // Chat Command
+        services.AddSingleton<IGetCommandHelpTextByKeywordQuery, GetCommandHelpTextByKeywordQuery>();
+        services.AddSingleton<IGetCommandTextByKeywordQuery, GetCommandTextByKeywordQuery>();
 
-            // Client Ids
-            services.AddSingleton<IGetClientIdsQuery, GetClientIdsQuery>();
+        // Client Ids
+        services.AddSingleton<IGetClientIdsQuery, GetClientIdsQuery>();
 
-            // Guessing Game
-            services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
-            services.AddSingleton<IGetPotentialWinnersQuery, GetPotentialWinnersQuery>();
+        // Guessing Game
+        services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
+        services.AddSingleton<IGetPotentialWinnersQuery, GetPotentialWinnersQuery>();
 
-            // Playlist
-            services.AddSingleton<ICheckUserHasMaxRegularsInQueueQuery, CheckUserHasMaxRegularsInQueueQuery>();
-            services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
-            services.AddSingleton<IGetMaxRegularRequestCountQuery, GetMaxRegularRequestCountQuery>();
-            services.AddSingleton<IGetPlaylistStateQuery, GetPlaylistStateQuery>();
-            services.AddSingleton<IGetSingleSongRequestIdQuery, GetSingleSongRequestIdQuery>();
-            services.AddSingleton<IGetSongRequestByIdQuery, GetSongRequestByIdQuery>();
-            services.AddSingleton<IGetTopTenRequestsQuery, GetTopTenRequestsQuery>();
-            services.AddSingleton<IGetUsersCurrentRequestCountsQuery, GetUsersCurrentRequestCountsQuery>();
-            services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
-            services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
-            services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
+        // Playlist
+        services.AddSingleton<ICheckUserHasMaxRegularsInQueueQuery, CheckUserHasMaxRegularsInQueueQuery>();
+        services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();
+        services.AddSingleton<IGetMaxRegularRequestCountQuery, GetMaxRegularRequestCountQuery>();
+        services.AddSingleton<IGetPlaylistStateQuery, GetPlaylistStateQuery>();
+        services.AddSingleton<IGetSingleSongRequestIdQuery, GetSingleSongRequestIdQuery>();
+        services.AddSingleton<IGetSongRequestByIdQuery, GetSongRequestByIdQuery>();
+        services.AddSingleton<IGetTopTenRequestsQuery, GetTopTenRequestsQuery>();
+        services.AddSingleton<IGetUsersCurrentRequestCountsQuery, GetUsersCurrentRequestCountsQuery>();
+        services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
+        services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
+        services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
 
-            // Search
-            services.AddSingleton<IGetPriorityChartFromSearchResultsQuery, GetPriorityChartFromSearchResultsQuery>();
-            services.AddSingleton<IGetSongBySearchIdQuery, GetSongBySearchIdQuery>();
-            services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
+        // Search
+        services.AddSingleton<IGetPriorityChartFromSearchResultsQuery, GetPriorityChartFromSearchResultsQuery>();
+        services.AddSingleton<IGetSongBySearchIdQuery, GetSongBySearchIdQuery>();
+        services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
 
-            // StreamLabs
-            services.AddSingleton<IGetRecentDonationsQuery, GetRecentDonationsQuery>();
+        // StreamLabs
+        services.AddSingleton<IGetRecentDonationsQuery, GetRecentDonationsQuery>();
 
-            // Stream Status
-            services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
+        // Stream Status
+        services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
 
-            // Vip
-            services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();
-            services.AddSingleton<IGetUsersGiftedVipsQuery, GetUsersGiftedVipsQuery>();
-            services.AddSingleton<IGetUserVipCountQuery, GetUserVipCountQuery>();
+        // Vip
+        services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();
+        services.AddSingleton<IGetUsersGiftedVipsQuery, GetUsersGiftedVipsQuery>();
+        services.AddSingleton<IGetUserVipCountQuery, GetUserVipCountQuery>();
 
-            return services;
-        }
+        return services;
     }
 }

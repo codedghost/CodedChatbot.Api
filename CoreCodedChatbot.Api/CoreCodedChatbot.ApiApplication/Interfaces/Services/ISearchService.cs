@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+
+public interface ISearchService
 {
-    public interface ISearchService
-    {
-        bool SaveSearchSynonymRequest(SaveSearchSynonymRequest request);
-        Task DownloadSongToOneDrive(int requestSongId);
-        Task<int> FindChartAndDownload(string requestText);
-    }
+    bool SaveSearchSynonymRequest(SaveSearchSynonymRequest request);
+    Task DownloadSongToOneDrive(int requestSongId);
+    Task<int> FindChartAndDownload(string requestText);
 }

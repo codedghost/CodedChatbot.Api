@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
+
+public interface IGetUserByteCountQuery
 {
-    public interface IGetUserByteCountQuery
-    {
-        string Get(string username);
-    }
+    string Get(string username);
 }

@@ -3,28 +3,27 @@ using System.Reflection;
 using AutoFixture.Kernel;
 using Microsoft.VisualStudio.Services.WebApi;
 
-namespace CoreCodedChatbot.ApiTests.TestExtensions
-{
-    public class IgnoreVirtualMembers : ISpecimenBuilder
-    {
-        public Type ReflectedType { get; }
+namespace CoreCodedChatbot.ApiTests.TestExtensions;
 
-        public object Create(object request, ISpecimenContext context)
+public class IgnoreVirtualMembers : ISpecimenBuilder
+{
+    public Type ReflectedType { get; }
+
+    public object Create(object request, ISpecimenContext context)
+    {
+        var pi = request as PropertyInfo;
+        if (pi != null)
         {
-            var pi = request as PropertyInfo;
-            if (pi != null)
+            if (this.ReflectedType == null ||
+                this.ReflectedType == pi.ReflectedType)
             {
-                if (this.ReflectedType == null ||
-                    this.ReflectedType == pi.ReflectedType)
+                if (pi.GetGetMethod().IsVirtual)
                 {
-                    if (pi.GetGetMethod().IsVirtual)
-                    {
-                        return new OmitSpecimen();
-                    }
+                    return new OmitSpecimen();
                 }
             }
-
-            return new NoSpecimen();
         }
+
+        return new NoSpecimen();
     }
 }

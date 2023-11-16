@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+
+public interface ICloseGuessingGameRepository
 {
-    public interface ICloseGuessingGameRepository
-    {
-        bool Close();
-    }
+    bool Close();
 }

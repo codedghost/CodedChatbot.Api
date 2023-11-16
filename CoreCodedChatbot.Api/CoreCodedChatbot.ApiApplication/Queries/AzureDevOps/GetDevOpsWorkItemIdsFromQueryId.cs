@@ -7,33 +7,32 @@ using Microsoft.Extensions.Logging;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
+
+public class GetDevOpsWorkItemIdsFromQueryId : IGetDevOpsWorkItemIdsFromQueryId
 {
-    public class GetDevOpsWorkItemIdsFromQueryId : IGetDevOpsWorkItemIdsFromQueryId
+    private readonly ILogger<GetDevOpsWorkItemIdsFromQueryId> _logger;
+
+    public GetDevOpsWorkItemIdsFromQueryId(ILogger<GetDevOpsWorkItemIdsFromQueryId> logger)
     {
-        private readonly ILogger<GetDevOpsWorkItemIdsFromQueryId> _logger;
+        _logger = logger;
+    }
 
-        public GetDevOpsWorkItemIdsFromQueryId(ILogger<GetDevOpsWorkItemIdsFromQueryId> logger)
+    public async Task<List<int>> Get(WorkItemTrackingHttpClient client, Guid queryId)
+    {
+        try
         {
-            _logger = logger;
+            var queryResult = await client.QueryByIdAsync(queryId);
+
+            if (queryResult == null || !queryResult.WorkItems.Any())
+                return new List<int>();
+
+            return queryResult.WorkItems.Select(wi => wi.Id).ToList();
         }
-
-        public async Task<List<int>> Get(WorkItemTrackingHttpClient client, Guid queryId)
+        catch (VssServiceException e)
         {
-            try
-            {
-                var queryResult = await client.QueryByIdAsync(queryId);
-
-                if (queryResult == null || !queryResult.WorkItems.Any())
-                    return new List<int>();
-
-                return queryResult.WorkItems.Select(wi => wi.Id).ToList();
-            }
-            catch (VssServiceException e)
-            {
-                _logger.LogError(e, $"Could not load Dev Ops Query: {queryId}");
-                return null;
-            }
+            _logger.LogError(e, $"Could not load Dev Ops Query: {queryId}");
+            return null;
         }
     }
 }

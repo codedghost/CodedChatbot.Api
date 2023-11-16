@@ -2,33 +2,32 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Search
+namespace CoreCodedChatbot.ApiApplication.Repositories.Search;
+
+public class SaveSearchSynonymRequestRepository : ISaveSearchSynonymRequestRepository
 {
-    public class SaveSearchSynonymRequestRepository : ISaveSearchSynonymRequestRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public SaveSearchSynonymRequestRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public SaveSearchSynonymRequestRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public void Save(string synonymRequest, string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
-
-        public void Save(string synonymRequest, string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
+            var request = new SearchSynonymRequest
             {
-                var request = new SearchSynonymRequest
-                {
-                    SynonymRequest = synonymRequest,
-                    Username = username
-                };
+                SynonymRequest = synonymRequest,
+                Username = username
+            };
 
-                context.SearchSynonymRequests.Add(request);
+            context.SearchSynonymRequests.Add(request);
 
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

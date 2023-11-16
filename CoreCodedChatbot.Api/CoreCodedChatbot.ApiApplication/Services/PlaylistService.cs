@@ -18,679 +18,678 @@ using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace CoreCodedChatbot.ApiApplication.Services
+namespace CoreCodedChatbot.ApiApplication.Services;
+
+public class PlaylistService : IPlaylistService
 {
-    public class PlaylistService : IPlaylistService
+    private readonly IGetSongRequestByIdQuery _getSongRequestByIdQuery;
+    private readonly IGetPlaylistStateQuery _getPlaylistStateQuery;
+    private readonly IAddSongRequestCommand _addSongRequestCommand;
+    private readonly IPromoteRequestCommand _promoteRequestCommand;
+    private readonly IArchiveRequestCommand _archiveRequestCommand;
+    private readonly IRemoveAndRefundAllRequestsCommand _removeAndRefundAllRequestsCommand;
+    private readonly IGetCurrentRequestsQuery _getCurrentRequestsQuery;
+    private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
+    private readonly IGetUsersFormattedRequestsQuery _getUsersFormattedRequestsQuery;
+    private readonly IUpdatePlaylistStateCommand _updatePlaylistStateCommand;
+    private readonly IAddSongToDriveCommand _addSongToDriveCommand;
+    private readonly IGetMaxRegularRequestCountQuery _getMaxRegularRequestCountQuery;
+    private readonly IEditSuperVipCommand _editSuperVipCommand;
+    private readonly IRemoveSuperVipCommand _removeSuperVipCommand;
+    private readonly IGetUsersCurrentRequestCountsQuery _getUsersCurrentRequestCountsQuery;
+    private readonly IRemoveUsersRequestByPlaylistIndexCommand _removeUsersRequestByPlaylistIndexCommand;
+    private readonly IArchiveUsersSingleRequestCommand _archiveUsersSingleRequestCommand;
+    private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
+    private readonly IGetUsersRequestAtPlaylistIndexQuery _getUsersRequestAtPlaylistIndexQuery;
+    private readonly IEditRequestCommand _editRequestCommand;
+    private readonly IGetTopTenRequestsQuery _getTopTenRequestsQuery;
+    private readonly ISecretService _secretService;
+    private readonly IConfigService _configService;
+    private readonly ISignalRService _signalRService;
+    private readonly IRefundVipCommand _refundVipCommand;
+    private readonly ISearchService _searchService;
+
+    private PlaylistItem _currentRequest;
+    private Random _rand;
+
+    private int _currentVipRequestsPlayed = 0;
+    private int _concurrentVipSongsToPlay = 0;
+
+    public PlaylistService(
+        IGetSongRequestByIdQuery getSongRequestByIdQuery,
+        IGetPlaylistStateQuery getPlaylistStateQuery,
+        IAddSongRequestCommand addSongRequestCommand,
+        IPromoteRequestCommand promoteRequestCommand,
+        IArchiveRequestCommand archiveRequestCommand,
+        IRemoveAndRefundAllRequestsCommand removeAndRefundAllRequestsCommand,
+        IGetCurrentRequestsQuery getCurrentRequestsQuery,
+        IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
+        IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery,
+        IUpdatePlaylistStateCommand updatePlaylistStateCommand,
+        IAddSongToDriveCommand addSongToDriveCommand,
+        IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery,
+        IEditSuperVipCommand editSuperVipCommand,
+        IRemoveSuperVipCommand removeSuperVipCommand,
+        IGetUsersCurrentRequestCountsQuery getUsersCurrentRequestCountsQuery,
+        IRemoveUsersRequestByPlaylistIndexCommand removeUsersRequestByPlaylistIndexCommand,
+        IArchiveUsersSingleRequestCommand archiveUsersSingleRequestCommand,
+        IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository,
+        IGetUsersRequestAtPlaylistIndexQuery getUsersRequestAtPlaylistIndexQuery,
+        IEditRequestCommand editRequestCommand,
+        IGetTopTenRequestsQuery getTopTenRequestsQuery,
+        ISecretService secretService,
+        IConfigService configService,
+        ISignalRService signalRService,
+        IRefundVipCommand refundVipCommand,
+        ISearchService searchService
+    )
     {
-        private readonly IGetSongRequestByIdQuery _getSongRequestByIdQuery;
-        private readonly IGetPlaylistStateQuery _getPlaylistStateQuery;
-        private readonly IAddSongRequestCommand _addSongRequestCommand;
-        private readonly IPromoteRequestCommand _promoteRequestCommand;
-        private readonly IArchiveRequestCommand _archiveRequestCommand;
-        private readonly IRemoveAndRefundAllRequestsCommand _removeAndRefundAllRequestsCommand;
-        private readonly IGetCurrentRequestsQuery _getCurrentRequestsQuery;
-        private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
-        private readonly IGetUsersFormattedRequestsQuery _getUsersFormattedRequestsQuery;
-        private readonly IUpdatePlaylistStateCommand _updatePlaylistStateCommand;
-        private readonly IAddSongToDriveCommand _addSongToDriveCommand;
-        private readonly IGetMaxRegularRequestCountQuery _getMaxRegularRequestCountQuery;
-        private readonly IEditSuperVipCommand _editSuperVipCommand;
-        private readonly IRemoveSuperVipCommand _removeSuperVipCommand;
-        private readonly IGetUsersCurrentRequestCountsQuery _getUsersCurrentRequestCountsQuery;
-        private readonly IRemoveUsersRequestByPlaylistIndexCommand _removeUsersRequestByPlaylistIndexCommand;
-        private readonly IArchiveUsersSingleRequestCommand _archiveUsersSingleRequestCommand;
-        private readonly IGetSingleSongRequestIdRepository _getSingleSongRequestIdRepository;
-        private readonly IGetUsersRequestAtPlaylistIndexQuery _getUsersRequestAtPlaylistIndexQuery;
-        private readonly IEditRequestCommand _editRequestCommand;
-        private readonly IGetTopTenRequestsQuery _getTopTenRequestsQuery;
-        private readonly ISecretService _secretService;
-        private readonly IConfigService _configService;
-        private readonly ISignalRService _signalRService;
-        private readonly IRefundVipCommand _refundVipCommand;
-        private readonly ISearchService _searchService;
+        _getSongRequestByIdQuery = getSongRequestByIdQuery;
+        _getPlaylistStateQuery = getPlaylistStateQuery;
+        _addSongRequestCommand = addSongRequestCommand;
+        _promoteRequestCommand = promoteRequestCommand;
+        _archiveRequestCommand = archiveRequestCommand;
+        _removeAndRefundAllRequestsCommand = removeAndRefundAllRequestsCommand;
+        _getCurrentRequestsQuery = getCurrentRequestsQuery;
+        _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
+        _getUsersFormattedRequestsQuery = getUsersFormattedRequestsQuery;
+        _updatePlaylistStateCommand = updatePlaylistStateCommand;
+        _addSongToDriveCommand = addSongToDriveCommand;
+        _getMaxRegularRequestCountQuery = getMaxRegularRequestCountQuery;
+        _editSuperVipCommand = editSuperVipCommand;
+        _removeSuperVipCommand = removeSuperVipCommand;
+        _getUsersCurrentRequestCountsQuery = getUsersCurrentRequestCountsQuery;
+        _removeUsersRequestByPlaylistIndexCommand = removeUsersRequestByPlaylistIndexCommand;
+        _archiveUsersSingleRequestCommand = archiveUsersSingleRequestCommand;
+        _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
+        _getUsersRequestAtPlaylistIndexQuery = getUsersRequestAtPlaylistIndexQuery;
+        _editRequestCommand = editRequestCommand;
+        _getTopTenRequestsQuery = getTopTenRequestsQuery;
+        _secretService = secretService;
+        _configService = configService;
+        _signalRService = signalRService;
+        _refundVipCommand = refundVipCommand;
+        _searchService = searchService;
 
-        private PlaylistItem _currentRequest;
-        private Random _rand;
+        _concurrentVipSongsToPlay = configService.Get<int>("ConcurrentVipSongsToPlay");
 
-        private int _currentVipRequestsPlayed = 0;
-        private int _concurrentVipSongsToPlay = 0;
+        _rand = new Random();
+    }
 
-        public PlaylistService(
-            IGetSongRequestByIdQuery getSongRequestByIdQuery,
-            IGetPlaylistStateQuery getPlaylistStateQuery,
-            IAddSongRequestCommand addSongRequestCommand,
-            IPromoteRequestCommand promoteRequestCommand,
-            IArchiveRequestCommand archiveRequestCommand,
-            IRemoveAndRefundAllRequestsCommand removeAndRefundAllRequestsCommand,
-            IGetCurrentRequestsQuery getCurrentRequestsQuery,
-            IIsSuperVipInQueueQuery isSuperVipInQueueQuery,
-            IGetUsersFormattedRequestsQuery getUsersFormattedRequestsQuery,
-            IUpdatePlaylistStateCommand updatePlaylistStateCommand,
-            IAddSongToDriveCommand addSongToDriveCommand,
-            IGetMaxRegularRequestCountQuery getMaxRegularRequestCountQuery,
-            IEditSuperVipCommand editSuperVipCommand,
-            IRemoveSuperVipCommand removeSuperVipCommand,
-            IGetUsersCurrentRequestCountsQuery getUsersCurrentRequestCountsQuery,
-            IRemoveUsersRequestByPlaylistIndexCommand removeUsersRequestByPlaylistIndexCommand,
-            IArchiveUsersSingleRequestCommand archiveUsersSingleRequestCommand,
-            IGetSingleSongRequestIdRepository getSingleSongRequestIdRepository,
-            IGetUsersRequestAtPlaylistIndexQuery getUsersRequestAtPlaylistIndexQuery,
-            IEditRequestCommand editRequestCommand,
-            IGetTopTenRequestsQuery getTopTenRequestsQuery,
-            ISecretService secretService,
-            IConfigService configService,
-            ISignalRService signalRService,
-            IRefundVipCommand refundVipCommand,
-            ISearchService searchService
-        )
+    public PlaylistItem GetRequestById(int songId)
+    {
+        var playlistItem = _getSongRequestByIdQuery.GetSongRequestById(songId);
+
+        return playlistItem;
+    }
+
+    public async Task<(AddRequestResult, int)> AddRequest(string username, string commandText, bool vipRequest = false)
+    {
+        var songId = await _searchService.FindChartAndDownload(commandText).ConfigureAwait(false);
+
+        var result = await _addSongRequestCommand.AddSongRequest(username, commandText,
+            vipRequest ? SongRequestType.Vip : SongRequestType.Regular, songId).ConfigureAwait(false);
+
+        if (_currentRequest == null)
         {
-            _getSongRequestByIdQuery = getSongRequestByIdQuery;
-            _getPlaylistStateQuery = getPlaylistStateQuery;
-            _addSongRequestCommand = addSongRequestCommand;
-            _promoteRequestCommand = promoteRequestCommand;
-            _archiveRequestCommand = archiveRequestCommand;
-            _removeAndRefundAllRequestsCommand = removeAndRefundAllRequestsCommand;
-            _getCurrentRequestsQuery = getCurrentRequestsQuery;
-            _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
-            _getUsersFormattedRequestsQuery = getUsersFormattedRequestsQuery;
-            _updatePlaylistStateCommand = updatePlaylistStateCommand;
-            _addSongToDriveCommand = addSongToDriveCommand;
-            _getMaxRegularRequestCountQuery = getMaxRegularRequestCountQuery;
-            _editSuperVipCommand = editSuperVipCommand;
-            _removeSuperVipCommand = removeSuperVipCommand;
-            _getUsersCurrentRequestCountsQuery = getUsersCurrentRequestCountsQuery;
-            _removeUsersRequestByPlaylistIndexCommand = removeUsersRequestByPlaylistIndexCommand;
-            _archiveUsersSingleRequestCommand = archiveUsersSingleRequestCommand;
-            _getSingleSongRequestIdRepository = getSingleSongRequestIdRepository;
-            _getUsersRequestAtPlaylistIndexQuery = getUsersRequestAtPlaylistIndexQuery;
-            _editRequestCommand = editRequestCommand;
-            _getTopTenRequestsQuery = getTopTenRequestsQuery;
-            _secretService = secretService;
-            _configService = configService;
-            _signalRService = signalRService;
-            _refundVipCommand = refundVipCommand;
-            _searchService = searchService;
-
-            _concurrentVipSongsToPlay = configService.Get<int>("ConcurrentVipSongsToPlay");
-
-            _rand = new Random();
-        }
-
-        public PlaylistItem GetRequestById(int songId)
-        {
-            var playlistItem = _getSongRequestByIdQuery.GetSongRequestById(songId);
-
-            return playlistItem;
-        }
-
-        public async Task<(AddRequestResult, int)> AddRequest(string username, string commandText, bool vipRequest = false)
-        {
-            var songId = await _searchService.FindChartAndDownload(commandText).ConfigureAwait(false);
-
-            var result = await _addSongRequestCommand.AddSongRequest(username, commandText,
-                vipRequest ? SongRequestType.Vip : SongRequestType.Regular, songId).ConfigureAwait(false);
-
-            if (_currentRequest == null)
+            _currentRequest = new PlaylistItem
             {
-                _currentRequest = new PlaylistItem
-                {
-                    songRequestId = result.SongRequestId,
-                    songRequestText = result.FormattedSongText,
-                    songRequester = username,
-                    isEvenIndex = false,
-                    isInChat = true,
-                    isVip = vipRequest,
-                    isSuperVip = false,
-                    isInDrive = false
-                };
-            }
-
-            UpdateFullPlaylist();
-
-
-            return (result.AddRequestResult, result.SongIndex);
-        }
-
-        public async Task<AddRequestResult> AddWebRequest(AddWebSongRequest requestSongViewModel, string username)
-        {
-            var requestText =
-                $"{requestSongViewModel.Artist} - {requestSongViewModel.Title} ({requestSongViewModel.SelectedInstrument})";
-
-            var songId = await _searchService.FindChartAndDownload(requestText).ConfigureAwait(false);
-
-            var result = await _addSongRequestCommand.AddSongRequest(username, requestText,
-                requestSongViewModel.IsSuperVip ? SongRequestType.SuperVip :
-                requestSongViewModel.IsVip ? SongRequestType.Vip : SongRequestType.Regular, songId).ConfigureAwait(false);
-
-
-            if (_currentRequest == null)
-            {
-                _currentRequest = new PlaylistItem
-                {
-                    songRequestId = result.SongRequestId,
-                    songRequestText = result.FormattedSongText,
-                    songRequester = username,
-                    isEvenIndex = false,
-                    isInChat = true,
-                    isVip = requestSongViewModel.IsVip,
-                    isSuperVip = requestSongViewModel.IsSuperVip,
-                    isInDrive = false
-                };
-            }
-
-            if (result.AddRequestResult == AddRequestResult.Success)
-                UpdateFullPlaylist();
-
-            return result.AddRequestResult;
-        }
-
-        public PlaylistState GetPlaylistState()
-        {
-            var playlistState = _getPlaylistStateQuery.GetPlaylistState();
-
-            return playlistState;
-        }
-
-        public async Task<PromoteSongResponse> PromoteRequest(string username, int songId, bool useSuperVip)
-        {
-            var result = await _promoteRequestCommand.Promote(username, useSuperVip, songId)
-                .ConfigureAwait(false);
-
-            UpdateFullPlaylist();
-
-            return new PromoteSongResponse
-            {
-                PlaylistIndex = result.PlaylistIndex,
-                PromoteRequestResult = result.PromoteRequestResult
+                songRequestId = result.SongRequestId,
+                songRequestText = result.FormattedSongText,
+                songRequester = username,
+                isEvenIndex = false,
+                isInChat = true,
+                isVip = vipRequest,
+                isSuperVip = false,
+                isInDrive = false
             };
         }
 
-        public async Task<PromoteRequestResult> PromoteWebRequest(int songId, string username)
+        UpdateFullPlaylist();
+
+
+        return (result.AddRequestResult, result.SongIndex);
+    }
+
+    public async Task<AddRequestResult> AddWebRequest(AddWebSongRequest requestSongViewModel, string username)
+    {
+        var requestText =
+            $"{requestSongViewModel.Artist} - {requestSongViewModel.Title} ({requestSongViewModel.SelectedInstrument})";
+
+        var songId = await _searchService.FindChartAndDownload(requestText).ConfigureAwait(false);
+
+        var result = await _addSongRequestCommand.AddSongRequest(username, requestText,
+            requestSongViewModel.IsSuperVip ? SongRequestType.SuperVip :
+            requestSongViewModel.IsVip ? SongRequestType.Vip : SongRequestType.Regular, songId).ConfigureAwait(false);
+
+
+        if (_currentRequest == null)
         {
-            var result = await _promoteRequestCommand.Promote(username, false, songId).ConfigureAwait(false);
-
-            UpdateFullPlaylist();
-
-            return result.PromoteRequestResult;
-        }
-
-        public void ArchiveCurrentRequest(int songId = 0)
-        {
-            var currentRequest = songId == 0 ? _currentRequest :
-                songId == _currentRequest?.songRequestId ? _currentRequest : null;
-
-            if (currentRequest == null) return;
-
-            _archiveRequestCommand.ArchiveRequest(currentRequest.songRequestId, false);
-
-            UpdateFullPlaylist(true);
-        }
-
-        public GetAllSongsResponse GetAllSongs()
-        {
-            var currentRequests = _getCurrentRequestsQuery.GetCurrentRequests();
-
-            var regularRequests = currentRequests.RegularRequests.ToArray();
-            var vipRequests = currentRequests.VipRequests.ToArray();
-
-            // Ensure if the playlist is populated then a request is made current
-            if (_currentRequest == null)
+            _currentRequest = new PlaylistItem
             {
-                if (currentRequests.VipRequests.Any())
-                {
-                    _currentRequest = currentRequests.VipRequests.First();
-
-                    vipRequests = vipRequests.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
-                }
-                else if (currentRequests.RegularRequests.Any())
-                {
-                    _currentRequest =
-                        regularRequests[_rand.Next(0, currentRequests.RegularRequests.Count)];
-                    regularRequests = regularRequests.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
-                }
-            }
-
-            return new GetAllSongsResponse
-            {
-                CurrentSong = _currentRequest,
-                RegularList = regularRequests,
-                VipList = vipRequests
+                songRequestId = result.SongRequestId,
+                songRequestText = result.FormattedSongText,
+                songRequester = username,
+                isEvenIndex = false,
+                isInChat = true,
+                isVip = requestSongViewModel.IsVip,
+                isSuperVip = requestSongViewModel.IsSuperVip,
+                isInDrive = false
             };
         }
 
-        public async Task<bool> ArchiveRequestById(int songId)
-        {
-            await _archiveRequestCommand.ArchiveRequest(songId, true).ConfigureAwait(false);
-
+        if (result.AddRequestResult == AddRequestResult.Success)
             UpdateFullPlaylist();
 
-            return true;
+        return result.AddRequestResult;
+    }
+
+    public PlaylistState GetPlaylistState()
+    {
+        var playlistState = _getPlaylistStateQuery.GetPlaylistState();
+
+        return playlistState;
+    }
+
+    public async Task<PromoteSongResponse> PromoteRequest(string username, int songId, bool useSuperVip)
+    {
+        var result = await _promoteRequestCommand.Promote(username, useSuperVip, songId)
+            .ConfigureAwait(false);
+
+        UpdateFullPlaylist();
+
+        return new PromoteSongResponse
+        {
+            PlaylistIndex = result.PlaylistIndex,
+            PromoteRequestResult = result.PromoteRequestResult
+        };
+    }
+
+    public async Task<PromoteRequestResult> PromoteWebRequest(int songId, string username)
+    {
+        var result = await _promoteRequestCommand.Promote(username, false, songId).ConfigureAwait(false);
+
+        UpdateFullPlaylist();
+
+        return result.PromoteRequestResult;
+    }
+
+    public void ArchiveCurrentRequest(int songId = 0)
+    {
+        var currentRequest = songId == 0 ? _currentRequest :
+            songId == _currentRequest?.songRequestId ? _currentRequest : null;
+
+        if (currentRequest == null) return;
+
+        _archiveRequestCommand.ArchiveRequest(currentRequest.songRequestId, false);
+
+        UpdateFullPlaylist(true);
+    }
+
+    public GetAllSongsResponse GetAllSongs()
+    {
+        var currentRequests = _getCurrentRequestsQuery.GetCurrentRequests();
+
+        var regularRequests = currentRequests.RegularRequests.ToArray();
+        var vipRequests = currentRequests.VipRequests.ToArray();
+
+        // Ensure if the playlist is populated then a request is made current
+        if (_currentRequest == null)
+        {
+            if (currentRequests.VipRequests.Any())
+            {
+                _currentRequest = currentRequests.VipRequests.First();
+
+                vipRequests = vipRequests.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
+            }
+            else if (currentRequests.RegularRequests.Any())
+            {
+                _currentRequest =
+                    regularRequests[_rand.Next(0, currentRequests.RegularRequests.Count)];
+                regularRequests = regularRequests.Where(r => r.songRequestId != _currentRequest.songRequestId).ToArray();
+            }
         }
 
-        public async Task ClearRockRequests()
+        return new GetAllSongsResponse
         {
-            await _removeAndRefundAllRequestsCommand.RemoveAndRefundAllRequests();
+            CurrentSong = _currentRequest,
+            RegularList = regularRequests,
+            VipList = vipRequests
+        };
+    }
+
+    public async Task<bool> ArchiveRequestById(int songId)
+    {
+        await _archiveRequestCommand.ArchiveRequest(songId, true).ConfigureAwait(false);
+
+        UpdateFullPlaylist();
+
+        return true;
+    }
+
+    public async Task ClearRockRequests()
+    {
+        await _removeAndRefundAllRequestsCommand.RemoveAndRefundAllRequests();
             
-            UpdateFullPlaylist();
-        }
+        UpdateFullPlaylist();
+    }
 
-        public async Task<bool> RemoveRockRequests(string username, string commandText, bool isMod)
+    public async Task<bool> RemoveRockRequests(string username, string commandText, bool isMod)
+    {
+        bool success = false;
+
+        // If the command text doesn't parse, we should attempt to remove a regular request
+        if (!int.TryParse(commandText.Trim(), out var playlistIndex))
         {
-            bool success = false;
-
-            // If the command text doesn't parse, we should attempt to remove a regular request
-            if (!int.TryParse(commandText.Trim(), out var playlistIndex))
-            {
-                // remove regular request if it exists
-                if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+            // remove regular request if it exists
+            if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
                     SongRequestType.Regular) == 1)
-                {
-                    success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.Regular, _currentRequest.songRequestId).ConfigureAwait(false);
-                }
-
-                // if true return, otherwise attempt to remove and refund a single vip
-                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
-                {
-                    success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.Vip, _currentRequest.songRequestId).ConfigureAwait(false);
-                }
-
-                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
-                    SongRequestType.SuperVip) == 1)
-                {
-                    success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.SuperVip, _currentRequest.songRequestId).ConfigureAwait(false);
-                }
-
-                return success;
+            {
+                success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.Regular, _currentRequest.songRequestId).ConfigureAwait(false);
             }
 
-            // Remove VIP request using provided playlistIndex.
-            // Query can use existing GetUsersRequestsRepository to get the song request id
-            success = await _removeUsersRequestByPlaylistIndexCommand.Remove(username, playlistIndex).ConfigureAwait(false);
+            // if true return, otherwise attempt to remove and refund a single vip
+            else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
+            {
+                success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.Vip, _currentRequest.songRequestId).ConfigureAwait(false);
+            }
 
-            UpdateFullPlaylist();
+            else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                         SongRequestType.SuperVip) == 1)
+            {
+                success = await _archiveUsersSingleRequestCommand.ArchiveAndRefundVips(username, SongRequestType.SuperVip, _currentRequest.songRequestId).ConfigureAwait(false);
+            }
 
             return success;
         }
 
-        public string GetUserRequests(string username)
+        // Remove VIP request using provided playlistIndex.
+        // Query can use existing GetUsersRequestsRepository to get the song request id
+        success = await _removeUsersRequestByPlaylistIndexCommand.Remove(username, playlistIndex).ConfigureAwait(false);
+
+        UpdateFullPlaylist();
+
+        return success;
+    }
+
+    public string GetUserRequests(string username)
+    {
+        var formattedRequests = _getUsersFormattedRequestsQuery.GetUsersFormattedRequests(username);
+
+        var requestString = formattedRequests.Any()
+            ? string.Join(", ", formattedRequests)
+            : "Looks like you don't have any requests right now. Get some in there! !howtorequest";
+
+        return requestString;
+    }
+
+    public async Task<(bool Success, string SongRequestText, bool SyntaxError)> EditRequest(string username, string commandText, bool isMod)
+    {
+        var songRequestText = string.Empty;
+        var syntaxError = false;
+        if (string.IsNullOrWhiteSpace(commandText))
         {
-            var formattedRequests = _getUsersFormattedRequestsQuery.GetUsersFormattedRequests(username);
-
-            var requestString = formattedRequests.Any()
-                ? string.Join(", ", formattedRequests)
-                : "Looks like you don't have any requests right now. Get some in there! !howtorequest";
-
-            return requestString;
+            syntaxError = true;
+            return (false, songRequestText, syntaxError);
         }
 
-        public async Task<(bool Success, string SongRequestText, bool SyntaxError)> EditRequest(string username, string commandText, bool isMod)
+        var commandTextTerms = commandText.Trim().Split(" ");
+
+        SongRequestType editRequestType;
+        EditRequestResult result;
+
+        // If the command text doesn't parse, we should attempt to edit a regular request
+        if (!int.TryParse(commandTextTerms[0].Trim(), out var playlistIndex))
         {
-            var songRequestText = string.Empty;
-            var syntaxError = false;
-            if (string.IsNullOrWhiteSpace(commandText))
+            songRequestText = commandText;
+
+            // edit regular request if it exists
+            if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                    SongRequestType.Regular) == 1)
             {
+                editRequestType = SongRequestType.Regular;
+            }
+            // if true return, otherwise attempt to edit and refund a single vip
+            else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
+            {
+                editRequestType = SongRequestType.Vip;
+            }
+
+            else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
+                         SongRequestType.SuperVip) == 1)
+            {
+                editRequestType = SongRequestType.SuperVip;
+            }
+            else
+            {
+                songRequestText = string.Empty;
                 syntaxError = true;
                 return (false, songRequestText, syntaxError);
             }
 
-            var commandTextTerms = commandText.Trim().Split(" ");
+            var formattedRequest =
+                FormattedRequest.GetFormattedRequest(songRequestText);
 
-            SongRequestType editRequestType;
-            EditRequestResult result;
-
-            // If the command text doesn't parse, we should attempt to edit a regular request
-            if (!int.TryParse(commandTextTerms[0].Trim(), out var playlistIndex))
+            var songRequestId = _getSingleSongRequestIdRepository.Get(username, editRequestType);
+            var editRequestModel = new EditWebRequestRequestModel
             {
-                songRequestText = commandText;
+                SongRequestId = songRequestId,
+                Title = formattedRequest?.SongName ?? songRequestText,
+                Artist = formattedRequest?.SongArtist ?? string.Empty,
+                SelectedInstrument = formattedRequest?.InstrumentName ?? string.Empty,
+                IsVip = editRequestType == SongRequestType.Vip,
+                IsSuperVip = editRequestType == SongRequestType.SuperVip,
+                Username = username,
+                IsMod = isMod
+            };
 
-                // edit regular request if it exists
-                if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
-                    SongRequestType.Regular) == 1)
-                {
-                    editRequestType = SongRequestType.Regular;
-                }
-                // if true return, otherwise attempt to edit and refund a single vip
-                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username, SongRequestType.Vip) == 1)
-                {
-                    editRequestType = SongRequestType.Vip;
-                }
+            result = await EditWebRequest(editRequestModel).ConfigureAwait(false);
+        }
+        else
+        {
+            songRequestText = string.Join(' ', commandTextTerms);
 
-                else if (_getUsersCurrentRequestCountsQuery.GetUsersCurrentRequestCounts(username,
-                    SongRequestType.SuperVip) == 1)
-                {
-                    editRequestType = SongRequestType.SuperVip;
-                }
-                else
-                {
-                    songRequestText = string.Empty;
-                    syntaxError = true;
-                    return (false, songRequestText, syntaxError);
-                }
+            // Edit request at position playlistIndex
+            var songRequest = _getUsersRequestAtPlaylistIndexQuery.Get(username, playlistIndex,
+                _currentRequest.isSuperVip || _currentRequest.isVip);
 
-                var formattedRequest =
-                    FormattedRequest.GetFormattedRequest(songRequestText);
-
-                var songRequestId = _getSingleSongRequestIdRepository.Get(username, editRequestType);
-                var editRequestModel = new EditWebRequestRequestModel
-                {
-                    SongRequestId = songRequestId,
-                    Title = formattedRequest?.SongName ?? songRequestText,
-                    Artist = formattedRequest?.SongArtist ?? string.Empty,
-                    SelectedInstrument = formattedRequest?.InstrumentName ?? string.Empty,
-                    IsVip = editRequestType == SongRequestType.Vip,
-                    IsSuperVip = editRequestType == SongRequestType.SuperVip,
-                    Username = username,
-                    IsMod = isMod
-                };
-
-                result = await EditWebRequest(editRequestModel).ConfigureAwait(false);
-            }
-            else
+            if (songRequest == null)
             {
-                songRequestText = string.Join(' ', commandTextTerms);
-
-                // Edit request at position playlistIndex
-                var songRequest = _getUsersRequestAtPlaylistIndexQuery.Get(username, playlistIndex,
-                    _currentRequest.isSuperVip || _currentRequest.isVip);
-
-                if (songRequest == null)
-                {
-                    syntaxError = true;
-                    songRequestText = string.Empty;
-                    return (false, songRequestText, syntaxError);
-                }
-
-                var formattedRequest =
-                    FormattedRequest.GetFormattedRequest(commandText);
-                var editRequestModel = new EditWebRequestRequestModel
-                {
-                    SongRequestId = songRequest.SongRequestId,
-                    Title = formattedRequest?.SongName ?? songRequestText,
-                    Artist = formattedRequest?.SongArtist ?? string.Empty,
-                    SelectedInstrument = formattedRequest?.InstrumentName ?? string.Empty,
-                    IsVip = songRequest.IsVip,
-                    IsSuperVip = songRequest.IsSuperVip,
-                    Username = username,
-                    IsMod = isMod
-                };
-
-                result = await EditWebRequest(editRequestModel).ConfigureAwait(false);
+                syntaxError = true;
+                songRequestText = string.Empty;
+                return (false, songRequestText, syntaxError);
             }
 
-            switch (result)
+            var formattedRequest =
+                FormattedRequest.GetFormattedRequest(commandText);
+            var editRequestModel = new EditWebRequestRequestModel
             {
-                case EditRequestResult.NoRequestEntered:
-                case EditRequestResult.NotYourRequest:
-                case EditRequestResult.RequestAlreadyRemoved:
-                    syntaxError = true;
-                    break;
-                default:
-                    syntaxError = false;
-                    break;
-            }
+                SongRequestId = songRequest.SongRequestId,
+                Title = formattedRequest?.SongName ?? songRequestText,
+                Artist = formattedRequest?.SongArtist ?? string.Empty,
+                SelectedInstrument = formattedRequest?.InstrumentName ?? string.Empty,
+                IsVip = songRequest.IsVip,
+                IsSuperVip = songRequest.IsSuperVip,
+                Username = username,
+                IsMod = isMod
+            };
 
-            return (result == EditRequestResult.Success, songRequestText, syntaxError);
+            result = await EditWebRequest(editRequestModel).ConfigureAwait(false);
         }
 
-        public async Task<EditRequestResult> EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel)
+        switch (result)
         {
-            if (editWebRequestRequestModel == null) return EditRequestResult.NoRequestEntered;
-
-            try
-            {
-                var searchTerms =
-                    string.IsNullOrWhiteSpace(editWebRequestRequestModel.Artist) &&
-                    string.IsNullOrWhiteSpace(editWebRequestRequestModel.SelectedInstrument)
-                        ? editWebRequestRequestModel.Title
-                        : $"{editWebRequestRequestModel.Artist} - {editWebRequestRequestModel.Title} ({editWebRequestRequestModel.SelectedInstrument})";
-                var songId = await _searchService.FindChartAndDownload(searchTerms).ConfigureAwait(false);
-
-                _editRequestCommand.Edit(editWebRequestRequestModel, songId);
-
-                UpdateFullPlaylist();
-
-                return EditRequestResult.Success;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return EditRequestResult.NotYourRequest;
-            }
-            catch (Exception)
-            {
-                return EditRequestResult.UnSuccessful;
-            }
+            case EditRequestResult.NoRequestEntered:
+            case EditRequestResult.NotYourRequest:
+            case EditRequestResult.RequestAlreadyRemoved:
+                syntaxError = true;
+                break;
+            default:
+                syntaxError = false;
+                break;
         }
 
-        public bool AddSongToDrive(int songId)
+        return (result == EditRequestResult.Success, songRequestText, syntaxError);
+    }
+
+    public async Task<EditRequestResult> EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel)
+    {
+        if (editWebRequestRequestModel == null) return EditRequestResult.NoRequestEntered;
+
+        try
         {
-            var result = _addSongToDriveCommand.AddSongToDrive(songId);
+            var searchTerms =
+                string.IsNullOrWhiteSpace(editWebRequestRequestModel.Artist) &&
+                string.IsNullOrWhiteSpace(editWebRequestRequestModel.SelectedInstrument)
+                    ? editWebRequestRequestModel.Title
+                    : $"{editWebRequestRequestModel.Artist} - {editWebRequestRequestModel.Title} ({editWebRequestRequestModel.SelectedInstrument})";
+            var songId = await _searchService.FindChartAndDownload(searchTerms).ConfigureAwait(false);
+
+            _editRequestCommand.Edit(editWebRequestRequestModel, songId);
 
             UpdateFullPlaylist();
 
-            return result;
+            return EditRequestResult.Success;
         }
-
-        public async Task<bool> OpenPlaylist()
+        catch (UnauthorizedAccessException)
         {
-            var result = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Open);
-
-            if (result)
-                await _signalRService.UpdatePlaylistState(PlaylistState.Open).ConfigureAwait(false);
-
-            return result;
+            return EditRequestResult.NotYourRequest;
         }
-
-        public async Task<bool> ClosePlaylist()
+        catch (Exception)
         {
-            var updatePlaylistState = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Closed);
-
-            if (updatePlaylistState)
-                await _signalRService.UpdatePlaylistState(PlaylistState.Closed).ConfigureAwait(false);
-
-            return updatePlaylistState;
+            return EditRequestResult.UnSuccessful;
         }
+    }
 
-        public async Task<bool> VeryClosePlaylist()
+    public bool AddSongToDrive(int songId)
+    {
+        var result = _addSongToDriveCommand.AddSongToDrive(songId);
+
+        UpdateFullPlaylist();
+
+        return result;
+    }
+
+    public async Task<bool> OpenPlaylist()
+    {
+        var result = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Open);
+
+        if (result)
+            await _signalRService.UpdatePlaylistState(PlaylistState.Open).ConfigureAwait(false);
+
+        return result;
+    }
+
+    public async Task<bool> ClosePlaylist()
+    {
+        var updatePlaylistState = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.Closed);
+
+        if (updatePlaylistState)
+            await _signalRService.UpdatePlaylistState(PlaylistState.Closed).ConfigureAwait(false);
+
+        return updatePlaylistState;
+    }
+
+    public async Task<bool> VeryClosePlaylist()
+    {
+        var updatePlaylistState = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.VeryClosed);
+
+        if (updatePlaylistState)
+            await _signalRService.UpdatePlaylistState(PlaylistState.VeryClosed).ConfigureAwait(false);
+
+        return updatePlaylistState;
+    }
+
+    public int GetMaxUserRequests()
+    {
+        var result = _getMaxRegularRequestCountQuery.Get();
+
+        return result;
+    }
+
+    public async Task<AddRequestResult> AddSuperVipRequest(string username, string commandText)
+    {
+        var songId = await _searchService.FindChartAndDownload(commandText).ConfigureAwait(false);
+
+        var result = await _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip, songId);
+
+        if (_currentRequest == null)
         {
-            var updatePlaylistState = _updatePlaylistStateCommand.UpdatePlaylistState(PlaylistState.VeryClosed);
-
-            if (updatePlaylistState)
-                await _signalRService.UpdatePlaylistState(PlaylistState.VeryClosed).ConfigureAwait(false);
-
-            return updatePlaylistState;
-        }
-
-        public int GetMaxUserRequests()
-        {
-            var result = _getMaxRegularRequestCountQuery.Get();
-
-            return result;
-        }
-
-        public async Task<AddRequestResult> AddSuperVipRequest(string username, string commandText)
-        {
-            var songId = await _searchService.FindChartAndDownload(commandText).ConfigureAwait(false);
-
-            var result = await _addSongRequestCommand.AddSongRequest(username, commandText, SongRequestType.SuperVip, songId);
-
-            if (_currentRequest == null)
+            _currentRequest = new PlaylistItem
             {
-                _currentRequest = new PlaylistItem
-                {
-                    songRequestId = result.SongRequestId,
-                    songRequestText = commandText,
-                    songRequester = username,
-                    isEvenIndex = false,
-                    isInChat = true,
-                    isVip = true,
-                    isSuperVip = true,
-                    isInDrive = false
-                };
-            }
-
-            UpdateFullPlaylist();
-
-            return result.AddRequestResult;
+                songRequestId = result.SongRequestId,
+                songRequestText = commandText,
+                songRequester = username,
+                isEvenIndex = false,
+                isInChat = true,
+                isVip = true,
+                isSuperVip = true,
+                isInDrive = false
+            };
         }
 
-        public async Task<bool> EditSuperVipRequest(string username, string songText)
+        UpdateFullPlaylist();
+
+        return result.AddRequestResult;
+    }
+
+    public async Task<bool> EditSuperVipRequest(string username, string songText)
+    {
+        var songId = await _searchService.FindChartAndDownload(songText).ConfigureAwait(false);
+
+        var songRequestId = _editSuperVipCommand.Edit(username, songText, songId);
+
+        UpdateFullPlaylist();
+
+        return songRequestId > 0;
+    }
+
+    public async Task<bool> RemoveSuperRequest(string username)
+    {
+        if (string.IsNullOrWhiteSpace(username)) return false;
+
+        await _removeSuperVipCommand.Remove(username).ConfigureAwait(false);
+
+        UpdateFullPlaylist();
+
+        return true;
+    }
+
+    public async void UpdateFullPlaylist(bool updateCurrent = false)
+    {
+        var psk = _secretService.GetSecret<string>("SignalRKey");
+
+        var connection = _signalRService.GetCurrentConnection(APIHubConstants.SongListHubPath);
+
+        if (connection == null) return;
+
+        var requests = GetAllSongs();
+
+        if (updateCurrent)
         {
-            var songId = await _searchService.FindChartAndDownload(songText).ConfigureAwait(false);
-
-            var songRequestId = _editSuperVipCommand.Edit(username, songText, songId);
-
-            UpdateFullPlaylist();
-
-            return songRequestId > 0;
+            UpdateCurrentSong(requests.RegularList, requests.VipList);
         }
 
-        public async Task<bool> RemoveSuperRequest(string username)
-        {
-            if (string.IsNullOrWhiteSpace(username)) return false;
+        // Should refresh the current song object to ensure any changes (like in-drive) are respected
+        var songRequestId = _currentRequest?.songRequestId ?? 0;
+        var current = requests.RegularList.SingleOrDefault(r => r.songRequestId == songRequestId);
+        _currentRequest = current ?? requests.VipList.SingleOrDefault(r => r.songRequestId == songRequestId);
 
-            await _removeSuperVipCommand.Remove(username).ConfigureAwait(false);
+        requests.RegularList = requests.RegularList.Where(r => r.songRequestId != songRequestId)
+            .ToArray();
+        requests.VipList = requests.VipList.Where(r => r.songRequestId != songRequestId).ToArray();
 
-            UpdateFullPlaylist();
-
-            return true;
-        }
-
-        public async void UpdateFullPlaylist(bool updateCurrent = false)
-        {
-            var psk = _secretService.GetSecret<string>("SignalRKey");
-
-            var connection = _signalRService.GetCurrentConnection(APIHubConstants.SongListHubPath);
-
-            if (connection == null) return;
-
-            var requests = GetAllSongs();
-
-            if (updateCurrent)
+        await connection.InvokeAsync<SongListHubModel>("SendAll",
+            new SongListHubModel
             {
-                UpdateCurrentSong(requests.RegularList, requests.VipList);
-            }
+                psk = psk,
+                currentSong = _currentRequest,
+                regularRequests = requests.RegularList,
+                vipRequests = requests.VipList
+            });
 
-            // Should refresh the current song object to ensure any changes (like in-drive) are respected
-            var songRequestId = _currentRequest?.songRequestId ?? 0;
-            var current = requests.RegularList.SingleOrDefault(r => r.songRequestId == songRequestId);
-            _currentRequest = current ?? requests.VipList.SingleOrDefault(r => r.songRequestId == songRequestId);
-
-            requests.RegularList = requests.RegularList.Where(r => r.songRequestId != songRequestId)
-                .ToArray();
-            requests.VipList = requests.VipList.Where(r => r.songRequestId != songRequestId).ToArray();
-
-            await connection.InvokeAsync<SongListHubModel>("SendAll",
-                new SongListHubModel
-                {
-                    psk = psk,
-                    currentSong = _currentRequest,
-                    regularRequests = requests.RegularList,
-                    vipRequests = requests.VipList
-                });
-
-            await connection.InvokeAsync<SongListHubModel>("UpdateClients",
-                new SongListHubModel
-                {
-                    psk = psk,
-                    currentSong = _currentRequest,
-                    regularRequests = requests.RegularList,
-                    vipRequests = requests.VipList
-                });
-        }
-
-        public bool IsSuperVipRequestInQueue()
-        {
-            var isInQueue = _isSuperVipInQueueQuery.IsSuperVipInQueue();
-
-            return isInQueue;
-        }
-
-        public PlaylistItem GetCurrentSongRequest()
-        {
-            return _currentRequest;
-        }
-
-        public List<PlaylistItem> GetTopTenPlaylistItems()
-        {
-            return _getTopTenRequestsQuery.Get();
-        }
-
-        private void UpdateCurrentSong(PlaylistItem[] regularRequests, PlaylistItem[] vipRequests)
-        {
-            var inChatRegularRequests = regularRequests.Where(r => r.isInChat).ToList();
-            if (!inChatRegularRequests.Any() && !vipRequests.Any())
+        await connection.InvokeAsync<SongListHubModel>("UpdateClients",
+            new SongListHubModel
             {
-                _currentRequest = null;
-                return;
-            }
+                psk = psk,
+                currentSong = _currentRequest,
+                regularRequests = requests.RegularList,
+                vipRequests = requests.VipList
+            });
+    }
 
-            if (_currentRequest.isVip)
-            {
-                _currentVipRequestsPlayed++;
-                if (vipRequests.Any(vr => vr.isSuperVip))
-                {
-                    UpdateCurrentToSuperVipRequest(vipRequests);
-                }
-                else if (_currentVipRequestsPlayed < _concurrentVipSongsToPlay
-                    && vipRequests.Any())
-                {
-                    UpdateCurrentToVipRequest(vipRequests);
-                }
-                else if (inChatRegularRequests.Any())
-                {
-                    _currentVipRequestsPlayed = 0;
-                    UpdateCurrentToRegularRequest(inChatRegularRequests);
-                }
-                else if (vipRequests.Any())
-                {
-                    UpdateCurrentToVipRequest(vipRequests);
-                }
-                else
-                {
-                    EmptyCurrent();
-                }
-            }
-            else
-            {
-                if (vipRequests.Any(vr => vr.isSuperVip))
-                {
-                    UpdateCurrentToSuperVipRequest(vipRequests);
-                }
-                else if (vipRequests.Any())
-                {
-                    UpdateCurrentToVipRequest(vipRequests);
-                }
-                else if (inChatRegularRequests.Any())
-                {
-                    UpdateCurrentToRegularRequest(inChatRegularRequests);
-                }
-                else
-                {
-                    EmptyCurrent();
-                }
-            }
-        }
+    public bool IsSuperVipRequestInQueue()
+    {
+        var isInQueue = _isSuperVipInQueueQuery.IsSuperVipInQueue();
 
-        private void UpdateCurrentToRegularRequest(List<PlaylistItem> inChatRegularRequests)
-        {
-            _currentRequest = inChatRegularRequests[_rand.Next(inChatRegularRequests.Count)];
-        }
+        return isInQueue;
+    }
 
-        private void UpdateCurrentToVipRequest(PlaylistItem[] vipRequests)
-        {
+    public PlaylistItem GetCurrentSongRequest()
+    {
+        return _currentRequest;
+    }
 
-            _currentRequest = vipRequests.FirstOrDefault();
-        }
+    public List<PlaylistItem> GetTopTenPlaylistItems()
+    {
+        return _getTopTenRequestsQuery.Get();
+    }
 
-        private void UpdateCurrentToSuperVipRequest(PlaylistItem[] vipRequests)
-        {
-
-            _currentRequest = vipRequests.FirstOrDefault(vr => vr.isSuperVip);
-        }
-
-        private void EmptyCurrent()
+    private void UpdateCurrentSong(PlaylistItem[] regularRequests, PlaylistItem[] vipRequests)
+    {
+        var inChatRegularRequests = regularRequests.Where(r => r.isInChat).ToList();
+        if (!inChatRegularRequests.Any() && !vipRequests.Any())
         {
             _currentRequest = null;
+            return;
         }
+
+        if (_currentRequest.isVip)
+        {
+            _currentVipRequestsPlayed++;
+            if (vipRequests.Any(vr => vr.isSuperVip))
+            {
+                UpdateCurrentToSuperVipRequest(vipRequests);
+            }
+            else if (_currentVipRequestsPlayed < _concurrentVipSongsToPlay
+                     && vipRequests.Any())
+            {
+                UpdateCurrentToVipRequest(vipRequests);
+            }
+            else if (inChatRegularRequests.Any())
+            {
+                _currentVipRequestsPlayed = 0;
+                UpdateCurrentToRegularRequest(inChatRegularRequests);
+            }
+            else if (vipRequests.Any())
+            {
+                UpdateCurrentToVipRequest(vipRequests);
+            }
+            else
+            {
+                EmptyCurrent();
+            }
+        }
+        else
+        {
+            if (vipRequests.Any(vr => vr.isSuperVip))
+            {
+                UpdateCurrentToSuperVipRequest(vipRequests);
+            }
+            else if (vipRequests.Any())
+            {
+                UpdateCurrentToVipRequest(vipRequests);
+            }
+            else if (inChatRegularRequests.Any())
+            {
+                UpdateCurrentToRegularRequest(inChatRegularRequests);
+            }
+            else
+            {
+                EmptyCurrent();
+            }
+        }
+    }
+
+    private void UpdateCurrentToRegularRequest(List<PlaylistItem> inChatRegularRequests)
+    {
+        _currentRequest = inChatRegularRequests[_rand.Next(inChatRegularRequests.Count)];
+    }
+
+    private void UpdateCurrentToVipRequest(PlaylistItem[] vipRequests)
+    {
+
+        _currentRequest = vipRequests.FirstOrDefault();
+    }
+
+    private void UpdateCurrentToSuperVipRequest(PlaylistItem[] vipRequests)
+    {
+
+        _currentRequest = vipRequests.FirstOrDefault(vr => vr.isSuperVip);
+    }
+
+    private void EmptyCurrent()
+    {
+        _currentRequest = null;
     }
 }

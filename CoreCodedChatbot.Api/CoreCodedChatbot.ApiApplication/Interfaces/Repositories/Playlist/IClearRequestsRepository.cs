@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IClearRequestsRepository
 {
-    public interface IClearRequestsRepository
-    {
-        void ClearRequests(List<BasicSongRequest> requestsToRemove);
-    }
+    void ClearRequests(List<BasicSongRequest> requestsToRemove);
 }

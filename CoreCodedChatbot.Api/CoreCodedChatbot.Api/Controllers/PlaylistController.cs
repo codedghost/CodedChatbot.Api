@@ -8,420 +8,419 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("Playlist/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class PlaylistController : Controller
 {
-    [Route("Playlist/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PlaylistController : Controller
+    private readonly IPlaylistService _playlistService;
+    private readonly ILogger<PlaylistController> _logger;
+
+    public PlaylistController(
+        IPlaylistService playlistService,
+        ILogger<PlaylistController> logger
+    )
     {
-        private readonly IPlaylistService _playlistService;
-        private readonly ILogger<PlaylistController> _logger;
+        _playlistService = playlistService;
+        _logger = logger;
+    }
 
-        public PlaylistController(
-            IPlaylistService playlistService,
-            ILogger<PlaylistController> logger
-            )
+    public IActionResult TestEndpoint()
+    {
+        return new JsonResult(new {Message = "Authorized!"});
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditRequest([FromBody] EditSongRequest editSongRequest)
+    {
+        var result = await _playlistService
+            .EditRequest(editSongRequest.Username, editSongRequest.CommandText, editSongRequest.IsMod)
+            .ConfigureAwait(false);
+
+        if (result.Success)
         {
-            _playlistService = playlistService;
-            _logger = logger;
-        }
-
-        public IActionResult TestEndpoint()
-        {
-            return new JsonResult(new {Message = "Authorized!"});
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditRequest([FromBody] EditSongRequest editSongRequest)
-        {
-            var result = await _playlistService
-                .EditRequest(editSongRequest.Username, editSongRequest.CommandText, editSongRequest.IsMod)
-                .ConfigureAwait(false);
-
-            if (result.Success)
+            var editResult = new EditRequestResponse
             {
-                var editResult = new EditRequestResponse
-                {
-                    SongRequestText = result.SongRequestText,
-                    SyntaxError = result.SyntaxError
-                };
-                return new JsonResult(editResult);
-            }
-            else
-                return BadRequest();
-        }
-
-        [HttpPost]
-        public IActionResult GetUserRequests([FromBody] string username)
-        {
-            var requests = _playlistService.GetUserRequests(username);
-
-            var requestsResult = new GetUserRequestsResponse
-            {
-                UserRequests = requests
+                SongRequestText = result.SongRequestText,
+                SyntaxError = result.SyntaxError
             };
-
-            return new JsonResult(requestsResult);
+            return new JsonResult(editResult);
         }
+        else
+            return BadRequest();
+    }
 
-        public async Task<IActionResult> OpenPlaylist()
+    [HttpPost]
+    public IActionResult GetUserRequests([FromBody] string username)
+    {
+        var requests = _playlistService.GetUserRequests(username);
+
+        var requestsResult = new GetUserRequestsResponse
         {
-            if (await _playlistService.OpenPlaylist())
-                return Ok();
+            UserRequests = requests
+        };
 
+        return new JsonResult(requestsResult);
+    }
+
+    public async Task<IActionResult> OpenPlaylist()
+    {
+        if (await _playlistService.OpenPlaylist())
+            return Ok();
+
+        return BadRequest();
+    }
+
+    public async Task<IActionResult> VeryClosePlaylist()
+    {
+        if (await _playlistService.VeryClosePlaylist())
+            return Ok();
+
+        return BadRequest();
+    }
+
+    public async Task<IActionResult> ClosePlaylist()
+    {
+        if (await _playlistService.ClosePlaylist())
+            return Ok();
+
+        return BadRequest();
+    }
+
+    public IActionResult IsPlaylistOpen()
+    {
+        return Json(_playlistService.GetPlaylistState());
+    }
+
+    public IActionResult ArchiveCurrentRequest()
+    {
+        try
+        {
+            _playlistService.ArchiveCurrentRequest();
+            return Ok();
+        }
+        catch (Exception)
+        {
             return BadRequest();
         }
+    }
 
-        public async Task<IActionResult> VeryClosePlaylist()
-        {
-            if (await _playlistService.VeryClosePlaylist())
-                return Ok();
-
-            return BadRequest();
-        }
-
-        public async Task<IActionResult> ClosePlaylist()
-        {
-            if (await _playlistService.ClosePlaylist())
-                return Ok();
-
-            return BadRequest();
-        }
-
-        public IActionResult IsPlaylistOpen()
-        {
-            return Json(_playlistService.GetPlaylistState());
-        }
-
-        public IActionResult ArchiveCurrentRequest()
-        {
-            try
-            {
-                _playlistService.ArchiveCurrentRequest();
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RemoveRockRequests([FromBody] RemoveSongRequest removeSongRequest)
-        {
-            if (await _playlistService
+    [HttpPost]
+    public async Task<IActionResult> RemoveRockRequests([FromBody] RemoveSongRequest removeSongRequest)
+    {
+        if (await _playlistService
                 .RemoveRockRequests(removeSongRequest.Username, removeSongRequest.CommandText, removeSongRequest.IsMod)
                 .ConfigureAwait(false))
-                return Ok();
+            return Ok();
 
-            return BadRequest();
-        }
+        return BadRequest();
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> RemoveSuperVip([FromBody] RemoveSuperVipRequest requestModel)
+    [HttpPost]
+    public async Task<IActionResult> RemoveSuperVip([FromBody] RemoveSuperVipRequest requestModel)
+    {
+        if (await _playlistService.RemoveSuperRequest(requestModel.Username).ConfigureAwait(false)) return Ok();
+
+        return BadRequest();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddRequest([FromBody] AddSongRequest requestModel)
+    {
+        var addRequestResult = await _playlistService
+            .AddRequest(requestModel.Username, requestModel.CommandText, requestModel.IsVipRequest)
+            .ConfigureAwait(false);
+        return new JsonResult(new AddRequestResponse
         {
-            if (await _playlistService.RemoveSuperRequest(requestModel.Username).ConfigureAwait(false)) return Ok();
+            Result = addRequestResult.Item1,
+            PlaylistPosition = addRequestResult.Item2,
+            FormattedSongText = requestModel.CommandText
+        });
+    }
 
-            return BadRequest();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddRequest([FromBody] AddSongRequest requestModel)
+    [HttpPost]
+    public async Task<IActionResult> AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
+    {
+        try
         {
-            var addRequestResult = await _playlistService
-                .AddRequest(requestModel.Username, requestModel.CommandText, requestModel.IsVipRequest)
+            var requestSongViewModel = new AddWebSongRequest
+            {
+                Title = addWebSongRequest.Title,
+                Artist = addWebSongRequest.Artist,
+                SelectedInstrument = addWebSongRequest.SelectedInstrument,
+                IsVip = addWebSongRequest.IsVip,
+                IsSuperVip = addWebSongRequest.IsSuperVip
+            };
+
+            var result = await _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username)
                 .ConfigureAwait(false);
+
+            var responseModel = new AddRequestResponse
+            {
+                Result = result,
+                PlaylistPosition = 0
+            };
+
+            return new JsonResult(responseModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in AddWebRequest", addWebSongRequest);
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
+    {
+        try
+        {
+            var addSuperVipResult =
+                await _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText).ConfigureAwait(false);
+
             return new JsonResult(new AddRequestResponse
             {
-                Result = addRequestResult.Item1,
-                PlaylistPosition = addRequestResult.Item2,
+                Result = addSuperVipResult,
                 FormattedSongText = requestModel.CommandText
             });
         }
-
-        [HttpPost]
-        public async Task<IActionResult> AddWebRequest([FromBody] AddWebSongRequest addWebSongRequest)
+        catch (Exception e)
         {
-            try
-            {
-                var requestSongViewModel = new AddWebSongRequest
-                {
-                    Title = addWebSongRequest.Title,
-                    Artist = addWebSongRequest.Artist,
-                    SelectedInstrument = addWebSongRequest.SelectedInstrument,
-                    IsVip = addWebSongRequest.IsVip,
-                    IsSuperVip = addWebSongRequest.IsSuperVip
-                };
+            _logger.LogError(e, "Error in AddSuperRequest", requestModel);
+            return BadRequest();
+        }
+    }
 
-                var result = await _playlistService.AddWebRequest(requestSongViewModel, addWebSongRequest.Username)
+    [HttpPost]
+    public async Task<IActionResult> EditSuperVipRequest([FromBody] EditSuperVipRequest requestModel)
+    {
+        try
+        {
+            var editSuperVipResult =
+                await _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText)
                     .ConfigureAwait(false);
 
-                var responseModel = new AddRequestResponse
-                {
-                    Result = result,
-                    PlaylistPosition = 0
-                };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in AddWebRequest", addWebSongRequest);
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddSuperRequest([FromBody] AddSuperVipRequest requestModel)
-        {
-            try
-            {
-                var addSuperVipResult =
-                    await _playlistService.AddSuperVipRequest(requestModel.Username, requestModel.CommandText).ConfigureAwait(false);
-
-                return new JsonResult(new AddRequestResponse
-                {
-                    Result = addSuperVipResult,
-                    FormattedSongText = requestModel.CommandText
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in AddSuperRequest", requestModel);
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditSuperVipRequest([FromBody] EditSuperVipRequest requestModel)
-        {
-            try
-            {
-                var editSuperVipResult =
-                    await _playlistService.EditSuperVipRequest(requestModel.Username, requestModel.CommandText)
-                        .ConfigureAwait(false);
-
-                if (editSuperVipResult)
-                    return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in EditSuperVipRequest", requestModel);
-            }
-
-            return BadRequest();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> PromoteRequest([FromBody] PromoteSongRequest promoteSongRequest)
-        {
-            try
-            {
-                var result =
-                    await _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId, promoteSongRequest.UseSuperVip).ConfigureAwait(false);
-
-                return new JsonResult(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in PromoteWebRequest", promoteSongRequest);
-                return BadRequest();
-            }
-        }
-
-        [HttpGet]
-        public IActionResult ClearRequests()
-        {
-            try
-            {
-                _playlistService.ClearRockRequests();
+            if (editSuperVipResult)
                 return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in ClearRequests");
-                return BadRequest();
-            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in EditSuperVipRequest", requestModel);
         }
 
-        [HttpGet]
-        public IActionResult GetAllSongs()
+        return BadRequest();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PromoteRequest([FromBody] PromoteSongRequest promoteSongRequest)
+    {
+        try
         {
-            try
-            {
-                var getAllSongsResponse = _playlistService.GetAllSongs();
-                return new JsonResult(getAllSongsResponse);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in GetAllSongs");
-                return BadRequest();
-            }
+            var result =
+                await _playlistService.PromoteRequest(promoteSongRequest.Username, promoteSongRequest.SongRequestId, promoteSongRequest.UseSuperVip).ConfigureAwait(false);
+
+            return new JsonResult(result);
         }
-
-        [HttpGet]
-        public IActionResult GetRequestById(int songId)
+        catch (Exception e)
         {
-            try
-            {
-                var request = _playlistService.GetRequestById(songId);
-
-                var responseModel = new GetRequestByIdResponse
-                {
-                    Request = request
-                };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in GetRequestById", songId);
-                return BadRequest();
-            }
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> ArchiveRequestById(int songId)
-        {
-            try
-            {
-                var result = await _playlistService.ArchiveRequestById(songId).ConfigureAwait(false);
-
-                return new JsonResult(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in ArchiveRequestById", songId);
-                return BadRequest();
-            }
-        }
-
-        [HttpDelete]
-        public IActionResult ArchiveCurrentRequest(int songId)
-        {
-            try
-            {
-                _playlistService.ArchiveCurrentRequest(songId);
-
-                return new JsonResult(true);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in ArchiveCurrentRequest", songId);
-                return BadRequest();
-            }
-        }
-
-        [HttpGet]
-        public IActionResult GetMaxUserRequests()
-        {
-            try
-            {
-                var result = _playlistService.GetMaxUserRequests();
-
-                var responseModel = new MaxUserRequestsResponse
-                {
-                    MaxRequests = result
-                };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in GetMaxUserRequests");
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditWebRequest([FromBody] EditWebRequestRequestModel editWebRequestRequestModel)
-        {
-            try
-            {
-                var result = await _playlistService.EditWebRequest(editWebRequestRequestModel).ConfigureAwait(false);
-
-                // Need a new EditWebRequestResponse model to hold the edit result enum
-                var responseModel = new EditWebRequestResponse
-                {
-                    EditResult = result
-                };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in EditWebRequest", editWebRequestRequestModel);
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult AddRequestToDrive([FromBody] AddSongToDriveRequest addSongToDriveRequest)
-        {
-            try
-            {
-                var result = _playlistService.AddSongToDrive(addSongToDriveRequest.SongRequestId);
-
-                if (result) return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in AddRequestToDrive", addSongToDriveRequest);
-            }
-
+            _logger.LogError(e, "Error in PromoteWebRequest", promoteSongRequest);
             return BadRequest();
         }
+    }
 
-        [HttpGet]
-        public IActionResult GetCurrentSongRequest()
+    [HttpGet]
+    public IActionResult ClearRequests()
+    {
+        try
         {
-            try
-            {
-                var songRequest = _playlistService.GetCurrentSongRequest();
-
-                if (songRequest == null) return BadRequest();
-
-                var responseModel = songRequest.FormattedRequest == null
-                    ? new GetCurrentSongRequestResponse
-                    {
-                        SongArtist = string.Empty,
-                        SongName = songRequest.songRequestText,
-                        RequesterUsername = songRequest.songRequester,
-                        InstrumentName = string.Empty
-                    }
-                    : new GetCurrentSongRequestResponse
-                    {
-                        SongArtist = songRequest.FormattedRequest.SongArtist,
-                        SongName = songRequest.FormattedRequest.SongName,
-                        RequesterUsername = songRequest.songRequester,
-                        InstrumentName = songRequest.FormattedRequest.InstrumentName
-                    };
-
-                return new JsonResult(responseModel);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in GetCurrentSongRequest");
-            }
-
+            _playlistService.ClearRockRequests();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in ClearRequests");
             return BadRequest();
         }
+    }
 
-        [HttpGet]
-        public IActionResult GetTopTen()
+    [HttpGet]
+    public IActionResult GetAllSongs()
+    {
+        try
         {
-            try
-            {
-                var topRequests = _playlistService.GetTopTenPlaylistItems();
-
-                return new JsonResult(topRequests);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in GetTopTen");
-            }
-
+            var getAllSongsResponse = _playlistService.GetAllSongs();
+            return new JsonResult(getAllSongsResponse);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in GetAllSongs");
             return BadRequest();
         }
+    }
+
+    [HttpGet]
+    public IActionResult GetRequestById(int songId)
+    {
+        try
+        {
+            var request = _playlistService.GetRequestById(songId);
+
+            var responseModel = new GetRequestByIdResponse
+            {
+                Request = request
+            };
+
+            return new JsonResult(responseModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in GetRequestById", songId);
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> ArchiveRequestById(int songId)
+    {
+        try
+        {
+            var result = await _playlistService.ArchiveRequestById(songId).ConfigureAwait(false);
+
+            return new JsonResult(result);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in ArchiveRequestById", songId);
+            return BadRequest();
+        }
+    }
+
+    [HttpDelete]
+    public IActionResult ArchiveCurrentRequest(int songId)
+    {
+        try
+        {
+            _playlistService.ArchiveCurrentRequest(songId);
+
+            return new JsonResult(true);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in ArchiveCurrentRequest", songId);
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public IActionResult GetMaxUserRequests()
+    {
+        try
+        {
+            var result = _playlistService.GetMaxUserRequests();
+
+            var responseModel = new MaxUserRequestsResponse
+            {
+                MaxRequests = result
+            };
+
+            return new JsonResult(responseModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in GetMaxUserRequests");
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditWebRequest([FromBody] EditWebRequestRequestModel editWebRequestRequestModel)
+    {
+        try
+        {
+            var result = await _playlistService.EditWebRequest(editWebRequestRequestModel).ConfigureAwait(false);
+
+            // Need a new EditWebRequestResponse model to hold the edit result enum
+            var responseModel = new EditWebRequestResponse
+            {
+                EditResult = result
+            };
+
+            return new JsonResult(responseModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in EditWebRequest", editWebRequestRequestModel);
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    public IActionResult AddRequestToDrive([FromBody] AddSongToDriveRequest addSongToDriveRequest)
+    {
+        try
+        {
+            var result = _playlistService.AddSongToDrive(addSongToDriveRequest.SongRequestId);
+
+            if (result) return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in AddRequestToDrive", addSongToDriveRequest);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet]
+    public IActionResult GetCurrentSongRequest()
+    {
+        try
+        {
+            var songRequest = _playlistService.GetCurrentSongRequest();
+
+            if (songRequest == null) return BadRequest();
+
+            var responseModel = songRequest.FormattedRequest == null
+                ? new GetCurrentSongRequestResponse
+                {
+                    SongArtist = string.Empty,
+                    SongName = songRequest.songRequestText,
+                    RequesterUsername = songRequest.songRequester,
+                    InstrumentName = string.Empty
+                }
+                : new GetCurrentSongRequestResponse
+                {
+                    SongArtist = songRequest.FormattedRequest.SongArtist,
+                    SongName = songRequest.FormattedRequest.SongName,
+                    RequesterUsername = songRequest.songRequester,
+                    InstrumentName = songRequest.FormattedRequest.InstrumentName
+                };
+
+            return new JsonResult(responseModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in GetCurrentSongRequest");
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet]
+    public IActionResult GetTopTen()
+    {
+        try
+        {
+            var topRequests = _playlistService.GetTopTenPlaylistItems();
+
+            return new JsonResult(topRequests);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in GetTopTen");
+        }
+
+        return BadRequest();
     }
 }

@@ -2,27 +2,26 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class IsSuperVipInQueueRepository : IIsSuperVipInQueueRepository
 {
-    public class IsSuperVipInQueueRepository : IIsSuperVipInQueueRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public IsSuperVipInQueueRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public IsSuperVipInQueueRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public bool IsSuperVipInQueue()
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var superVip = context.SongRequests.Where(sr => !sr.Played && sr.SuperVipRequestTime != null);
 
-        public bool IsSuperVipInQueue()
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var superVip = context.SongRequests.Where(sr => !sr.Played && sr.SuperVipRequestTime != null);
-
-                return superVip.Any();
-            }
+            return superVip.Any();
         }
     }
 }

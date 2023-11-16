@@ -2,32 +2,31 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
+
+public class UseSuperVipRepository : IUseSuperVipRepository
 {
-    public class UseSuperVipRepository : IUseSuperVipRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public UseSuperVipRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public UseSuperVipRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public void UseSuperVip(string username, int vipsToUse, int superVipsToRegister)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var user = context.Users.Find(username);
 
-        public void UseSuperVip(string username, int vipsToUse, int superVipsToRegister)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.Users.Find(username);
+            if (user == null) throw new UnauthorizedAccessException("User does not exist");
 
-                if (user == null) throw new UnauthorizedAccessException("User does not exist");
+            user.UsedSuperVipRequests += superVipsToRegister;
+            user.UsedVipRequests += vipsToUse;
 
-                user.UsedSuperVipRequests += superVipsToRegister;
-                user.UsedVipRequests += vipsToUse;
-
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

@@ -4,29 +4,28 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.Vip
+namespace CoreCodedChatbot.ApiTests.Commands.Vip;
+
+[TestFixture]
+public class UseVipCommandTests
 {
-    [TestFixture]
-    public class UseVipCommandTests
+    private Mock<IUseVipRepository> _useVipRepository;
+
+    private UseVipCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<IUseVipRepository> _useVipRepository;
+        _useVipRepository = new Mock<IUseVipRepository>();
 
-        private UseVipCommand _subject;
+        _subject = new UseVipCommand(_useVipRepository.Object);
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _useVipRepository = new Mock<IUseVipRepository>();
+    [Test, AutoData]
+    public void EnsureRepositoryIsCalled(string username, int vips)
+    {
+        _subject.UseVip(username, vips);
 
-            _subject = new UseVipCommand(_useVipRepository.Object);
-        }
-
-        [Test, AutoData]
-        public void EnsureRepositoryIsCalled(string username, int vips)
-        {
-            _subject.UseVip(username, vips);
-
-            _useVipRepository.Verify(s => s.UseVip(username, vips), Times.Once);
-        }
+        _useVipRepository.Verify(s => s.UseVip(username, vips), Times.Once);
     }
 }

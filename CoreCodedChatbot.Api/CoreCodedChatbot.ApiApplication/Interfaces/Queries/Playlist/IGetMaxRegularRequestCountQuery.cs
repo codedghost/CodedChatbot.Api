@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface IGetMaxRegularRequestCountQuery
 {
-    public interface IGetMaxRegularRequestCountQuery
-    {
-        int Get();
-    }
+    int Get();
 }

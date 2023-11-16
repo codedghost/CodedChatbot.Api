@@ -2,27 +2,26 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class GetUsersCurrentRequestCountRepository : IGetUsersCurrentRequestCountRepository
 {
-    public class GetUsersCurrentRequestCountRepository : IGetUsersCurrentRequestCountRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetUsersCurrentRequestCountRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetUsersCurrentRequestCountRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public int GetUsersCurrentRequestCount(string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var requests = context.SongRequests.Count(sr => !sr.Played && sr.Username == username);
 
-        public int GetUsersCurrentRequestCount(string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var requests = context.SongRequests.Count(sr => !sr.Played && sr.Username == username);
-
-                return requests;
-            }
+            return requests;
         }
     }
 }

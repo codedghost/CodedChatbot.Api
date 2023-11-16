@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+
+public interface IGetGuessingGameStateQuery
 {
-    public interface IGetGuessingGameStateQuery
-    {
-        bool InProgress();
-    }
+    bool InProgress();
 }

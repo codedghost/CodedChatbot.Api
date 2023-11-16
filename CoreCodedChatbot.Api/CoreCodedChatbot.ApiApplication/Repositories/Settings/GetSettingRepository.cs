@@ -3,32 +3,31 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Settings
+namespace CoreCodedChatbot.ApiApplication.Repositories.Settings;
+
+public class GetSettingRepository : IGetSettingRepository
 {
-    public class GetSettingRepository : IGetSettingRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetSettingRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetSettingRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public T Get<T>(string settingKey)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var setting = context.Settings.SingleOrDefault(s => s.SettingName == settingKey);
 
-        public T Get<T>(string settingKey)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var setting = context.Settings.SingleOrDefault(s => s.SettingName == settingKey);
+            if (setting == null)
+                return default;
 
-                if (setting == null)
-                    return default;
+            var castValue = Convert.ChangeType(setting.SettingValue, typeof(T));
 
-                var castValue = Convert.ChangeType(setting.SettingValue, typeof(T));
-
-                return (T)castValue;
-            }
+            return (T)castValue;
         }
     }
 }

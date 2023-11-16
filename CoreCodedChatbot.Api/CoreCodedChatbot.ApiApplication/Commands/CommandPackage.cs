@@ -23,90 +23,89 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoreCodedChatbot.ApiApplication.Commands
+namespace CoreCodedChatbot.ApiApplication.Commands;
+
+public static class CommandPackage
 {
-    public static class CommandPackage
+    public static IServiceCollection AddApiCommands(this IServiceCollection services)
     {
-        public static IServiceCollection AddApiCommands(this IServiceCollection services)
-        {
-            // Azure DevOps
-            services
-                .AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand,
-                    CreateJsonPatchDocumentFromBugRequestCommand>();
-            services
-                .AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand,
-                    CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
-            services.AddSingleton<ICreateJsonPatchForWorkItemCommand, CreateJsonPatchForWorkItemCommand>();
-            services
-                .AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand,
-                    MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
-            services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
-            services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
+        // Azure DevOps
+        services
+            .AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand,
+                CreateJsonPatchDocumentFromBugRequestCommand>();
+        services
+            .AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand,
+                CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
+        services.AddSingleton<ICreateJsonPatchForWorkItemCommand, CreateJsonPatchForWorkItemCommand>();
+        services
+            .AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand,
+                MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
+        services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
+        services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
 
-            // Bytes
-            services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
-            services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
-            services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
+        // Bytes
+        services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
+        services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
+        services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
 
-            // Channel Rewards
-            services.AddSingleton<ICreateOrUpdateChannelRewardCommand, CreateOrUpdateChannelRewardCommand>();
-            services.AddSingleton<IStoreChannelRewardRedemptionCommand, StoreChannelRewardRedemptionCommand>();
+        // Channel Rewards
+        services.AddSingleton<ICreateOrUpdateChannelRewardCommand, CreateOrUpdateChannelRewardCommand>();
+        services.AddSingleton<IStoreChannelRewardRedemptionCommand, StoreChannelRewardRedemptionCommand>();
 
-            // Chat Command
-            services.AddSingleton<IAddChatCommandCommand, AddChatCommandCommand>();
+        // Chat Command
+        services.AddSingleton<IAddChatCommandCommand, AddChatCommandCommand>();
 
-            // ClientId Command
-            services.AddSingleton<IStoreClientIdCommand, StoreClientIdCommand>();
-            services.AddSingleton<IRemoveClientIdCommand, RemoveClientIdCommand>();
+        // ClientId Command
+        services.AddSingleton<IStoreClientIdCommand, StoreClientIdCommand>();
+        services.AddSingleton<IRemoveClientIdCommand, RemoveClientIdCommand>();
 
-            // Guessing Game
-            services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
-            services.AddSingleton<IGiveGuessingGameWinnersBytesCommand, GiveGuessingGameWinnersBytesCommand>();
-            services.AddSingleton<ISetGuessingGameStateCommand, SetGuessingGameStateCommand>();
-            services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
+        // Guessing Game
+        services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
+        services.AddSingleton<IGiveGuessingGameWinnersBytesCommand, GiveGuessingGameWinnersBytesCommand>();
+        services.AddSingleton<ISetGuessingGameStateCommand, SetGuessingGameStateCommand>();
+        services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
 
-            // Moderation
-            services.AddSingleton<ITransferUserAccountCommand, TransferUserAccountCommand>();
+        // Moderation
+        services.AddSingleton<ITransferUserAccountCommand, TransferUserAccountCommand>();
 
-            // Playlist
-            services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();
-            services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
-            services.AddSingleton<IArchiveRequestCommand, ArchiveRequestCommand>();
-            services.AddSingleton<IArchiveUsersSingleRequestCommand, ArchiveUsersSingleRequestCommand>();
-            services.AddSingleton<IEditRequestCommand, EditRequestCommand>();
-            services.AddSingleton<IEditSuperVipCommand, EditSuperVipCommand>();
-            services.AddSingleton<IProcessRegularSongRequestCommand, ProcessRegularSongRequestCommand>();
-            services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
-            services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
-            services.AddSingleton<IProcessVipSongRequestCommand, ProcessVipSongRequestCommand>();
-            services.AddSingleton<IPromoteRequestCommand, PromoteRequestCommand>();
-            services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
-            services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
-            services
-                .AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
-            services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
+        // Playlist
+        services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();
+        services.AddSingleton<IAddSongToDriveCommand, AddSongToDriveCommand>();
+        services.AddSingleton<IArchiveRequestCommand, ArchiveRequestCommand>();
+        services.AddSingleton<IArchiveUsersSingleRequestCommand, ArchiveUsersSingleRequestCommand>();
+        services.AddSingleton<IEditRequestCommand, EditRequestCommand>();
+        services.AddSingleton<IEditSuperVipCommand, EditSuperVipCommand>();
+        services.AddSingleton<IProcessRegularSongRequestCommand, ProcessRegularSongRequestCommand>();
+        services.AddSingleton<IProcessSongRequestCommand, ProcessSongRequestCommand>();
+        services.AddSingleton<IProcessSuperVipSongRequestCommand, ProcessSuperVipSongRequestCommand>();
+        services.AddSingleton<IProcessVipSongRequestCommand, ProcessVipSongRequestCommand>();
+        services.AddSingleton<IPromoteRequestCommand, PromoteRequestCommand>();
+        services.AddSingleton<IRemoveAndRefundAllRequestsCommand, RemoveAndRefundAllRequestsCommand>();
+        services.AddSingleton<IRemoveSuperVipCommand, RemoveSuperVipCommand>();
+        services
+            .AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
+        services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
 
-            // Search
-            services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
+        // Search
+        services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
 
-            // Settings
-            services.AddSingleton<IUpdateSettingsCommand, UpdateSettingsCommand>();
+        // Settings
+        services.AddSingleton<IUpdateSettingsCommand, UpdateSettingsCommand>();
 
-            // Stream Status
-            services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
+        // Stream Status
+        services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
-            // Vip
-            services.AddSingleton<IGiftVipCommand, GiftVipCommand>();
-            services.AddSingleton<IGiveSubscriptionVipsCommand, GiveSubscriptionVipsCommand>();
-            services.AddSingleton<IModGiveVipCommand, ModGiveVipCommand>();
-            services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
-            services.AddSingleton<IUpdateDonationVipsCommand, UpdateDonationVipsCommand>();
-            services.AddSingleton<IUpdateTotalBitsCommand, UpdateTotalBitsCommand>();
-            services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
-            services.AddSingleton<IUseVipCommand, UseVipCommand>();
-            services.AddSingleton<IGiveChannelPointsVipCommand, GiveChannelPointsVipCommand>();
+        // Vip
+        services.AddSingleton<IGiftVipCommand, GiftVipCommand>();
+        services.AddSingleton<IGiveSubscriptionVipsCommand, GiveSubscriptionVipsCommand>();
+        services.AddSingleton<IModGiveVipCommand, ModGiveVipCommand>();
+        services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
+        services.AddSingleton<IUpdateDonationVipsCommand, UpdateDonationVipsCommand>();
+        services.AddSingleton<IUpdateTotalBitsCommand, UpdateTotalBitsCommand>();
+        services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
+        services.AddSingleton<IUseVipCommand, UseVipCommand>();
+        services.AddSingleton<IGiveChannelPointsVipCommand, GiveChannelPointsVipCommand>();
 
-            return services;
-        }
+        return services;
     }
 }

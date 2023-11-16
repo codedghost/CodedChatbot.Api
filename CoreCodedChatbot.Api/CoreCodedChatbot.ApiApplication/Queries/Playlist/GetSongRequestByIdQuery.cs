@@ -2,39 +2,38 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Queries.Playlist;
+
+public class GetSongRequestByIdQuery : IGetSongRequestByIdQuery
 {
-    public class GetSongRequestByIdQuery : IGetSongRequestByIdQuery
+    private readonly IGetSongRequestByIdRepository _getSongRequestByIdRepository;
+    private readonly IGetIsUserInChatRepository _getIsUserInChatRepository;
+
+    public GetSongRequestByIdQuery(
+        IGetSongRequestByIdRepository getSongRequestByIdRepository,
+        IGetIsUserInChatRepository getIsUserInChatRepository
+    )
     {
-        private readonly IGetSongRequestByIdRepository _getSongRequestByIdRepository;
-        private readonly IGetIsUserInChatRepository _getIsUserInChatRepository;
+        _getSongRequestByIdRepository = getSongRequestByIdRepository;
+        _getIsUserInChatRepository = getIsUserInChatRepository;
+    }
 
-        public GetSongRequestByIdQuery(
-            IGetSongRequestByIdRepository getSongRequestByIdRepository,
-            IGetIsUserInChatRepository getIsUserInChatRepository
-            )
+    public PlaylistItem GetSongRequestById(int id)
+    {
+        var songRequest = _getSongRequestByIdRepository.GetRequest(id);
+
+        var userInChat = _getIsUserInChatRepository.IsUserInChat(songRequest.SongRequestUsername);
+
+        return new PlaylistItem
         {
-            _getSongRequestByIdRepository = getSongRequestByIdRepository;
-            _getIsUserInChatRepository = getIsUserInChatRepository;
-        }
-
-        public PlaylistItem GetSongRequestById(int id)
-        {
-            var songRequest = _getSongRequestByIdRepository.GetRequest(id);
-
-            var userInChat = _getIsUserInChatRepository.IsUserInChat(songRequest.SongRequestUsername);
-
-            return new PlaylistItem
-            {
-                songRequestId = songRequest.SongRequestId,
-                songRequestText = songRequest.SongRequestText,
-                songRequester = songRequest.SongRequestUsername,
-                isInChat = userInChat || songRequest.IsRecentRequest || songRequest.IsRecentVip ||
-                           songRequest.IsRecentSuperVip,
-                isVip = songRequest.IsVip,
-                isSuperVip = songRequest.IsSuperVip,
-                isInDrive = songRequest.IsInDrive
-            };
-        }
+            songRequestId = songRequest.SongRequestId,
+            songRequestText = songRequest.SongRequestText,
+            songRequester = songRequest.SongRequestUsername,
+            isInChat = userInChat || songRequest.IsRecentRequest || songRequest.IsRecentVip ||
+                       songRequest.IsRecentSuperVip,
+            isVip = songRequest.IsVip,
+            isSuperVip = songRequest.IsSuperVip,
+            isInDrive = songRequest.IsInDrive
+        };
     }
 }

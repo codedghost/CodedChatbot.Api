@@ -31,117 +31,116 @@ using CoreCodedChatbot.ApiApplication.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Repositories.WatchTime;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories
+namespace CoreCodedChatbot.ApiApplication.Repositories;
+
+public static class RepositoryPackage
 {
-    public static class RepositoryPackage
+    public static IServiceCollection AddApiRepositories(this IServiceCollection services)
     {
-        public static IServiceCollection AddApiRepositories(this IServiceCollection services)
-        {
-            // Bytes
-            services.AddSingleton<IConvertBytesRepository, ConvertBytesRepository>();
-            services.AddSingleton<IGetUserByteCountRepository, GetUserByteCountRepository>();
-            services.AddSingleton<IGiveGiftSubBytesRepository, GiveGiftSubBytesRepository>();
-            services.AddSingleton<IGiveUsersBytesRepository, GiveUsersBytesRepository>();
-            services.AddSingleton<IGiveViewershipBytesRepository, GiveViewershipBytesRepository>();
+        // Bytes
+        services.AddSingleton<IConvertBytesRepository, ConvertBytesRepository>();
+        services.AddSingleton<IGetUserByteCountRepository, GetUserByteCountRepository>();
+        services.AddSingleton<IGiveGiftSubBytesRepository, GiveGiftSubBytesRepository>();
+        services.AddSingleton<IGiveUsersBytesRepository, GiveUsersBytesRepository>();
+        services.AddSingleton<IGiveViewershipBytesRepository, GiveViewershipBytesRepository>();
 
-            // Channel Rewards
-            services.AddSingleton<ICreateOrUpdateChannelRewardRepository, CreateOrUpdateChannelRewardRepository>();
-            services.AddSingleton<IStoreChannelRewardRedemptionRepository, StoreChannelRewardRedemptionRepository>();
-            services.AddSingleton<IGetChannelRewardRepository, GetChannelRewardRepository>();
-            services.AddSingleton<IGetChannelRewardRedemptionsRepository, GetChannelRewardRedemptionsRepository>();
+        // Channel Rewards
+        services.AddSingleton<ICreateOrUpdateChannelRewardRepository, CreateOrUpdateChannelRewardRepository>();
+        services.AddSingleton<IStoreChannelRewardRedemptionRepository, StoreChannelRewardRedemptionRepository>();
+        services.AddSingleton<IGetChannelRewardRepository, GetChannelRewardRepository>();
+        services.AddSingleton<IGetChannelRewardRedemptionsRepository, GetChannelRewardRedemptionsRepository>();
 
-            // Chat Command
-            services.AddSingleton<IAddChatCommandRepository, AddChatCommandRepository>();
-            services.AddSingleton<IGetCommandHelpTextByKeywordRepository, GetCommandHelpTextByKeywordRepository>();
-            services.AddSingleton<IGetCommandTextByKeywordRepository, GetCommandTextByKeywordRepository>();
+        // Chat Command
+        services.AddSingleton<IAddChatCommandRepository, AddChatCommandRepository>();
+        services.AddSingleton<IGetCommandHelpTextByKeywordRepository, GetCommandHelpTextByKeywordRepository>();
+        services.AddSingleton<IGetCommandTextByKeywordRepository, GetCommandTextByKeywordRepository>();
 
-            // ClientId
-            services.AddSingleton<IStoreClientIdRepository, StoreClientIdRepository>();
-            services.AddSingleton<IRemoveClientIdRepository, RemoveClientIdRepository>();
-            services.AddSingleton<IGetClientIdsRepository, GetClientIdsRepository>();
+        // ClientId
+        services.AddSingleton<IStoreClientIdRepository, StoreClientIdRepository>();
+        services.AddSingleton<IRemoveClientIdRepository, RemoveClientIdRepository>();
+        services.AddSingleton<IGetClientIdsRepository, GetClientIdsRepository>();
 
-            // Counters
-            services.AddTransient<ICounterRepository, CounterRepository>();
+        // Counters
+        services.AddTransient<ICounterRepository, CounterRepository>();
 
-            // Guessing Game
-            services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();
-            services.AddSingleton<ICompleteGuessingGameRepository, CompleteGuessingGameRepository>();
-            services.AddSingleton<IGetCurrentGuessingGameRepository, GetCurrentGuessingGameRepository>();
-            services.AddSingleton<IGetGuessingGameStateQuery, GetGuessingGameStateQuery>();
-            services.AddSingleton<IGetRunningGuessingGameIdRepository, GetRunningGuessingGameIdRepository>();
-            services.AddSingleton<IGetSongPercentageGuessesRepository, GetSongPercentageGuessesRepository>();
-            services.AddSingleton<IOpenGuessingGameRepository, OpenGuessingGameRepository>();
-            services.AddSingleton<ISubmitOrUpdateGuessRepository, SubmitOrUpdateGuessRepository>();
+        // Guessing Game
+        services.AddSingleton<ICloseGuessingGameRepository, CloseGuessingGameRepository>();
+        services.AddSingleton<ICompleteGuessingGameRepository, CompleteGuessingGameRepository>();
+        services.AddSingleton<IGetCurrentGuessingGameRepository, GetCurrentGuessingGameRepository>();
+        services.AddSingleton<IGetGuessingGameStateQuery, GetGuessingGameStateQuery>();
+        services.AddSingleton<IGetRunningGuessingGameIdRepository, GetRunningGuessingGameIdRepository>();
+        services.AddSingleton<IGetSongPercentageGuessesRepository, GetSongPercentageGuessesRepository>();
+        services.AddSingleton<IOpenGuessingGameRepository, OpenGuessingGameRepository>();
+        services.AddSingleton<ISubmitOrUpdateGuessRepository, SubmitOrUpdateGuessRepository>();
 
-            // Moderation
-            services.AddSingleton<ITransferUserAccountRepository, TransferUserAccountRepository>();
+        // Moderation
+        services.AddSingleton<ITransferUserAccountRepository, TransferUserAccountRepository>();
 
-            // Playlist
-            services.AddSingleton<IAddRequestRepository, AddRequestRepository>();
-            services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
-            services.AddSingleton<IArchiveRequestRepository, ArchiveRequestRepository>();
-            services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
-            services.AddSingleton<IEditRequestRepository, EditRequestRepository>();
-            services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
-            services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
-            services.AddSingleton<IGetIsUserInChatRepository, GetIsUserInChatRepository>();
-            services.AddSingleton<IGetSingleSongRequestIdRepository, GetSingleSongRequestIdRepository>();
-            services.AddSingleton<IGetSongRequestByIdRepository, GetSongRequestByIdRepository>();
-            services
-                .AddSingleton<IGetUsersCurrentRegularRequestCountRepository,
-                    GetUsersCurrentRegularRequestCountRepository>();
-            services.AddSingleton<IGetUsersCurrentRequestCountRepository, GetUsersCurrentRequestCountRepository>();
-            services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
-            services.AddSingleton<IPromoteUserRequestRepository, PromoteUserRequestRepository>();
-            services.AddSingleton<IRemoveRegularRequestRepository, RemoveRegularRequestRepository>();
-            services.AddSingleton<IRemoveSuperVipRepository, RemoveSuperVipRepository>();
+        // Playlist
+        services.AddSingleton<IAddRequestRepository, AddRequestRepository>();
+        services.AddSingleton<IAddSongToDriveRepository, AddSongToDriveRepository>();
+        services.AddSingleton<IArchiveRequestRepository, ArchiveRequestRepository>();
+        services.AddSingleton<IClearRequestsRepository, ClearRequestsRepository>();
+        services.AddSingleton<IEditRequestRepository, EditRequestRepository>();
+        services.AddSingleton<IEditSuperVipRequestRepository, EditSuperVipRequestRepository>();
+        services.AddSingleton<IGetCurrentRequestsRepository, GetCurrentRequestsRepository>();
+        services.AddSingleton<IGetIsUserInChatRepository, GetIsUserInChatRepository>();
+        services.AddSingleton<IGetSingleSongRequestIdRepository, GetSingleSongRequestIdRepository>();
+        services.AddSingleton<IGetSongRequestByIdRepository, GetSongRequestByIdRepository>();
+        services
+            .AddSingleton<IGetUsersCurrentRegularRequestCountRepository,
+                GetUsersCurrentRegularRequestCountRepository>();
+        services.AddSingleton<IGetUsersCurrentRequestCountRepository, GetUsersCurrentRequestCountRepository>();
+        services.AddSingleton<IGetUsersRequestsRepository, GetUsersRequestsRepository>();
+        services.AddSingleton<IPromoteUserRequestRepository, PromoteUserRequestRepository>();
+        services.AddSingleton<IRemoveRegularRequestRepository, RemoveRegularRequestRepository>();
+        services.AddSingleton<IRemoveSuperVipRepository, RemoveSuperVipRepository>();
 
-            // Quote
-            services.AddTransient<IQuoteRepository, QuoteRepository>();
+        // Quote
+        services.AddTransient<IQuoteRepository, QuoteRepository>();
 
-            // Search
-            services
-                .AddSingleton<IGetPriorityChartFromSearchResultsRepository,
-                    GetPriorityChartFromSearchResultsRepository>();
-            services.AddSingleton<IGetSongBySearchIdRepository, GetSongBySearchIdRepository>();
-            services.AddSingleton<IGetSongsFromSearchResultsRepository, GetSongsFromSearchResultsRepository>();
-            services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();
+        // Search
+        services
+            .AddSingleton<IGetPriorityChartFromSearchResultsRepository,
+                GetPriorityChartFromSearchResultsRepository>();
+        services.AddSingleton<IGetSongBySearchIdRepository, GetSongBySearchIdRepository>();
+        services.AddSingleton<IGetSongsFromSearchResultsRepository, GetSongsFromSearchResultsRepository>();
+        services.AddSingleton<ISaveSearchSynonymRequestRepository, SaveSearchSynonymRequestRepository>();
 
-            // Settings
-            services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
-            services.AddSingleton<ISetOrCreateSettingRepository, SetOrCreateSettingRepository>();
+        // Settings
+        services.AddSingleton<IGetSettingRepository, GetSettingRepository>();
+        services.AddSingleton<ISetOrCreateSettingRepository, SetOrCreateSettingRepository>();
 
-            // StreamLabs
-            services.AddSingleton<ISaveStreamLabsDonationsRepository, SaveStreamLabsDonationsRepository>();
+        // StreamLabs
+        services.AddSingleton<ISaveStreamLabsDonationsRepository, SaveStreamLabsDonationsRepository>();
 
-            // Stream Status
-            services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
-            services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
+        // Stream Status
+        services.AddSingleton<IGetStreamStatusRepository, GetStreamStatusRepository>();
+        services.AddSingleton<ISaveStreamStatusRepository, SaveStreamStatusRepository>();
 
-            // Vip
-            services
-                .AddSingleton<IGetUsersCurrentSuperVipRequestCountRepository,
-                    GetUsersCurrentSuperVipRequestCountRepository>();
-            services
-                .AddSingleton<IGetUsersCurrentVipRequestCountRepository, GetUsersCurrentVipRequestCountRepository>();
-            services.AddSingleton<IGetUsersGiftedVipsRepository, GetUsersGiftedVipsRepository>();
-            services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
-            services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
-            services.AddSingleton<IGiveSubVipsRepository, GiveSubVipsRepository>();
-            services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
-            services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
-            services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
-            services.AddSingleton<IUpdateDonationVipsRepository, UpdateDonationVipsRepository>();
-            services.AddSingleton<IUpdateTotalBitsRepository, UpdateTotalBitsRepository>();
-            services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
-            services.AddSingleton<IUseVipRepository, UseVipRepository>();
-            services.AddSingleton<IGiveChannelPointsVipRepository, GiveChannelPointsVipRepository>();
+        // Vip
+        services
+            .AddSingleton<IGetUsersCurrentSuperVipRequestCountRepository,
+                GetUsersCurrentSuperVipRequestCountRepository>();
+        services
+            .AddSingleton<IGetUsersCurrentVipRequestCountRepository, GetUsersCurrentVipRequestCountRepository>();
+        services.AddSingleton<IGetUsersGiftedVipsRepository, GetUsersGiftedVipsRepository>();
+        services.AddSingleton<IGetUsersVipCountRepository, GetUsersVipCountRepository>();
+        services.AddSingleton<IGiftVipRepository, GiftVipRepository>();
+        services.AddSingleton<IGiveSubVipsRepository, GiveSubVipsRepository>();
+        services.AddSingleton<IIsSuperVipInQueueRepository, IsSuperVipInQueueRepository>();
+        services.AddSingleton<IModGiveVipRepository, ModGiveVipRepository>();
+        services.AddSingleton<IRefundVipsRepository, RefundVipsRepository>();
+        services.AddSingleton<IUpdateDonationVipsRepository, UpdateDonationVipsRepository>();
+        services.AddSingleton<IUpdateTotalBitsRepository, UpdateTotalBitsRepository>();
+        services.AddSingleton<IUseSuperVipRepository, UseSuperVipRepository>();
+        services.AddSingleton<IUseVipRepository, UseVipRepository>();
+        services.AddSingleton<IGiveChannelPointsVipRepository, GiveChannelPointsVipRepository>();
 
-            // WatchTime
-            services.AddSingleton<IGetWatchTimeRepository, GetWatchTimeRepository>();
-            services.AddSingleton<IUpdateWatchTimeRepository, UpdateWatchTimeRepository>();
+        // WatchTime
+        services.AddSingleton<IGetWatchTimeRepository, GetWatchTimeRepository>();
+        services.AddSingleton<IUpdateWatchTimeRepository, UpdateWatchTimeRepository>();
 
-            return services;
-        }
+        return services;
     }
 }

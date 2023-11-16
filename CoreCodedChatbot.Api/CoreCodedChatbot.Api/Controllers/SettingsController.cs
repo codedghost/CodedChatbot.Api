@@ -5,32 +5,31 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("Settings/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class SettingsController : Controller
 {
-    [Route("Settings/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class SettingsController : Controller
+    private readonly ISettingsService _settingsService;
+
+    public SettingsController(ISettingsService settingsService)
     {
-        private readonly ISettingsService _settingsService;
+        _settingsService = settingsService;
+    }
 
-        public SettingsController(ISettingsService settingsService)
+    [HttpPost]
+    public IActionResult Update([FromBody] UpdateSettingsRequest request)
+    {
+        try
         {
-            _settingsService = settingsService;
+            _settingsService.Update(request.Key, request.Value);
+
+            return Ok();
         }
-
-        [HttpPost]
-        public IActionResult Update([FromBody] UpdateSettingsRequest request)
+        catch (Exception)
         {
-            try
-            {
-                _settingsService.Update(request.Key, request.Value);
-
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            return BadRequest();
         }
     }
 }

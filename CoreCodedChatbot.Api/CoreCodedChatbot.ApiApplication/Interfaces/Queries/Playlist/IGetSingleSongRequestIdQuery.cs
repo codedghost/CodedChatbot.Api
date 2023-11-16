@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiApplication.Models.Enums;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface IGetSingleSongRequestIdQuery
 {
-    public interface IGetSingleSongRequestIdQuery
-    {
-        int Get(string username, SongRequestType songRequestType);
-    }
+    int Get(string username, SongRequestType songRequestType);
 }

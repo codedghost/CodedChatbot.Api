@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IGetUsersCurrentRequestCountRepository
 {
-    public interface IGetUsersCurrentRequestCountRepository
-    {
-        int GetUsersCurrentRequestCount(string username);
-    }
+    int GetUsersCurrentRequestCount(string username);
 }

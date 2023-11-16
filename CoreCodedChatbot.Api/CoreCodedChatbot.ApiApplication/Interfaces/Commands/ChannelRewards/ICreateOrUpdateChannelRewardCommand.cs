@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards;
+
+public interface ICreateOrUpdateChannelRewardCommand
 {
-    public interface ICreateOrUpdateChannelRewardCommand
-    {
-        void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription);
-    }
+    void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription);
 }

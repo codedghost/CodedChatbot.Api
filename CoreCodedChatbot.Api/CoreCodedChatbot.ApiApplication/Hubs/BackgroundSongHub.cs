@@ -3,14 +3,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace CoreCodedChatbot.ApiApplication.Hubs
+namespace CoreCodedChatbot.ApiApplication.Hubs;
+
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class BackgroundSongHub : Hub
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class BackgroundSongHub : Hub
+    public async Task TriggerBackgroundSongCheck(string username)
     {
-        public async Task TriggerBackgroundSongCheck(string username)
-        {
-            await Clients.All.SendAsync("BackgroundSongCheck", username);
-        }
+        await Clients.All.SendAsync("BackgroundSongCheck", username);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IProcessRegularSongRequestCommand
 {
-    public interface IProcessRegularSongRequestCommand
-    {
-        AddSongResult Process(string username, string requestText, int searchSongId);
-    }
+    AddSongResult Process(string username, string requestText, int searchSongId);
 }

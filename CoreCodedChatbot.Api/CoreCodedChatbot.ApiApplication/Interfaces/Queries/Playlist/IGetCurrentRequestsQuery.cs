@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface IGetCurrentRequestsQuery
 {
-    public interface IGetCurrentRequestsQuery
-    {
-        (List<PlaylistItem> RegularRequests, List<PlaylistItem> VipRequests) GetCurrentRequests();
-    }
+    (List<PlaylistItem> RegularRequests, List<PlaylistItem> VipRequests) GetCurrentRequests();
 }

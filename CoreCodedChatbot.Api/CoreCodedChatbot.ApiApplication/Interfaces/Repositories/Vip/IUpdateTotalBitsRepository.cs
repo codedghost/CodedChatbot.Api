@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IUpdateTotalBitsRepository
 {
-    public interface IUpdateTotalBitsRepository
-    {
-        void Update(string username, int totalBits);
-    }
+    void Update(string username, int totalBits);
 }

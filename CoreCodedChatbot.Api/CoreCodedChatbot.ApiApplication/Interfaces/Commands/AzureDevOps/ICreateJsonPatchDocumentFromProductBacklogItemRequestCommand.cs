@@ -1,10 +1,9 @@
 ﻿using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
+
+public interface ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand
 {
-    public interface ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand
-    {
-        JsonPatchDocument Create(string twitchUsername, DevOpsProductBacklogItem pbiInfo);
-    }
+    JsonPatchDocument Create(string twitchUsername, DevOpsProductBacklogItem pbiInfo);
 }

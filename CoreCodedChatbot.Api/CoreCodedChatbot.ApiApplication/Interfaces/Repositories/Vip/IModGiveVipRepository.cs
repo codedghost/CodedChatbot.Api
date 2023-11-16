@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IModGiveVipRepository
 {
-    public interface IModGiveVipRepository
-    {
-        void ModGiveVip(string username, int vipsToGive);
-    }
+    void ModGiveVip(string username, int vipsToGive);
 }

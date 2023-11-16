@@ -6,37 +6,36 @@ using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.Vip
+namespace CoreCodedChatbot.ApiTests.Commands.Vip;
+
+[TestFixture]
+public class RefundVipCommandTests
 {
-    [TestFixture]
-    public class RefundVipCommandTests
+    private Mock<IRefundVipsRepository> _refundVipsRepository;
+
+    private RefundVipCommand _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IRefundVipsRepository> _refundVipsRepository;
+        _refundVipsRepository = new Mock<IRefundVipsRepository>();
 
-        private RefundVipCommand _subject;
+        _subject = new RefundVipCommand(_refundVipsRepository.Object);
+    }
 
-        [SetUp]
-        public void Setup()
-        {
-            _refundVipsRepository = new Mock<IRefundVipsRepository>();
+    [Test, AutoData]
+    public void EnsureSingleVipRefundCallsRepository(VipRefund vipRefund)
+    {
+        _subject.Refund(vipRefund);
 
-            _subject = new RefundVipCommand(_refundVipsRepository.Object);
-        }
+        _refundVipsRepository.Verify(s => s.RefundVips(new List<VipRefund> {vipRefund}), Times.Once);
+    }
 
-        [Test, AutoData]
-        public void EnsureSingleVipRefundCallsRepository(VipRefund vipRefund)
-        {
-            _subject.Refund(vipRefund);
+    [Test, AutoData]
+    public void EnsureMultipleVIpsRefundCallsRepository(List<VipRefund> vipRefunds)
+    {
+        _subject.Refund(vipRefunds);
 
-            _refundVipsRepository.Verify(s => s.RefundVips(new List<VipRefund> {vipRefund}), Times.Once);
-        }
-
-        [Test, AutoData]
-        public void EnsureMultipleVIpsRefundCallsRepository(List<VipRefund> vipRefunds)
-        {
-            _subject.Refund(vipRefunds);
-
-            _refundVipsRepository.Verify(s => s.RefundVips(vipRefunds));
-        }
+        _refundVipsRepository.Verify(s => s.RefundVips(vipRefunds));
     }
 }

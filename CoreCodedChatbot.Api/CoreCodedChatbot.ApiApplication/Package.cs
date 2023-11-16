@@ -13,61 +13,60 @@ using PrintfulLib.ExternalClients;
 using PrintfulLib.Interfaces.ExternalClients;
 using SolrNet;
 
-namespace CoreCodedChatbot.ApiApplication
+namespace CoreCodedChatbot.ApiApplication;
+
+public static class Package
 {
-    public static class Package
+    public static IServiceCollection AddFactories(this IServiceCollection services)
     {
-        public static IServiceCollection AddFactories(this IServiceCollection services)
+        services.AddSingleton<IPrintfulWebhookSetupFactory, PrintfulWebhookSetupFactory>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddSolr(this IServiceCollection services, ISecretService secretService)
+    {
+        var solrUser = secretService.GetSecret<string>("SolrUsername");
+        var solrPass = secretService.GetSecret<string>("SolrPassword");
+        var solrUrl = secretService.GetSecret<string>("SolrUrl");
+
+        var credentials = Encoding.ASCII.GetBytes($"{solrUser}:{solrPass}");
+
+        var credentialsBase64 = Convert.ToBase64String(credentials);
+
+        services.AddSolrNet<SongSearch>($"{solrUrl}/SongSearch", options =>
         {
-            services.AddSingleton<IPrintfulWebhookSetupFactory, PrintfulWebhookSetupFactory>();
+            options.HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", credentialsBase64);
+        });
 
-            return services;
-        }
+        services.AddScoped<ISolrService, SolrService>();
+        services.AddSingleton<IDownloadChartService, DownloadChartService>();
 
-        public static IServiceCollection AddSolr(this IServiceCollection services, ISecretService secretService)
-        {
-            var solrUser = secretService.GetSecret<string>("SolrUsername");
-            var solrPass = secretService.GetSecret<string>("SolrPassword");
-            var solrUrl = secretService.GetSecret<string>("SolrUrl");
+        return services;
+    }
 
-            var credentials = Encoding.ASCII.GetBytes($"{solrUser}:{solrPass}");
+    public static IServiceCollection AddRabbitConnectionServices(this IServiceCollection services)
+    {
+        services.AddConnectionRabbitServices()
+            .AddRabbitPublisherService();
 
-            var credentialsBase64 = Convert.ToBase64String(credentials);
+        return services;
+    }
 
-            services.AddSolrNet<SongSearch>($"{solrUrl}/SongSearch", options =>
-            {
-                options.HttpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", credentialsBase64);
-            });
+    public static IServiceCollection AddPrintfulClient(this IServiceCollection services, ISecretService secretService)
+    {
+        var printfulClient = new PrintfulClient(secretService.GetSecret<string>("PrintfulAPIKey"));
 
-            services.AddScoped<ISolrService, SolrService>();
-            services.AddSingleton<IDownloadChartService, DownloadChartService>();
+        services.AddSingleton<IPrintfulClient>(printfulClient);
 
-            return services;
-        }
+        return services;
+    }
 
-        public static IServiceCollection AddRabbitConnectionServices(this IServiceCollection services)
-        {
-            services.AddConnectionRabbitServices()
-                .AddRabbitPublisherService();
+    public static IServiceCollection AddAutoMapper(this IServiceCollection services)
+    {
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            return services;
-        }
-
-        public static IServiceCollection AddPrintfulClient(this IServiceCollection services, ISecretService secretService)
-        {
-            var printfulClient = new PrintfulClient(secretService.GetSecret<string>("PrintfulAPIKey"));
-
-            services.AddSingleton<IPrintfulClient>(printfulClient);
-
-            return services;
-        }
-
-        public static IServiceCollection AddAutoMapper(this IServiceCollection services)
-        {
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            return services;
-        }
+        return services;
     }
 }

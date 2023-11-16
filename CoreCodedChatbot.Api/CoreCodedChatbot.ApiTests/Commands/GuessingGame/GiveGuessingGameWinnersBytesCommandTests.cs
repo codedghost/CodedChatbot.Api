@@ -6,47 +6,46 @@ using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame
+namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame;
+
+[TestFixture]
+public class GiveGuessingGameWinnersBytesCommandTests
 {
-    [TestFixture]
-    public class GiveGuessingGameWinnersBytesCommandTests
+    private Mock<IGiveUsersBytesRepository> _giveUsersBytesRepository;
+
+    private GiveGuessingGameWinnersBytesCommand _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IGiveUsersBytesRepository> _giveUsersBytesRepository;
+        _giveUsersBytesRepository = new Mock<IGiveUsersBytesRepository>();
 
-        private GiveGuessingGameWinnersBytesCommand _subject;
+        _subject = new GiveGuessingGameWinnersBytesCommand(_giveUsersBytesRepository.Object);
+    }
 
-        [SetUp]
-        public void Setup()
-        {
-            _giveUsersBytesRepository = new Mock<IGiveUsersBytesRepository>();
+    [Test]
+    public void RepositoryNotCalledWhen_InputIsNull()
+    {
+        _subject.Give(null);
 
-            _subject = new GiveGuessingGameWinnersBytesCommand(_giveUsersBytesRepository.Object);
-        }
+        _giveUsersBytesRepository.Verify(s => s.GiveBytes(It.IsAny<List<GiveBytesToUserModel>>()), Times.Never);
+    }
 
-        [Test]
-        public void RepositoryNotCalledWhen_InputIsNull()
-        {
-            _subject.Give(null);
+    [Test]
+    public void RepositoryCalledWithEmptyListWhen_InputIsEmptyList()
+    {
+        _subject.Give(new List<GuessingGameWinner>());
 
-            _giveUsersBytesRepository.Verify(s => s.GiveBytes(It.IsAny<List<GiveBytesToUserModel>>()), Times.Never);
-        }
+        _giveUsersBytesRepository.Verify(s => s.GiveBytes(new List<GiveBytesToUserModel>()), Times.Once);
+    }
 
-        [Test]
-        public void RepositoryCalledWithEmptyListWhen_InputIsEmptyList()
-        {
-            _subject.Give(new List<GuessingGameWinner>());
+    [Test, AutoData]
+    public void RepositoryCalledWithPopulatedListWhen_GivenPopulatedList(
+        List<GuessingGameWinner> winners)
+    {
+        _subject.Give(winners);
 
-            _giveUsersBytesRepository.Verify(s => s.GiveBytes(new List<GiveBytesToUserModel>()), Times.Once);
-        }
-
-        [Test, AutoData]
-        public void RepositoryCalledWithPopulatedListWhen_GivenPopulatedList(
-            List<GuessingGameWinner> winners)
-        {
-            _subject.Give(winners);
-
-            _giveUsersBytesRepository.Verify(
-                s => s.GiveBytes(It.Is<List<GiveBytesToUserModel>>(g => g.Count == winners.Count)), Times.Once);
-        }
-}
+        _giveUsersBytesRepository.Verify(
+            s => s.GiveBytes(It.Is<List<GiveBytesToUserModel>>(g => g.Count == winners.Count)), Times.Once);
+    }
 }

@@ -6,52 +6,51 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Microsoft.AspNetCore.Components.Route("ClientTrigger/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class ClientTriggerController : Controller
 {
-    [Microsoft.AspNetCore.Components.Route("ClientTrigger/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ClientTriggerController : Controller
+    private readonly ILogger<ClientTriggerController> _logger;
+    private readonly IClientTriggerService _clientTriggerService;
+
+    public ClientTriggerController(ILogger<ClientTriggerController> logger,
+        IClientTriggerService clientTriggerService)
     {
-        private readonly ILogger<ClientTriggerController> _logger;
-        private readonly IClientTriggerService _clientTriggerService;
+        _logger = logger;
+        _clientTriggerService = clientTriggerService;
+    }
 
-        public ClientTriggerController(ILogger<ClientTriggerController> logger,
-            IClientTriggerService clientTriggerService)
+    [HttpPost]
+    public IActionResult CheckBackgroundSong([FromBody] CheckBackgroundSongRequest request)
+    {
+        try
         {
-            _logger = logger;
-            _clientTriggerService = clientTriggerService;
+            _clientTriggerService.TriggerSongCheck(request.Username);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in CheckBackgroundSong");
         }
 
-        [HttpPost]
-        public IActionResult CheckBackgroundSong([FromBody] CheckBackgroundSongRequest request)
-        {
-            try
-            {
-                _clientTriggerService.TriggerSongCheck(request.Username);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in CheckBackgroundSong");
-            }
+        return BadRequest();
+    }
 
-            return BadRequest();
+    [HttpPost]
+    public IActionResult SendBackgroundSongResult([FromBody] SendBackgroundSongResultRequest request)
+    {
+        try
+        {
+            _clientTriggerService.SendSongToChat(request.Username, request.Title, request.Artist, request.Url);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in SendBackgroundSongResult");
         }
 
-        [HttpPost]
-        public IActionResult SendBackgroundSongResult([FromBody] SendBackgroundSongResultRequest request)
-        {
-            try
-            {
-                _clientTriggerService.SendSongToChat(request.Username, request.Title, request.Artist, request.Url);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in SendBackgroundSongResult");
-            }
-
-            return BadRequest();
-        }
+        return BadRequest();
     }
 }

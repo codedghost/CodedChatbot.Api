@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface IGetTopTenRequestsQuery
 {
-    public interface IGetTopTenRequestsQuery
-    {
-        List<PlaylistItem> Get();
-    }
+    List<PlaylistItem> Get();
 }

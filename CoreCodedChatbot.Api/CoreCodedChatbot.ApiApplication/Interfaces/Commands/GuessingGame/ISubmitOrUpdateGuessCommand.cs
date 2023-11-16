@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
+
+public interface ISubmitOrUpdateGuessCommand
 {
-    public interface ISubmitOrUpdateGuessCommand
-    {
-        void SubmitOrUpdate(string username, decimal percentageGuess);
-    }
+    void SubmitOrUpdate(string username, decimal percentageGuess);
 }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Extensions
+namespace CoreCodedChatbot.ApiApplication.Extensions;
+
+public static class SongListQueryableExtensions
 {
-    public static class SongListQueryableExtensions
+    public static List<SongRequest> OrderRequests(this IQueryable<SongRequest> requests)
     {
-        public static List<SongRequest> OrderRequests(this IQueryable<SongRequest> requests)
-        {
-            return requests.OrderBy(sr => sr.SuperVipRequestTime ?? DateTime.MaxValue).ThenBy(sr => sr.VipRequestTime ?? DateTime.MaxValue).ThenBy(sr => sr.RequestTime).ToList();
-        }
+        return requests.OrderBy(sr => sr.SuperVipRequestTime ?? DateTime.MaxValue).ThenBy(sr => sr.VipRequestTime ?? DateTime.MaxValue).ThenBy(sr => sr.RequestTime).ToList();
     }
 }

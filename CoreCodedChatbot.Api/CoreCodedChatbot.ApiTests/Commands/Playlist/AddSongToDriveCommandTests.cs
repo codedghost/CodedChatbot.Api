@@ -4,50 +4,49 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.Playlist
+namespace CoreCodedChatbot.ApiTests.Commands.Playlist;
+
+[TestFixture]
+public class AddSongToDriveCommandTests
 {
-    [TestFixture]
-    public class AddSongToDriveCommandTests
+    private Mock<IAddSongToDriveRepository> _addSongToDriveRepository;
+
+    private AddSongToDriveCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<IAddSongToDriveRepository> _addSongToDriveRepository;
+        _addSongToDriveRepository = new Mock<IAddSongToDriveRepository>();
 
-        private AddSongToDriveCommand _subject;
+        _addSongToDriveRepository.Setup(a => a.AddSongToDrive(It.IsAny<int>())).Returns(true);
 
-        [SetUp]
-        public void SetUp()
-        {
-            _addSongToDriveRepository = new Mock<IAddSongToDriveRepository>();
+        _subject = new AddSongToDriveCommand(_addSongToDriveRepository.Object);
+    }
 
-            _addSongToDriveRepository.Setup(a => a.AddSongToDrive(It.IsAny<int>())).Returns(true);
+    [TestCase(50, true, TestName = "SuccessWhen_ValidSongId")]
+    [TestCase(0, false, TestName = "FailureWhen_InvalidSongId")]
+    [TestCase(-1, false, TestName = "FailureWhen_InvalidSongId")]
+    public void Tests(int songId, bool expectedResult)
+    {
+        var result = _subject.AddSongToDrive(songId);
 
-            _subject = new AddSongToDriveCommand(_addSongToDriveRepository.Object);
-        }
+        Assert.AreEqual(expectedResult, result);
+    }
 
-        [TestCase(50, true, TestName = "SuccessWhen_ValidSongId")]
-        [TestCase(0, false, TestName = "FailureWhen_InvalidSongId")]
-        [TestCase(-1, false, TestName = "FailureWhen_InvalidSongId")]
-        public void Tests(int songId, bool expectedResult)
-        {
-            var result = _subject.AddSongToDrive(songId);
+    [Test, AutoData]
+    public void EnsureThat_AddSongToDriveRepositoryIsCalled_WhenValidSongId(int songRequestId)
+    {
+        _subject.AddSongToDrive(songRequestId);
 
-            Assert.AreEqual(expectedResult, result);
-        }
+        _addSongToDriveRepository.Verify(a => a.AddSongToDrive(songRequestId), Times.Once);
+    }
 
-        [Test, AutoData]
-        public void EnsureThat_AddSongToDriveRepositoryIsCalled_WhenValidSongId(int songRequestId)
-        {
-            _subject.AddSongToDrive(songRequestId);
+    [TestCase(0, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId_0")]
+    [TestCase(-1, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId_-1")]
+    public void InvalidSongTest(int songRequestId)
+    {
+        _subject.AddSongToDrive(songRequestId);
 
-            _addSongToDriveRepository.Verify(a => a.AddSongToDrive(songRequestId), Times.Once);
-        }
-
-        [TestCase(0, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId_0")]
-        [TestCase(-1, TestName = "EnsureThat_AddSongToDriveRepositoryIsNotCalled_WhenInvalidSongId_-1")]
-        public void InvalidSongTest(int songRequestId)
-        {
-            _subject.AddSongToDrive(songRequestId);
-
-            _addSongToDriveRepository.Verify(a => a.AddSongToDrive(songRequestId), Times.Never);
-        }
+        _addSongToDriveRepository.Verify(a => a.AddSongToDrive(songRequestId), Times.Never);
     }
 }

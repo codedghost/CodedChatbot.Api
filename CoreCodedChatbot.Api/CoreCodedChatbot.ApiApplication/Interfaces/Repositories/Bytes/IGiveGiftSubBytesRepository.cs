@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+
+public interface IGiveGiftSubBytesRepository
 {
-    public interface IGiveGiftSubBytesRepository
-    {
-        void Give(string username, int conversionAmount);
-    }
+    void Give(string username, int conversionAmount);
 }

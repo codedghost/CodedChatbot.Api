@@ -2,29 +2,28 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
+
+public class GetUsersCurrentVipRequestCountRepository : IGetUsersCurrentVipRequestCountRepository
 {
-    public class GetUsersCurrentVipRequestCountRepository : IGetUsersCurrentVipRequestCountRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetUsersCurrentVipRequestCountRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetUsersCurrentVipRequestCountRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public int GetUsersCurrentVipRequestCount(string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var vips = context.SongRequests.Count(sr =>
+                !sr.Played && sr.Username == username && sr.VipRequestTime != null &&
+                sr.SuperVipRequestTime == null);
 
-        public int GetUsersCurrentVipRequestCount(string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var vips = context.SongRequests.Count(sr =>
-                    !sr.Played && sr.Username == username && sr.VipRequestTime != null &&
-                    sr.SuperVipRequestTime == null);
-
-                return vips;
-            }
+            return vips;
         }
     }
 }

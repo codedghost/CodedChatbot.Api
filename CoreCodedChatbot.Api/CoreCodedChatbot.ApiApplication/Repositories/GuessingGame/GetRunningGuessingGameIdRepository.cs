@@ -2,25 +2,24 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame
+namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
+
+public class GetRunningGuessingGameIdRepository : IGetRunningGuessingGameIdRepository
 {
-    public class GetRunningGuessingGameIdRepository : IGetRunningGuessingGameIdRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetRunningGuessingGameIdRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetRunningGuessingGameIdRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public int Get()
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
-
-        public int Get()
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                return context.SongGuessingRecords?.SingleOrDefault(x => x.UsersCanGuess)?.SongGuessingRecordId ?? 0;
-            }
+            return context.SongGuessingRecords?.SingleOrDefault(x => x.UsersCanGuess)?.SongGuessingRecordId ?? 0;
         }
     }
 }

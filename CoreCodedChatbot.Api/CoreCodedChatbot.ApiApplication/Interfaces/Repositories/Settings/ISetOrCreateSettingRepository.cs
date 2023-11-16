@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
+
+public interface ISetOrCreateSettingRepository
 {
-    public interface ISetOrCreateSettingRepository
-    {
-        void Set(string settingKey, string value);
-    }
+    void Set(string settingKey, string value);
 }

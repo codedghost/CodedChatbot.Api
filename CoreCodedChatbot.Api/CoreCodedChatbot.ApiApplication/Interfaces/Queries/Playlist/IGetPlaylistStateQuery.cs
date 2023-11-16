@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiContract.Enums.Playlist;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface IGetPlaylistStateQuery
 {
-    public interface IGetPlaylistStateQuery
-    {
-        PlaylistState GetPlaylistState();
-    }
+    PlaylistState GetPlaylistState();
 }

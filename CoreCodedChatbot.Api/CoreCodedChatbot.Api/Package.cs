@@ -5,25 +5,24 @@ using CoreCodedChatbot.ApiApplication.Repositories;
 using CoreCodedChatbot.ApiApplication.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoreCodedChatbot.Api
+namespace CoreCodedChatbot.Api;
+
+public static class Package
 {
-    public static class Package
+    public static IServiceCollection AddTwitchServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddTwitchServices(this IServiceCollection services)
-        {
-            services.AddTwitchFactories();
+        services.AddTwitchFactories();
 
-            return services;
-        }
+        return services;
+    }
 
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddApiServices()
-                .AddApiCommands()
-                .AddApiQueries()
-                .AddApiRepositories();
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        services.AddApiServices()
+            .AddApiCommands()
+            .AddApiQueries()
+            .AddApiRepositories();
 
-            return services;
-        }
+        return services;
     }
 }

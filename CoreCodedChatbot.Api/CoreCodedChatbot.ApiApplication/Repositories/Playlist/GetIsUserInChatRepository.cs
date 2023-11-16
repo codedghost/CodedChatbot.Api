@@ -3,31 +3,30 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class GetIsUserInChatRepository : IGetIsUserInChatRepository
 {
-    public class GetIsUserInChatRepository : IGetIsUserInChatRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetIsUserInChatRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetIsUserInChatRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public bool IsUserInChat(string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var user = context.Users.SingleOrDefault(u => u.Username == username);
 
-        public bool IsUserInChat(string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null) return false;
 
-                if (user == null) return false;
+            var tmiReportedInChat = user.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
 
-                var tmiReportedInChat = user.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
-
-                return tmiReportedInChat;
-            }
+            return tmiReportedInChat;
         }
     }
 }

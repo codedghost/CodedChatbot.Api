@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
+
+public interface ISetGuessingGameStateCommand
 {
-    public interface ISetGuessingGameStateCommand
-    {
-        void Set(bool value);
-    }
+    void Set(bool value);
 }

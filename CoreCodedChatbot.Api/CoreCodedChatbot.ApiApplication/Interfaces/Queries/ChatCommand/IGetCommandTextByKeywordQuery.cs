@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
+
+public interface IGetCommandTextByKeywordQuery
 {
-    public interface IGetCommandTextByKeywordQuery
-    {
-        string Get(string keyword);
-    }
+    string Get(string keyword);
 }

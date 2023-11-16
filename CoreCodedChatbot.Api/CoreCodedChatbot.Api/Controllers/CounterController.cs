@@ -11,98 +11,97 @@ using Microsoft.Build.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("Counters/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class CounterController : Controller
 {
-    [Route("Counters/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class CounterController : Controller
+    private readonly ICounterService _counterService;
+    private readonly ILogger<CounterController> _logger;
+
+    public CounterController(
+        ICounterService counterService,
+        ILogger<CounterController> logger)
     {
-        private readonly ICounterService _counterService;
-        private readonly ILogger<CounterController> _logger;
+        _counterService = counterService;
+        _logger = logger;
+    }
 
-        public CounterController(
-            ICounterService counterService,
-            ILogger<CounterController> logger)
+    [HttpGet]
+    public async Task<IActionResult> GetCounters(int? page, int? pageSize, string? orderByColumnName, bool? desc,
+        string? filterByColumn, string? filterByValue)
+    {
+        try
         {
-            _counterService = counterService;
-            _logger = logger;
+            var counters = await _counterService.GetCounters(page, pageSize, orderByColumnName, desc,
+                filterByColumn, filterByValue);
+
+            return Json(new GetCountersResponse
+            {
+                Counters = counters
+            });
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetCounters(int? page, int? pageSize, string? orderByColumnName, bool? desc,
-            string? filterByColumn, string? filterByValue)
+        catch (Exception e)
         {
-            try
-            {
-                var counters = await _counterService.GetCounters(page, pageSize, orderByColumnName, desc,
-                    filterByColumn, filterByValue);
-
-                return Json(new GetCountersResponse
-                {
-                    Counters = counters
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.Log(LogLevel.Error, e, "Error when retrieving Counter list");
-                return BadRequest();
-            }
+            _logger.Log(LogLevel.Error, e, "Error when retrieving Counter list");
+            return BadRequest();
         }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetCounter(string counterName)
+    [HttpGet]
+    public async Task<IActionResult> GetCounter(string counterName)
+    {
+        try
         {
-            try
-            {
-                var counter = await _counterService.GetCounter(counterName);
+            var counter = await _counterService.GetCounter(counterName);
 
-                return Json(new GetCounterResponse
-                {
-                    Counter = counter
-                });
-            }
-            catch (Exception e)
+            return Json(new GetCounterResponse
             {
-                _logger.Log(LogLevel.Error, e, $"Error when retrieving counter: {counterName}");
-                return NotFound();
-            }
+                Counter = counter
+            });
         }
-
-        [HttpPut]
-        public async Task<IActionResult> AddCounter([FromBody] CreateCounterRequest request)
+        catch (Exception e)
         {
-            try
-            {
-                await _counterService.CreateCounter(request.CounterName, request.CounterPreText,
-                    request.CounterInitialVal);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.Log(LogLevel.Error, e, $"Error when creating Counter: {request.CounterName}",
-                    new object[] {request.CounterName, request.CounterPreText, request.CounterInitialVal});
-                return BadRequest();
-            }
+            _logger.Log(LogLevel.Error, e, $"Error when retrieving counter: {counterName}");
+            return NotFound();
         }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateCounter(string counterName)
+    [HttpPut]
+    public async Task<IActionResult> AddCounter([FromBody] CreateCounterRequest request)
+    {
+        try
         {
-            try
-            {
-                var counter = await _counterService.UpdateCounter(counterName);
+            await _counterService.CreateCounter(request.CounterName, request.CounterPreText,
+                request.CounterInitialVal);
 
-                return Json(new UpdateCounterResponse
-                {
-                    Counter = counter
-                });
-            }
-            catch (Exception e)
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.Log(LogLevel.Error, e, $"Error when creating Counter: {request.CounterName}",
+                new object[] {request.CounterName, request.CounterPreText, request.CounterInitialVal});
+            return BadRequest();
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> UpdateCounter(string counterName)
+    {
+        try
+        {
+            var counter = await _counterService.UpdateCounter(counterName);
+
+            return Json(new UpdateCounterResponse
             {
-                _logger.Log(LogLevel.Error, e, $"Error when updating Counter: {counterName}");
-                return BadRequest();
-            }
+                Counter = counter
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.Log(LogLevel.Error, e, $"Error when updating Counter: {counterName}");
+            return BadRequest();
         }
     }
 }

@@ -6,62 +6,37 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 
-namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Commands.Playlist;
+
+public class PromoteRequestCommand : IPromoteRequestCommand
 {
-    public class PromoteRequestCommand : IPromoteRequestCommand
+    private readonly IPromoteUserRequestRepository _promoteUserRequestRepository;
+    private readonly IVipService _vipService;
+    private readonly IGetSongRequestByIdRepository _getSongRequestByIdRepository;
+    private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
+
+    public PromoteRequestCommand(
+        IPromoteUserRequestRepository promoteUserRequestRepository,
+        IVipService vipService,
+        IGetSongRequestByIdRepository getSongRequestByIdRepository,
+        IIsSuperVipInQueueQuery isSuperVipInQueueQuery
+    )
     {
-        private readonly IPromoteUserRequestRepository _promoteUserRequestRepository;
-        private readonly IVipService _vipService;
-        private readonly IGetSongRequestByIdRepository _getSongRequestByIdRepository;
-        private readonly IIsSuperVipInQueueQuery _isSuperVipInQueueQuery;
+        _promoteUserRequestRepository = promoteUserRequestRepository;
+        _vipService = vipService;
+        _getSongRequestByIdRepository = getSongRequestByIdRepository;
+        _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
+    }
 
-        public PromoteRequestCommand(
-            IPromoteUserRequestRepository promoteUserRequestRepository,
-            IVipService vipService,
-            IGetSongRequestByIdRepository getSongRequestByIdRepository,
-            IIsSuperVipInQueueQuery isSuperVipInQueueQuery
-            )
+    public async Task<PromoteRequestIntermediate> Promote(string username, bool useSuperVip, int songRequestId = 0)
+    {
+        var songRequest = _getSongRequestByIdRepository.GetRequest(songRequestId);
+
+        if (useSuperVip)
         {
-            _promoteUserRequestRepository = promoteUserRequestRepository;
-            _vipService = vipService;
-            _getSongRequestByIdRepository = getSongRequestByIdRepository;
-            _isSuperVipInQueueQuery = isSuperVipInQueueQuery;
-        }
-
-        public async Task<PromoteRequestIntermediate> Promote(string username, bool useSuperVip, int songRequestId = 0)
-        {
-            var songRequest = _getSongRequestByIdRepository.GetRequest(songRequestId);
-
-            if (useSuperVip)
+            if (songRequest.IsVip)
             {
-                if (songRequest.IsVip)
-                {
-                    if (!await _vipService.UseSuperVip(username, 1))
-                    {
-                        return new PromoteRequestIntermediate
-                        {
-                            PlaylistIndex = 0,
-                            PromoteRequestResult = PromoteRequestResult.NoVipAvailable
-                        };
-                    }
-
-                    return new PromoteRequestIntermediate
-                    {
-                        PlaylistIndex = 1,
-                        PromoteRequestResult = PromoteRequestResult.Successful
-                    };
-                }
-
-                if (songRequest.IsSuperVip)
-                {
-                    return new PromoteRequestIntermediate
-                    {
-                        PromoteRequestResult = PromoteRequestResult.AlreadyVip,
-                        PlaylistIndex = 0
-                    };
-                }
-
-                if (!await _vipService.UseSuperVip(username, 0))
+                if (!await _vipService.UseSuperVip(username, 1))
                 {
                     return new PromoteRequestIntermediate
                     {
@@ -70,16 +45,6 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                     };
                 }
 
-                if (_isSuperVipInQueueQuery.IsSuperVipInQueue())
-                {
-                    return new PromoteRequestIntermediate
-                    {
-                        PromoteRequestResult = PromoteRequestResult.AlreadyVip
-                    };
-                }
-
-                _promoteUserRequestRepository.PromoteUserRequest(username, songRequestId, true);
-
                 return new PromoteRequestIntermediate
                 {
                     PlaylistIndex = 1,
@@ -87,7 +52,7 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                 };
             }
 
-            if (songRequest?.IsVip ?? false)
+            if (songRequest.IsSuperVip)
             {
                 return new PromoteRequestIntermediate
                 {
@@ -96,20 +61,54 @@ namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
                 };
             }
 
-            if (!await _vipService.UseVip(username))
+            if (!await _vipService.UseSuperVip(username, 0))
+            {
                 return new PromoteRequestIntermediate
                 {
+                    PlaylistIndex = 0,
                     PromoteRequestResult = PromoteRequestResult.NoVipAvailable
                 };
+            }
 
-            var newSongIndex = _promoteUserRequestRepository.PromoteUserRequest(username, songRequestId);
+            if (_isSuperVipInQueueQuery.IsSuperVipInQueue())
+            {
+                return new PromoteRequestIntermediate
+                {
+                    PromoteRequestResult = PromoteRequestResult.AlreadyVip
+                };
+            }
+
+            _promoteUserRequestRepository.PromoteUserRequest(username, songRequestId, true);
 
             return new PromoteRequestIntermediate
             {
-                PromoteRequestResult =
-                    newSongIndex > 0 ? PromoteRequestResult.Successful : PromoteRequestResult.UnSuccessful,
-                PlaylistIndex = newSongIndex
+                PlaylistIndex = 1,
+                PromoteRequestResult = PromoteRequestResult.Successful
             };
         }
+
+        if (songRequest?.IsVip ?? false)
+        {
+            return new PromoteRequestIntermediate
+            {
+                PromoteRequestResult = PromoteRequestResult.AlreadyVip,
+                PlaylistIndex = 0
+            };
+        }
+
+        if (!await _vipService.UseVip(username))
+            return new PromoteRequestIntermediate
+            {
+                PromoteRequestResult = PromoteRequestResult.NoVipAvailable
+            };
+
+        var newSongIndex = _promoteUserRequestRepository.PromoteUserRequest(username, songRequestId);
+
+        return new PromoteRequestIntermediate
+        {
+            PromoteRequestResult =
+                newSongIndex > 0 ? PromoteRequestResult.Successful : PromoteRequestResult.UnSuccessful,
+            PlaylistIndex = newSongIndex
+        };
     }
 }

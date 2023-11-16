@@ -21,3 +21,5 @@
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/netcoreapp3.1
 /CoreCodedChatbot.Api/CoreCodedChatbot.Api/bin/Debug/net7.0
 /CoreCodedChatbot.Api/CoreCodedChatbot.ApiTests/bin/Debug/net7.0
+/CoreCodedChatbot.Api/CoreCodedChatbot.ApiTests/coveragereport
+/CoreCodedChatbot.Api/CoreCodedChatbot.ApiTests/TestResults/b6703ea3-6c83-440c-9971-7cfd03664ef3

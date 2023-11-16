@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
+
+public interface IGetStreamStatusQuery
 {
-    public interface IGetStreamStatusQuery
-    {
-        bool Get(string broadcasterUsername);
-    }
+    bool Get(string broadcasterUsername);
 }

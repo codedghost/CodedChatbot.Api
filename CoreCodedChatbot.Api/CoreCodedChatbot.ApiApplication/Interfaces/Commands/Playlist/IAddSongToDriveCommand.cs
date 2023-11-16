@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IAddSongToDriveCommand
 {
-    public interface IAddSongToDriveCommand
-    {
-        bool AddSongToDrive(int songRequestId);
-    }
+    bool AddSongToDrive(int songRequestId);
 }

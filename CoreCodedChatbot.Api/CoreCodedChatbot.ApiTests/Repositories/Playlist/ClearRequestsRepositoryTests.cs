@@ -10,64 +10,63 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
+namespace CoreCodedChatbot.ApiTests.Repositories.Playlist;
+
+[TestFixture]
+public class ClearRequestsRepositoryTests
 {
-    [TestFixture]
-    public class ClearRequestsRepositoryTests
+    private Mock<IChatbotContextFactory> _chatbotContextFactory;
+    private Mock<IChatbotContext> _chatbotContext;
+
+    private ClearRequestsRepository _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IChatbotContextFactory> _chatbotContextFactory;
-        private Mock<IChatbotContext> _chatbotContext;
+        _chatbotContextFactory = new Mock<IChatbotContextFactory>();
+        _chatbotContext = new Mock<IChatbotContext>();
+    }
 
-        private ClearRequestsRepository _subject;
+    private void SetupSubject(Mock<DbSet<SongRequest>> songRequests)
+    {
+        _chatbotContext.Setup(s => s.SongRequests).Returns(songRequests.Object);
 
-        [SetUp]
-        public void Setup()
-        {
-            _chatbotContextFactory = new Mock<IChatbotContextFactory>();
-            _chatbotContext = new Mock<IChatbotContext>();
-        }
+        _chatbotContextFactory.Setup(s => s.Create()).Returns(_chatbotContext.Object);
 
-        private void SetupSubject(Mock<DbSet<SongRequest>> songRequests)
-        {
-            _chatbotContext.Setup(s => s.SongRequests).Returns(songRequests.Object);
+        _subject = new ClearRequestsRepository(_chatbotContextFactory.Object);
+    }
 
-            _chatbotContextFactory.Setup(s => s.Create()).Returns(_chatbotContext.Object);
+    [Test]
+    public void EnsureMethodExitsWhen_NullItemsToRemove()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var dbList = fixture.Get<List<SongRequest>>();
 
-            _subject = new ClearRequestsRepository(_chatbotContextFactory.Object);
-        }
+        var dbSet = MockChatbotContextSetup.SetUpDbSetMock(dbList);
 
-        [Test]
-        public void EnsureMethodExitsWhen_NullItemsToRemove()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var dbList = fixture.Get<List<SongRequest>>();
+        SetupSubject(dbSet);
 
-            var dbSet = MockChatbotContextSetup.SetUpDbSetMock(dbList);
+        _subject.ClearRequests(null);
 
-            SetupSubject(dbSet);
+        _chatbotContextFactory.Verify(s => s.Create(), Times.Never);
+        _chatbotContext.Verify(s => s.SongRequests, Times.Never);
+        _chatbotContext.Verify(s => s.SaveChanges(), Times.Never);
+    }
 
-            _subject.ClearRequests(null);
+    [Test]
+    public void EnsureMethodExitsWhen_EmptyListOfRequestsToRemove()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var dbList = fixture.Get<List<SongRequest>>();
 
-            _chatbotContextFactory.Verify(s => s.Create(), Times.Never);
-            _chatbotContext.Verify(s => s.SongRequests, Times.Never);
-            _chatbotContext.Verify(s => s.SaveChanges(), Times.Never);
-        }
+        var dbSet = MockChatbotContextSetup.SetUpDbSetMock(dbList);
 
-        [Test]
-        public void EnsureMethodExitsWhen_EmptyListOfRequestsToRemove()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var dbList = fixture.Get<List<SongRequest>>();
+        SetupSubject(dbSet);
 
-            var dbSet = MockChatbotContextSetup.SetUpDbSetMock(dbList);
+        _subject.ClearRequests(new List<BasicSongRequest>());
 
-            SetupSubject(dbSet);
-
-            _subject.ClearRequests(new List<BasicSongRequest>());
-
-            _chatbotContextFactory.Verify(s => s.Create(), Times.Never);
-            _chatbotContext.Verify(s => s.SongRequests, Times.Never);
-            _chatbotContext.Verify(s => s.SaveChanges(), Times.Never);
-        }
+        _chatbotContextFactory.Verify(s => s.Create(), Times.Never);
+        _chatbotContext.Verify(s => s.SongRequests, Times.Never);
+        _chatbotContext.Verify(s => s.SaveChanges(), Times.Never);
     }
 }

@@ -3,34 +3,33 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
+
+public class RefundVipsRepository : IRefundVipsRepository
 {
-    public class RefundVipsRepository : IRefundVipsRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public RefundVipsRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public RefundVipsRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public void RefundVips(IEnumerable<VipRefund> refunds)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
-
-        public void RefundVips(IEnumerable<VipRefund> refunds)
-        {
-            using (var context = _chatbotContextFactory.Create())
+            foreach (var refund in refunds)
             {
-                foreach (var refund in refunds)
-                {
-                    var user = context.Users.Find(refund.Username);
+                var user = context.Users.Find(refund.Username);
 
-                    if (user == null) continue;
+                if (user == null) continue;
 
-                    user.ModGivenVipRequests += refund.VipsToRefund;
-                }
-
-                context.SaveChanges();
+                user.ModGivenVipRequests += refund.VipsToRefund;
             }
+
+            context.SaveChanges();
         }
     }
 }

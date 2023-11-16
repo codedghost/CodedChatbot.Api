@@ -6,85 +6,84 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using IGuessingGameService = CoreCodedChatbot.ApiApplication.Interfaces.Services.IGuessingGameService;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("GuessingGame/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class GuessingGameController : Controller
 {
-    [Route("GuessingGame/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class GuessingGameController : Controller
+    private readonly IGuessingGameService _guessingGameService;
+    private readonly ILogger<GuessingGameController> _logger;
+
+    private object timerLock = new object();
+
+    public GuessingGameController(
+        IGuessingGameService guessingGameService,
+        ILogger<GuessingGameController> logger
+    )
     {
-        private readonly IGuessingGameService _guessingGameService;
-        private readonly ILogger<GuessingGameController> _logger;
+        _guessingGameService = guessingGameService;
+        _logger = logger;
+    }
 
-        private object timerLock = new object();
-
-        public GuessingGameController(
-            IGuessingGameService guessingGameService,
-            ILogger<GuessingGameController> logger
-            )
+    [HttpPost]
+    public IActionResult StartGuessingGame([FromBody] StartGuessingGameRequest songInfo)
+    {
+        try
         {
-            _guessingGameService = guessingGameService;
-            _logger = logger;
+            bool isGameInProgress;
+            lock (timerLock)
+            {
+                // Check guessing game state
+                isGameInProgress = _guessingGameService.IsGuessingGameInProgress();
+            }
+
+            if (!isGameInProgress)
+                _guessingGameService.GuessingGameStart(songInfo.SongName, songInfo.SongLengthSeconds);
+
+            return Ok();
         }
-
-        [HttpPost]
-        public IActionResult StartGuessingGame([FromBody] StartGuessingGameRequest songInfo)
+        catch (Exception e)
         {
-            try
-            {
-                bool isGameInProgress;
-                lock (timerLock)
-                {
-                    // Check guessing game state
-                    isGameInProgress = _guessingGameService.IsGuessingGameInProgress();
-                }
 
-                if (!isGameInProgress)
-                    _guessingGameService.GuessingGameStart(songInfo.SongName, songInfo.SongLengthSeconds);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-
-                _logger.LogError(e, "Error in StartGuessingGame");
-                return BadRequest();
-            }
-        }
-
-        [HttpPost]
-        public IActionResult FinishGuessingGame([FromBody] decimal finalPercentage)
-        {
-            if (_guessingGameService.SetPercentageAndFinishGame(finalPercentage))
-            {
-                return Ok();
-            }
-
+            _logger.LogError(e, "Error in StartGuessingGame");
             return BadRequest();
         }
+    }
 
-        [HttpPost]
-        public IActionResult SubmitGuess([FromBody] SubmitGuessRequest submitGuessModel)
+    [HttpPost]
+    public IActionResult FinishGuessingGame([FromBody] decimal finalPercentage)
+    {
+        if (_guessingGameService.SetPercentageAndFinishGame(finalPercentage))
         {
-            if (_guessingGameService.SubmitOrUpdateGuess(submitGuessModel.Username, submitGuessModel.Guess))
-                return Ok();
-
-            return BadRequest();
+            return Ok();
         }
 
-        [HttpGet]
-        public IActionResult InitialiseGuessingGame()
-        {
-            try
-            {
-                _guessingGameService.SetGuessingGameState(false);
+        return BadRequest();
+    }
 
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in InitialiseGuessingGame");
-                return BadRequest();
-            }
+    [HttpPost]
+    public IActionResult SubmitGuess([FromBody] SubmitGuessRequest submitGuessModel)
+    {
+        if (_guessingGameService.SubmitOrUpdateGuess(submitGuessModel.Username, submitGuessModel.Guess))
+            return Ok();
+
+        return BadRequest();
+    }
+
+    [HttpGet]
+    public IActionResult InitialiseGuessingGame()
+    {
+        try
+        {
+            _guessingGameService.SetGuessingGameState(false);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in InitialiseGuessingGame");
+            return BadRequest();
         }
     }
 }

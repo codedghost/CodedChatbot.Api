@@ -3,20 +3,19 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Queries.ChannelRewards;
+
+public class GetChannelRewardQuery : IGetChannelRewardQuery
 {
-    public class GetChannelRewardQuery : IGetChannelRewardQuery
+    private readonly IGetChannelRewardRepository _getChannelRewardRepository;
+
+    public GetChannelRewardQuery(IGetChannelRewardRepository getChannelRewardRepository)
     {
-        private readonly IGetChannelRewardRepository _getChannelRewardRepository;
+        _getChannelRewardRepository = getChannelRewardRepository;
+    }
 
-        public GetChannelRewardQuery(IGetChannelRewardRepository getChannelRewardRepository)
-        {
-            _getChannelRewardRepository = getChannelRewardRepository;
-        }
-
-        public ChannelReward GetChannelReward(Guid channelId)
-        {
-            return _getChannelRewardRepository.GetById(channelId);
-        }
+    public ChannelReward GetChannelReward(Guid channelId)
+    {
+        return _getChannelRewardRepository.GetById(channelId);
     }
 }

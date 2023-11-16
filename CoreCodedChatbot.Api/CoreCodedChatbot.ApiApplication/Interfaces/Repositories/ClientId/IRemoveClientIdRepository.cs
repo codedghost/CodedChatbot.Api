@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId;
+
+public interface IRemoveClientIdRepository
 {
-    public interface IRemoveClientIdRepository
-    {
-        void Remove(string hubType, string clientId);
-    }
+    void Remove(string hubType, string clientId);
 }

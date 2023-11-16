@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IRemoveAndRefundAllRequestsCommand
 {
-    public interface IRemoveAndRefundAllRequestsCommand
-    {
-        Task RemoveAndRefundAllRequests();
-    }
+    Task RemoveAndRefundAllRequests();
 }

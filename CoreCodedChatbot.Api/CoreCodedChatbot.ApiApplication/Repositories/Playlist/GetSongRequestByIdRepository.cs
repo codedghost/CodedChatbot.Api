@@ -3,42 +3,41 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class GetSongRequestByIdRepository : IGetSongRequestByIdRepository
 {
-    public class GetSongRequestByIdRepository : IGetSongRequestByIdRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetSongRequestByIdRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetSongRequestByIdRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public SongRequestIntermediate GetRequest(int id)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var songRequest = context.SongRequests.Find(id);
 
-        public SongRequestIntermediate GetRequest(int id)
-        {
-            using (var context = _chatbotContextFactory.Create())
+            if (songRequest == null) return null;
+
+            var intermediate = new SongRequestIntermediate
             {
-                var songRequest = context.SongRequests.Find(id);
+                SongRequestId = songRequest.SongRequestId,
+                SongRequestText = songRequest.RequestText,
+                SongRequestUsername = songRequest.Username,
+                IsRecentRequest = songRequest.RequestTime.AddMinutes(5) >= DateTime.UtcNow,
+                IsVip = songRequest.VipRequestTime != null,
+                IsRecentVip = (songRequest.VipRequestTime ?? DateTime.MinValue).AddMinutes(5) >= DateTime.UtcNow,
+                IsSuperVip = songRequest.SuperVipRequestTime != null,
+                IsRecentSuperVip = (songRequest.SuperVipRequestTime ?? DateTime.MinValue).AddMinutes(5) >= DateTime.UtcNow,
+                IsInDrive = songRequest.InDrive
+            };
 
-                if (songRequest == null) return null;
-
-                var intermediate = new SongRequestIntermediate
-                {
-                    SongRequestId = songRequest.SongRequestId,
-                    SongRequestText = songRequest.RequestText,
-                    SongRequestUsername = songRequest.Username,
-                    IsRecentRequest = songRequest.RequestTime.AddMinutes(5) >= DateTime.UtcNow,
-                    IsVip = songRequest.VipRequestTime != null,
-                    IsRecentVip = (songRequest.VipRequestTime ?? DateTime.MinValue).AddMinutes(5) >= DateTime.UtcNow,
-                    IsSuperVip = songRequest.SuperVipRequestTime != null,
-                    IsRecentSuperVip = (songRequest.SuperVipRequestTime ?? DateTime.MinValue).AddMinutes(5) >= DateTime.UtcNow,
-                    IsInDrive = songRequest.InDrive
-                };
-
-                return intermediate;
-            }
+            return intermediate;
         }
     }
 }

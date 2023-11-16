@@ -6,61 +6,60 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame
+namespace CoreCodedChatbot.ApiTests.Commands.GuessingGame;
+
+[TestFixture]
+public class SubmitOrUpdateGuessCommandTests
 {
-    [TestFixture]
-    public class SubmitOrUpdateGuessCommandTests
+    private Mock<ISubmitOrUpdateGuessRepository> _submitOrUpdateGuessRepository;
+    private Mock<IGetRunningGuessingGameIdRepository> _getRunningGuessingGameIdRepository;
+
+    private SubmitOrUpdateGuessCommand _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<ISubmitOrUpdateGuessRepository> _submitOrUpdateGuessRepository;
-        private Mock<IGetRunningGuessingGameIdRepository> _getRunningGuessingGameIdRepository;
+        _submitOrUpdateGuessRepository = new Mock<ISubmitOrUpdateGuessRepository>();
+        _getRunningGuessingGameIdRepository = new Mock<IGetRunningGuessingGameIdRepository>();
+    }
 
-        private SubmitOrUpdateGuessCommand _subject;
+    private void SetCurrentGameId(int currentGameId)
+    {
+        _getRunningGuessingGameIdRepository.Setup(s => s.Get()).Returns(currentGameId);
+    }
 
-        [SetUp]
-        public void Setup()
-        {
-            _submitOrUpdateGuessRepository = new Mock<ISubmitOrUpdateGuessRepository>();
-            _getRunningGuessingGameIdRepository = new Mock<IGetRunningGuessingGameIdRepository>();
-        }
+    private void SetupSubject()
+    {
+        _subject = new SubmitOrUpdateGuessCommand(_submitOrUpdateGuessRepository.Object,
+            _getRunningGuessingGameIdRepository.Object);
+    }
 
-        private void SetCurrentGameId(int currentGameId)
-        {
-            _getRunningGuessingGameIdRepository.Setup(s => s.Get()).Returns(currentGameId);
-        }
+    [Test, AutoData]
+    public void ThrowsExceptionWhen_NoGuessingGameId(string username, decimal percentageGuess)
+    {
+        SetCurrentGameId(0);
+        SetupSubject();
 
-        private void SetupSubject()
-        {
-            _subject = new SubmitOrUpdateGuessCommand(_submitOrUpdateGuessRepository.Object,
-                _getRunningGuessingGameIdRepository.Object);
-        }
+        Assert.Throws(typeof(Exception), () => _subject.SubmitOrUpdate(username, percentageGuess));
+        _getRunningGuessingGameIdRepository.Verify(s => s.Get(), Times.Once);
+        _submitOrUpdateGuessRepository.Verify(
+            s => s.Submit(It.IsAny<int>(), username, percentageGuess), Times.Never);
+    }
 
-        [Test, AutoData]
-        public void ThrowsExceptionWhen_NoGuessingGameId(string username, decimal percentageGuess)
-        {
-            SetCurrentGameId(0);
-            SetupSubject();
+    [Test, AutoData]
+    public void SuccessfulWhen_GuessingGameIdReturns(string username, decimal percentageGuess)
+    {
+        var fixture = new Fixture();
+        fixture.Customizations.Add(new RandomNumericSequenceGenerator(1, int.MaxValue));
 
-            Assert.Throws(typeof(Exception), () => _subject.SubmitOrUpdate(username, percentageGuess));
-            _getRunningGuessingGameIdRepository.Verify(s => s.Get(), Times.Once);
-            _submitOrUpdateGuessRepository.Verify(
-                s => s.Submit(It.IsAny<int>(), username, percentageGuess), Times.Never);
-        }
+        var currentGameId = fixture.Create<int>();
 
-        [Test, AutoData]
-        public void SuccessfulWhen_GuessingGameIdReturns(string username, decimal percentageGuess)
-        {
-            var fixture = new Fixture();
-            fixture.Customizations.Add(new RandomNumericSequenceGenerator(1, int.MaxValue));
+        SetCurrentGameId(currentGameId);
+        SetupSubject();
 
-            var currentGameId = fixture.Create<int>();
+        _subject.SubmitOrUpdate(username, percentageGuess);
 
-            SetCurrentGameId(currentGameId);
-            SetupSubject();
-
-            _subject.SubmitOrUpdate(username, percentageGuess);
-
-            _getRunningGuessingGameIdRepository.Verify(s => s.Get(), Times.Once);
-            _submitOrUpdateGuessRepository.Verify(s => s.Submit(currentGameId, username, percentageGuess), Times.Once);
-        }
+        _getRunningGuessingGameIdRepository.Verify(s => s.Get(), Times.Once);
+        _submitOrUpdateGuessRepository.Verify(s => s.Submit(currentGameId, username, percentageGuess), Times.Once);
     }
 }

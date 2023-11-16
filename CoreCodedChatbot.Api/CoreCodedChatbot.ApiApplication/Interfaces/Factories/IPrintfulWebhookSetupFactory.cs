@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Factories
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Factories;
+
+public interface IPrintfulWebhookSetupFactory
 {
-    public interface IPrintfulWebhookSetupFactory
-    {
-        Task SetupPrintfulWebhook();
-    }
+    Task SetupPrintfulWebhook();
 }

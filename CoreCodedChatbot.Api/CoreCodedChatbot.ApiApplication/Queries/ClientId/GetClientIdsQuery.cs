@@ -2,20 +2,19 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ClientId;
 
-namespace CoreCodedChatbot.ApiApplication.Queries.ClientId
+namespace CoreCodedChatbot.ApiApplication.Queries.ClientId;
+
+public class GetClientIdsQuery : IGetClientIdsQuery
 {
-    public class GetClientIdsQuery : IGetClientIdsQuery
+    private readonly IGetClientIdsRepository _getClientIdsRepository;
+
+    public GetClientIdsQuery(IGetClientIdsRepository getClientIdsRepository)
     {
-        private readonly IGetClientIdsRepository _getClientIdsRepository;
+        _getClientIdsRepository = getClientIdsRepository;
+    }
 
-        public GetClientIdsQuery(IGetClientIdsRepository getClientIdsRepository)
-        {
-            _getClientIdsRepository = getClientIdsRepository;
-        }
-
-        public List<string> Get(string username, string hubType)
-        {
-            return _getClientIdsRepository.Get(username, hubType);
-        }
+    public List<string> Get(string username, string hubType)
+    {
+        return _getClientIdsRepository.Get(username, hubType);
     }
 }

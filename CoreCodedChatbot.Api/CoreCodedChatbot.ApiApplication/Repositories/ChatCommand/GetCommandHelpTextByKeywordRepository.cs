@@ -3,36 +3,35 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.ChatCommand
+namespace CoreCodedChatbot.ApiApplication.Repositories.ChatCommand;
+
+public class GetCommandHelpTextByKeywordRepository : IGetCommandHelpTextByKeywordRepository
 {
-    public class GetCommandHelpTextByKeywordRepository : IGetCommandHelpTextByKeywordRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetCommandHelpTextByKeywordRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetCommandHelpTextByKeywordRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public string Get(string keyword)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var commandKeyword = context.InfoCommandKeywords.FirstOrDefault(ik => ik.InfoCommandKeywordText == keyword);
 
-        public string Get(string keyword)
-        {
-            using (var context = _chatbotContextFactory.Create())
+            if (commandKeyword != null)
             {
-                var commandKeyword = context.InfoCommandKeywords.FirstOrDefault(ik => ik.InfoCommandKeywordText == keyword);
+                var command = context.InfoCommands.Single(ic => ic.InfoCommandId == commandKeyword.InfoCommandId);
 
-                if (commandKeyword != null)
-                {
-                    var command = context.InfoCommands.Single(ic => ic.InfoCommandId == commandKeyword.InfoCommandId);
+                if (command == null) throw new Exception("Command keyword does not have a valid InfoCommandId");
 
-                    if (command == null) throw new Exception("Command keyword does not have a valid InfoCommandId");
-
-                    return command.InfoHelpText;
-                }
+                return command.InfoHelpText;
             }
-
-            return string.Empty;
         }
+
+        return string.Empty;
     }
 }

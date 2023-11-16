@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IGetUsersGiftedVipsRepository
 {
-    public interface IGetUsersGiftedVipsRepository
-    {
-        int GetUsersGiftedVips(string username);
-    }
+    int GetUsersGiftedVips(string username);
 }

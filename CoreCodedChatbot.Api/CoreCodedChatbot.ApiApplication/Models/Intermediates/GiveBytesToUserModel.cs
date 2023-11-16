@@ -1,8 +1,7 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Models.Intermediates
+﻿namespace CoreCodedChatbot.ApiApplication.Models.Intermediates;
+
+public class GiveBytesToUserModel
 {
-    public class GiveBytesToUserModel
-    {
-        public string Username { get; set; }
-        public decimal Bytes { get; set; }
-    }
+    public string Username { get; set; }
+    public decimal Bytes { get; set; }
 }

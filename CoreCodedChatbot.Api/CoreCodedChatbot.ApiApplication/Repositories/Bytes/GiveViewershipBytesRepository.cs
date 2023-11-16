@@ -5,31 +5,30 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes
+namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes;
+
+public class GiveViewershipBytesRepository : IGiveViewershipBytesRepository
 {
-    public class GiveViewershipBytesRepository : IGiveViewershipBytesRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GiveViewershipBytesRepository(IChatbotContextFactory chatbotContextFactory)
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GiveViewershipBytesRepository(IChatbotContextFactory chatbotContextFactory)
+    public async Task Give(List<string> usernames)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
-
-        public async Task Give(List<string> usernames)
-        {
-            using (var context = _chatbotContextFactory.Create())
+            foreach (var username in usernames)
             {
-                foreach (var username in usernames)
-                {
-                    var user = context.GetOrCreateUser(username, true);
+                var user = context.GetOrCreateUser(username, true);
 
-                    //user.TokenBytes++;
-                    user.TimeLastInChat = DateTime.UtcNow;
-                }
-
-                await context.SaveChangesAsync();
+                //user.TokenBytes++;
+                user.TimeLastInChat = DateTime.UtcNow;
             }
+
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,33 +1,32 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class ArchiveRequestRepository : IArchiveRequestRepository
 {
-    public class ArchiveRequestRepository : IArchiveRequestRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public ArchiveRequestRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public ArchiveRequestRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public string ArchiveRequest(int requestId)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var request = context.SongRequests.Find(requestId);
 
-        public string ArchiveRequest(int requestId)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var request = context.SongRequests.Find(requestId);
+            if (request == null) return string.Empty;
 
-                if (request == null) return string.Empty;
+            request.Played = true;
 
-                request.Played = true;
+            context.SaveChanges();
 
-                context.SaveChanges();
-
-                return request.Username;
-            }
+            return request.Username;
         }
     }
 }

@@ -2,25 +2,24 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.ClientId
+namespace CoreCodedChatbot.ApiApplication.Repositories.ClientId;
+
+public class RemoveClientIdRepository : IRemoveClientIdRepository
 {
-    public class RemoveClientIdRepository : IRemoveClientIdRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public RemoveClientIdRepository(IChatbotContextFactory chatbotContextFactory)
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public RemoveClientIdRepository(IChatbotContextFactory chatbotContextFactory)
+    public void Remove(string hubType, string clientId)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            context.Users.RemoveClientId(hubType, clientId);
 
-        public void Remove(string hubType, string clientId)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                context.Users.RemoveClientId(hubType, clientId);
-
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

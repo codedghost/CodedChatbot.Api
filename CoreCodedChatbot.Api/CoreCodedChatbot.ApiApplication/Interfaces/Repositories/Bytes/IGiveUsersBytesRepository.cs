@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+
+public interface IGiveUsersBytesRepository
 {
-    public interface IGiveUsersBytesRepository
-    {
-        void GiveBytes(List<GiveBytesToUserModel> users);
-    }
+    void GiveBytes(List<GiveBytesToUserModel> users);
 }

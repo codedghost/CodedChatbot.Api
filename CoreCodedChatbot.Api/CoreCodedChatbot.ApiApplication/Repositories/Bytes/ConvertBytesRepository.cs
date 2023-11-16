@@ -2,36 +2,35 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes
+namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes;
+
+public class ConvertBytesRepository : IConvertBytesRepository
 {
-    public class ConvertBytesRepository : IConvertBytesRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public ConvertBytesRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public ConvertBytesRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public int Convert(string username, int tokensToConvert, int byteConversion)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var user = context.GetOrCreateUser(username);
 
-        public int Convert(string username, int tokensToConvert, int byteConversion)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.GetOrCreateUser(username);
+            if (tokensToConvert < 0 || (user.TokenBytes < byteConversion * tokensToConvert)) return 0;
 
-                if (tokensToConvert < 0 || (user.TokenBytes < byteConversion * tokensToConvert)) return 0;
+            var bytesToRemove = byteConversion * tokensToConvert;
 
-                var bytesToRemove = byteConversion * tokensToConvert;
+            user.TokenBytes -= bytesToRemove;
+            user.TokenVipRequests += tokensToConvert;
 
-                user.TokenBytes -= bytesToRemove;
-                user.TokenVipRequests += tokensToConvert;
+            context.SaveChanges();
 
-                context.SaveChanges();
-
-                return tokensToConvert;
-            }
+            return tokensToConvert;
         }
     }
 }

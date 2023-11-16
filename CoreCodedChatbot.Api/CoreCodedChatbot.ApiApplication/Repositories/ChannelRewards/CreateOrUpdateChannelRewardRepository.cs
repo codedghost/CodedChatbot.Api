@@ -3,38 +3,37 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
+
+public class CreateOrUpdateChannelRewardRepository : ICreateOrUpdateChannelRewardRepository
 {
-    public class CreateOrUpdateChannelRewardRepository : ICreateOrUpdateChannelRewardRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public CreateOrUpdateChannelRewardRepository(IChatbotContextFactory chatbotContextFactory)
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public CreateOrUpdateChannelRewardRepository(IChatbotContextFactory chatbotContextFactory)
+    public void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var reward = context.ChannelRewards.Find(rewardId);
 
-        public void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription)
-        {
-            using (var context = _chatbotContextFactory.Create())
+            if (reward == null)
             {
-                var reward = context.ChannelRewards.Find(rewardId);
-
-                if (reward == null)
+                reward = new ChannelReward
                 {
-                    reward = new ChannelReward
-                    {
-                        ChannelRewardId = rewardId
-                    };
+                    ChannelRewardId = rewardId
+                };
 
-                    context.ChannelRewards.Add(reward);
-                }
-
-                reward.RewardTitle = rewardTitle;
-                reward.RewardDescription = rewardDescription;
-
-                context.SaveChanges();
+                context.ChannelRewards.Add(reward);
             }
+
+            reward.RewardTitle = rewardTitle;
+            reward.RewardDescription = rewardDescription;
+
+            context.SaveChanges();
         }
     }
 }

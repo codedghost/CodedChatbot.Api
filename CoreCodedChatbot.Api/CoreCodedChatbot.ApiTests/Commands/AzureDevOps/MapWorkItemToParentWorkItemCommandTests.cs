@@ -7,39 +7,38 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps
+namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps;
+
+[TestFixture]
+public class MapWorkItemToParentWorkItemCommandTests
 {
-    [TestFixture]
-    public class MapWorkItemToParentWorkItemCommandTests
+    private Mock<IAzureDevOpsService> _azureDevOpsService;
+
+    private Mock<IMapWorkItemsAndChildTasksToApiResponseModelsCommand>
+        _mapWorkItemsAndChildTasksToApiResponseModelsCommand;
+
+    private MapWorkItemToParentWorkItemCommand _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IAzureDevOpsService> _azureDevOpsService;
+        _azureDevOpsService = new Mock<IAzureDevOpsService>();
+        _mapWorkItemsAndChildTasksToApiResponseModelsCommand =
+            new Mock<IMapWorkItemsAndChildTasksToApiResponseModelsCommand>();
+    }
 
-        private Mock<IMapWorkItemsAndChildTasksToApiResponseModelsCommand>
-            _mapWorkItemsAndChildTasksToApiResponseModelsCommand;
+    [Test, AutoData]
+    public void EnsureServicesAreCalled(WorkItem workItem, List<WorkItem> childWorkItems)
+    {
+        _azureDevOpsService.Setup(s => s.GetChildWorkItemsByPbi(workItem)).ReturnsAsync(childWorkItems);
 
-        private MapWorkItemToParentWorkItemCommand _subject;
+        _subject = new MapWorkItemToParentWorkItemCommand(_azureDevOpsService.Object,
+            _mapWorkItemsAndChildTasksToApiResponseModelsCommand.Object);
 
-        [SetUp]
-        public void Setup()
-        {
-            _azureDevOpsService = new Mock<IAzureDevOpsService>();
-            _mapWorkItemsAndChildTasksToApiResponseModelsCommand =
-                new Mock<IMapWorkItemsAndChildTasksToApiResponseModelsCommand>();
-        }
+        var result = _subject.Map(workItem);
 
-        [Test, AutoData]
-        public void EnsureServicesAreCalled(WorkItem workItem, List<WorkItem> childWorkItems)
-        {
-            _azureDevOpsService.Setup(s => s.GetChildWorkItemsByPbi(workItem)).ReturnsAsync(childWorkItems);
-
-            _subject = new MapWorkItemToParentWorkItemCommand(_azureDevOpsService.Object,
-                _mapWorkItemsAndChildTasksToApiResponseModelsCommand.Object);
-
-            var result = _subject.Map(workItem);
-
-            _azureDevOpsService.Verify(s => s.GetChildWorkItemsByPbi(workItem), Times.Once);
-            _mapWorkItemsAndChildTasksToApiResponseModelsCommand.Verify(s => s.Map(workItem, childWorkItems),
-                Times.Once);
-        }
+        _azureDevOpsService.Verify(s => s.GetChildWorkItemsByPbi(workItem), Times.Once);
+        _mapWorkItemsAndChildTasksToApiResponseModelsCommand.Verify(s => s.Map(workItem, childWorkItems),
+            Times.Once);
     }
 }

@@ -2,38 +2,37 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class RemoveRegularRequestRepository : IRemoveRegularRequestRepository
 {
-    public class RemoveRegularRequestRepository : IRemoveRegularRequestRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public RemoveRegularRequestRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public RemoveRegularRequestRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public bool Remove(string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var usersRegularRequests = context.SongRequests.SingleOrDefault(sr =>
+                !sr.Played &&
+                sr.Username == username &&
+                sr.VipRequestTime == null &&
+                sr.SuperVipRequestTime == null
+            );
 
-        public bool Remove(string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var usersRegularRequests = context.SongRequests.SingleOrDefault(sr =>
-                    !sr.Played &&
-                    sr.Username == username &&
-                    sr.VipRequestTime == null &&
-                    sr.SuperVipRequestTime == null
-                );
+            if (usersRegularRequests == null) return false;
 
-                if (usersRegularRequests == null) return false;
+            usersRegularRequests.Played = true;
 
-                usersRegularRequests.Played = true;
+            context.SaveChanges();
 
-                context.SaveChanges();
-
-                return true;
-            }
+            return true;
         }
     }
 }

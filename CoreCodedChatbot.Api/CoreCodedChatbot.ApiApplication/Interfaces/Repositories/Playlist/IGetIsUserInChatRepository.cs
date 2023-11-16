@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IGetIsUserInChatRepository
 {
-    public interface IGetIsUserInChatRepository
-    {
-        bool IsUserInChat(string username);
-    }
+    bool IsUserInChat(string username);
 }

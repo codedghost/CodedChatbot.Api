@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+
+public interface ISubmitOrUpdateGuessRepository
 {
-    public interface ISubmitOrUpdateGuessRepository
-    {
-        void Submit(int gameId, string username, decimal percentageGuess);
-    }
+    void Submit(int gameId, string username, decimal percentageGuess);
 }

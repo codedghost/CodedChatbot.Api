@@ -2,29 +2,28 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
+
+public class ModGiveVipRepository : IModGiveVipRepository
 {
-    public class ModGiveVipRepository : IModGiveVipRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public ModGiveVipRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public ModGiveVipRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public void ModGiveVip(string username, int vipsToGive)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var user = context.GetOrCreateUser(username);
 
-        public void ModGiveVip(string username, int vipsToGive)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.GetOrCreateUser(username);
+            user.ModGivenVipRequests += vipsToGive;
 
-                user.ModGivenVipRequests += vipsToGive;
-
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

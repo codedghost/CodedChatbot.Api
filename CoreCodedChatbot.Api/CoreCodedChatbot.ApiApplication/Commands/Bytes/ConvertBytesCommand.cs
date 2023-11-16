@@ -2,29 +2,28 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
 using CoreCodedChatbot.Config;
 
-namespace CoreCodedChatbot.ApiApplication.Commands.Bytes
+namespace CoreCodedChatbot.ApiApplication.Commands.Bytes;
+
+public class ConvertBytesCommand : IConvertBytesCommand
 {
-    public class ConvertBytesCommand : IConvertBytesCommand
+    private readonly IConvertBytesRepository _convertBytesRepository;
+    private readonly IConfigService _configService;
+
+    public ConvertBytesCommand(
+        IConvertBytesRepository convertBytesRepository,
+        IConfigService configService
+    )
     {
-        private readonly IConvertBytesRepository _convertBytesRepository;
-        private readonly IConfigService _configService;
+        _convertBytesRepository = convertBytesRepository;
+        _configService = configService;
+    }
 
-        public ConvertBytesCommand(
-            IConvertBytesRepository convertBytesRepository,
-            IConfigService configService
-            )
-        {
-            _convertBytesRepository = convertBytesRepository;
-            _configService = configService;
-        }
+    public int Convert(string username, int bytesToConvert)
+    {
+        var conversionAmount = _configService.Get<int>("BytesToVip");
 
-        public int Convert(string username, int bytesToConvert)
-        {
-            var conversionAmount = _configService.Get<int>("BytesToVip");
+        var convertedTokens = _convertBytesRepository.Convert(username, bytesToConvert, conversionAmount);
 
-            var convertedTokens = _convertBytesRepository.Convert(username, bytesToConvert, conversionAmount);
-
-            return convertedTokens;
-        }
+        return convertedTokens;
     }
 }

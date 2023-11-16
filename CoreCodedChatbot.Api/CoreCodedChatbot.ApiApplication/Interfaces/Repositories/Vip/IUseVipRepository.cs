@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IUseVipRepository
 {
-    public interface IUseVipRepository
-    {
-        void UseVip(string username, int vips);
-    }
+    void UseVip(string username, int vips);
 }

@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+
+public interface IGetUserByteCountRepository
 {
-    public interface IGetUserByteCountRepository
-    {
-        float Get(string username, int byteConversion);
-    }
+    float Get(string username, int byteConversion);
 }

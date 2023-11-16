@@ -2,35 +2,34 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
 using CoreCodedChatbot.ApiContract.Enums.Playlist;
 
-namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Commands.Playlist;
+
+public class UpdatePlaylistStateCommand : IUpdatePlaylistStateCommand
 {
-    public class UpdatePlaylistStateCommand : IUpdatePlaylistStateCommand
+    private readonly ISetOrCreateSettingRepository _setOrCreateSettingRepository;
+
+    public UpdatePlaylistStateCommand(
+        ISetOrCreateSettingRepository setOrCreateSettingRepository
+    )
     {
-        private readonly ISetOrCreateSettingRepository _setOrCreateSettingRepository;
+        _setOrCreateSettingRepository = setOrCreateSettingRepository;
+    }
 
-        public UpdatePlaylistStateCommand(
-            ISetOrCreateSettingRepository setOrCreateSettingRepository
-            )
+    public bool UpdatePlaylistState(PlaylistState state)
+    {
+        switch (state)
         {
-            _setOrCreateSettingRepository = setOrCreateSettingRepository;
-        }
-
-        public bool UpdatePlaylistState(PlaylistState state)
-        {
-            switch (state)
-            {
-                case PlaylistState.VeryClosed:
-                    _setOrCreateSettingRepository.Set("PlaylistStatus", "VeryClosed");
-                    return true;
-                case PlaylistState.Closed:
-                    _setOrCreateSettingRepository.Set("PlaylistStatus", "Closed");
-                    return true;
-                case PlaylistState.Open:
-                    _setOrCreateSettingRepository.Set("PlaylistStatus", "Open");
-                    return true;
-                default:
-                    return false;
-            }
+            case PlaylistState.VeryClosed:
+                _setOrCreateSettingRepository.Set("PlaylistStatus", "VeryClosed");
+                return true;
+            case PlaylistState.Closed:
+                _setOrCreateSettingRepository.Set("PlaylistStatus", "Closed");
+                return true;
+            case PlaylistState.Open:
+                _setOrCreateSettingRepository.Set("PlaylistStatus", "Open");
+                return true;
+            default:
+                return false;
         }
     }
 }

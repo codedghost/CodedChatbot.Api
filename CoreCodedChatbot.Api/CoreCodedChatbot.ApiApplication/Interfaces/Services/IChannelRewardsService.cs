@@ -1,12 +1,11 @@
 ﻿using System;
 using CommandTypes = CoreCodedChatbot.ApiContract.Enums.ChannelRewards.CommandTypes;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+
+public interface IChannelRewardsService
 {
-    public interface IChannelRewardsService
-    {
-        void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription);
-        CommandTypes Store(Guid channelRewardId, string redeemedBy, Guid channelRewardsRedemptionId);
-        void Initialise();
-    }
+    void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription);
+    CommandTypes Store(Guid channelRewardId, string redeemedBy, Guid channelRewardsRedemptionId);
+    void Initialise();
 }

@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IRemoveRegularRequestRepository
 {
-    public interface IRemoveRegularRequestRepository
-    {
-        bool Remove(string username);
-    }
+    bool Remove(string username);
 }

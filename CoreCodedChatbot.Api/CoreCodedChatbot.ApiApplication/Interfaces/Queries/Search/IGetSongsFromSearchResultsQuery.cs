@@ -3,10 +3,9 @@ using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
+
+public interface IGetSongsFromSearchResultsQuery
 {
-    public interface IGetSongsFromSearchResultsQuery
-    {
-        Task<List<BasicSongSearchResult>> Get(List<SongSearch> searchResults);
-    }
+    Task<List<BasicSongSearchResult>> Get(List<SongSearch> searchResults);
 }

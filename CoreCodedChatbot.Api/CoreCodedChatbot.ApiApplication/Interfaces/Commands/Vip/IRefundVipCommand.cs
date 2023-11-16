@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+
+public interface IRefundVipCommand
 {
-    public interface IRefundVipCommand
-    {
-        void Refund(VipRefund vipRefund);
-        void Refund(List<VipRefund> vipRefunds);
-    }
+    void Refund(VipRefund vipRefund);
+    void Refund(List<VipRefund> vipRefunds);
 }

@@ -1,13 +1,12 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+
+public interface IGuessingGameService
 {
-    public interface IGuessingGameService
-    {
-        Task GuessingGameStart(string songName, int songLengthInSeconds);
-        bool SetPercentageAndFinishGame(decimal finalPercentage);
-        bool SubmitOrUpdateGuess(string username, decimal percentageGuess);
-        bool IsGuessingGameInProgress();
-        bool SetGuessingGameState(bool state);
-    }
+    Task GuessingGameStart(string songName, int songLengthInSeconds);
+    bool SetPercentageAndFinishGame(decimal finalPercentage);
+    bool SubmitOrUpdateGuess(string username, decimal percentageGuess);
+    bool IsGuessingGameInProgress();
+    bool SetGuessingGameState(bool state);
 }

@@ -5,36 +5,35 @@ using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.StreamStatus
+namespace CoreCodedChatbot.ApiTests.Commands.StreamStatus;
+
+[TestFixture]
+public class SaveStreamStatusCommandTests
 {
-    [TestFixture]
-    public class SaveStreamStatusCommandTests
+    private Mock<ISaveStreamStatusRepository> _saveStreamStatusRepository;
+
+    private bool _successValue;
+
+    private SaveStreamStatusCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<ISaveStreamStatusRepository> _saveStreamStatusRepository;
+        _saveStreamStatusRepository = new Mock<ISaveStreamStatusRepository>();
 
-        private bool _successValue;
+        _saveStreamStatusRepository.Setup(s => s.Save(It.IsAny<PutStreamStatusRequest>())).Returns(_successValue);
 
-        private SaveStreamStatusCommand _subject;
+        _subject = new SaveStreamStatusCommand(_saveStreamStatusRepository.Object);
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _saveStreamStatusRepository = new Mock<ISaveStreamStatusRepository>();
+    [Test, AutoData]
+    public void SuccessWhen_ValueIsReturned_RepositoryCalled(
+        PutStreamStatusRequest request)
+    {
+        var result = _subject.Save(request);
 
-            _saveStreamStatusRepository.Setup(s => s.Save(It.IsAny<PutStreamStatusRequest>())).Returns(_successValue);
+        _saveStreamStatusRepository.Verify(s => s.Save(request), Times.Once);
 
-            _subject = new SaveStreamStatusCommand(_saveStreamStatusRepository.Object);
-        }
-
-        [Test, AutoData]
-        public void SuccessWhen_ValueIsReturned_RepositoryCalled(
-            PutStreamStatusRequest request)
-        {
-            var result = _subject.Save(request);
-
-            _saveStreamStatusRepository.Verify(s => s.Save(request), Times.Once);
-
-            Assert.AreEqual(_successValue, result);
-        }
+        Assert.AreEqual(_successValue, result);
     }
 }

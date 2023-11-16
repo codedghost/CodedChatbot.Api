@@ -2,36 +2,35 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class EditSuperVipRequestRepository : IEditSuperVipRequestRepository
 {
-    public class EditSuperVipRequestRepository : IEditSuperVipRequestRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public EditSuperVipRequestRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public EditSuperVipRequestRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public int Edit(string username, string newText, int songId)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var superVip = context.SongRequests.SingleOrDefault(sr =>
+                !sr.Played &&
+                sr.SuperVipRequestTime != null &&
+                sr.Username == username
+            );
 
-        public int Edit(string username, string newText, int songId)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var superVip = context.SongRequests.SingleOrDefault(sr =>
-                    !sr.Played &&
-                    sr.SuperVipRequestTime != null &&
-                    sr.Username == username
-                );
+            if (superVip == null) return 0;
 
-                if (superVip == null) return 0;
+            superVip.RequestText = newText;
+            superVip.SongId = songId != 0 ? songId : (int?)null;
 
-                superVip.RequestText = newText;
-                superVip.SongId = songId != 0 ? songId : (int?)null;
-
-                return superVip.SongRequestId;
-            }
+            return superVip.SongRequestId;
         }
     }
 }

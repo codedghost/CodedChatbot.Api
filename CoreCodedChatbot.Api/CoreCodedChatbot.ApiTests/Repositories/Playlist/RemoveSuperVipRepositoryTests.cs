@@ -11,173 +11,172 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Repositories.Playlist
+namespace CoreCodedChatbot.ApiTests.Repositories.Playlist;
+
+[TestFixture]
+public class RemoveSuperVipRepositoryTests
 {
-    [TestFixture]
-    public class RemoveSuperVipRepositoryTests
+    private Mock<IChatbotContextFactory> _chatbotContextFactory;
+    private Mock<IChatbotContext> _context;
+    private Mock<IConfigService> _configService;
+
+    private readonly int _superVipCost = 50;
+
+    private RemoveSuperVipRepository _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IChatbotContextFactory> _chatbotContextFactory;
-        private Mock<IChatbotContext> _context;
-        private Mock<IConfigService> _configService;
+        _chatbotContextFactory = new Mock<IChatbotContextFactory>();
+        _context = new Mock<IChatbotContext>();
 
-        private readonly int _superVipCost = 50;
+        _configService = new Mock<IConfigService>();
+        _configService.Setup(s => s.Get<int>("SuperVipCost")).Returns(_superVipCost);
+    }
 
-        private RemoveSuperVipRepository _subject;
+    private void SetupSubject(Mock<DbSet<SongRequest>> songRequests, Mock<DbSet<User>> users)
+    {
+        _context.Setup(s => s.SongRequests).Returns(songRequests.Object);
+        _context.Setup(s => s.Users).Returns(users.Object);
 
-        [SetUp]
-        public void Setup()
-        {
-            _chatbotContextFactory = new Mock<IChatbotContextFactory>();
-            _context = new Mock<IChatbotContext>();
+        _chatbotContextFactory.Setup(s => s.Create()).Returns(_context.Object);
+        _subject = new RemoveSuperVipRepository(_chatbotContextFactory.Object, _configService.Object);
+    }
 
-            _configService = new Mock<IConfigService>();
-            _configService.Setup(s => s.Get<int>("SuperVipCost")).Returns(_superVipCost);
-        }
+    [Test]
+    public void SaveChangesNotCalledWhen_UserHasNoSuperVip()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var requests = fixture.Get<List<SongRequest>>();
+        var users = fixture.Get<List<User>>();
 
-        private void SetupSubject(Mock<DbSet<SongRequest>> songRequests, Mock<DbSet<User>> users)
-        {
-            _context.Setup(s => s.SongRequests).Returns(songRequests.Object);
-            _context.Setup(s => s.Users).Returns(users.Object);
+        var username = "TestUsername";
 
-            _chatbotContextFactory.Setup(s => s.Create()).Returns(_context.Object);
-            _subject = new RemoveSuperVipRepository(_chatbotContextFactory.Object, _configService.Object);
-        }
+        var dbSongRequests= MockChatbotContextSetup.SetUpDbSetMock(requests);
+        var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
 
-        [Test]
-        public void SaveChangesNotCalledWhen_UserHasNoSuperVip()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var requests = fixture.Get<List<SongRequest>>();
-            var users = fixture.Get<List<User>>();
+        SetupSubject(dbSongRequests, dbUsers);
 
-            var username = "TestUsername";
+        _subject.Remove(username);
 
-            var dbSongRequests= MockChatbotContextSetup.SetUpDbSetMock(requests);
-            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+        _context.Verify(s => s.Users, Times.Never);
+        _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
+        _context.Verify(s => s.SaveChanges(), Times.Never);
+    }
 
-            SetupSubject(dbSongRequests, dbUsers);
+    [Test]
+    public void SaveChangesNotCalledWhen_UserHasAPlayedSuperVip()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var requests = fixture.Get<List<SongRequest>>();
+        var users = fixture.Get<List<User>>();
+        var userRequest = fixture.Get<SongRequest>();
+        var user = fixture.Get<User>();
 
-            _subject.Remove(username);
+        userRequest.Username = user.Username;
+        userRequest.Played = true;
 
-            _context.Verify(s => s.Users, Times.Never);
-            _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
-            _context.Verify(s => s.SaveChanges(), Times.Never);
-        }
+        var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+        var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
 
-        [Test]
-        public void SaveChangesNotCalledWhen_UserHasAPlayedSuperVip()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var requests = fixture.Get<List<SongRequest>>();
-            var users = fixture.Get<List<User>>();
-            var userRequest = fixture.Get<SongRequest>();
-            var user = fixture.Get<User>();
+        SetupSubject(dbSongRequests, dbUsers);
 
-            userRequest.Username = user.Username;
-            userRequest.Played = true;
+        _subject.Remove(user.Username);
 
-            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
-            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+        _context.Verify(s => s.Users, Times.Never);
+        _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
+        _context.Verify(s => s.SaveChanges(), Times.Never);
+    }
 
-            SetupSubject(dbSongRequests, dbUsers);
+    [Test]
+    public void SaveChangesNotCalledWhen_UserOnlyHasNormalVipAndRegular()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var requests = fixture.Get<List<SongRequest>>();
+        var users = fixture.Get<List<User>>();
+        var userVipRequest = fixture.Get<SongRequest>();
+        var userRegularRequest = fixture.Get<SongRequest>();
+        var user = fixture.Get<User>();
 
-            _subject.Remove(user.Username);
+        userVipRequest.Username = user.Username;
+        userVipRequest.Played = false;
+        userVipRequest.VipRequestTime = DateTime.Now;
+        userVipRequest.SuperVipRequestTime = null;
 
-            _context.Verify(s => s.Users, Times.Never);
-            _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
-            _context.Verify(s => s.SaveChanges(), Times.Never);
-        }
+        userRegularRequest.Username = user.Username;
+        userVipRequest.Played = false;
+        userRegularRequest.VipRequestTime = null;
+        userRegularRequest.SuperVipRequestTime = null;
 
-        [Test]
-        public void SaveChangesNotCalledWhen_UserOnlyHasNormalVipAndRegular()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var requests = fixture.Get<List<SongRequest>>();
-            var users = fixture.Get<List<User>>();
-            var userVipRequest = fixture.Get<SongRequest>();
-            var userRegularRequest = fixture.Get<SongRequest>();
-            var user = fixture.Get<User>();
+        requests.Add(userVipRequest);
+        requests.Add(userRegularRequest);
+        users.Add(user);
 
-            userVipRequest.Username = user.Username;
-            userVipRequest.Played = false;
-            userVipRequest.VipRequestTime = DateTime.Now;
-            userVipRequest.SuperVipRequestTime = null;
+        var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+        var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
 
-            userRegularRequest.Username = user.Username;
-            userVipRequest.Played = false;
-            userRegularRequest.VipRequestTime = null;
-            userRegularRequest.SuperVipRequestTime = null;
+        SetupSubject(dbSongRequests, dbUsers);
 
-            requests.Add(userVipRequest);
-            requests.Add(userRegularRequest);
-            users.Add(user);
+        _subject.Remove(user.Username);
 
-            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
-            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+        _context.Verify(s => s.Users, Times.Never);
+        _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
+        _context.Verify(s => s.SaveChanges(), Times.Never);
+    }
 
-            SetupSubject(dbSongRequests, dbUsers);
+    [Test]
+    public void SaveChangesNotCalledWhen_UserRecordDoesNotExist()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var requests = fixture.Get<List<SongRequest>>();
+        var users = fixture.Get<List<User>>();
+        var songRequest = fixture.Get<SongRequest>();
+        var user = fixture.Get<User>();
 
-            _subject.Remove(user.Username);
+        songRequest.Username = user.Username;
+        songRequest.Played = false;
+        songRequest.VipRequestTime = DateTime.Now;
+        songRequest.SuperVipRequestTime = DateTime.Now;
 
-            _context.Verify(s => s.Users, Times.Never);
-            _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
-            _context.Verify(s => s.SaveChanges(), Times.Never);
-        }
+        requests.Add(songRequest);
 
-        [Test]
-        public void SaveChangesNotCalledWhen_UserRecordDoesNotExist()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var requests = fixture.Get<List<SongRequest>>();
-            var users = fixture.Get<List<User>>();
-            var songRequest = fixture.Get<SongRequest>();
-            var user = fixture.Get<User>();
+        var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+        var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+        SetupSubject(dbSongRequests, dbUsers);
 
-            songRequest.Username = user.Username;
-            songRequest.Played = false;
-            songRequest.VipRequestTime = DateTime.Now;
-            songRequest.SuperVipRequestTime = DateTime.Now;
-
-            requests.Add(songRequest);
-
-            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
-            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
-            SetupSubject(dbSongRequests, dbUsers);
-
-            _subject.Remove(user.Username);
+        _subject.Remove(user.Username);
 
 
-            _context.Verify(s => s.Users, Times.Once);
-            _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
-            _context.Verify(s => s.SaveChanges(), Times.Never);
-        }
+        _context.Verify(s => s.Users, Times.Once);
+        _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Never);
+        _context.Verify(s => s.SaveChanges(), Times.Never);
+    }
 
-        [Test]
-        public void SaveChangesCalledWhen_AllIsOk()
-        {
-            var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
-            var requests = fixture.Get<List<SongRequest>>();
-            var users = fixture.Get<List<User>>();
-            var userRequest = fixture.Get<SongRequest>();
-            var user = fixture.Get<User>();
+    [Test]
+    public void SaveChangesCalledWhen_AllIsOk()
+    {
+        var fixture = new Fixture().Customize(new IgnoreVirtualMembersCustomization());
+        var requests = fixture.Get<List<SongRequest>>();
+        var users = fixture.Get<List<User>>();
+        var userRequest = fixture.Get<SongRequest>();
+        var user = fixture.Get<User>();
 
-            userRequest.Username = user.Username;
-            userRequest.Played = false;
-            userRequest.VipRequestTime = DateTime.Now;
-            userRequest.SuperVipRequestTime = DateTime.Now;
+        userRequest.Username = user.Username;
+        userRequest.Played = false;
+        userRequest.VipRequestTime = DateTime.Now;
+        userRequest.SuperVipRequestTime = DateTime.Now;
 
-            users.Add(user);
-            requests.Add(userRequest);
+        users.Add(user);
+        requests.Add(userRequest);
 
-            var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
-            var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
-            SetupSubject(dbSongRequests, dbUsers);
+        var dbSongRequests = MockChatbotContextSetup.SetUpDbSetMock(requests);
+        var dbUsers = MockChatbotContextSetup.SetUpDbSetMock(users);
+        SetupSubject(dbSongRequests, dbUsers);
 
-            _subject.Remove(user.Username);
+        _subject.Remove(user.Username);
 
-            _context.Verify(s => s.Users, Times.Once);
-            _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Once);
-            _context.Verify(s => s.SaveChanges(), Times.Once);
-        }
+        _context.Verify(s => s.Users, Times.Once);
+        _configService.Verify(s => s.Get<int>("SuperVipCost"), Times.Once);
+        _context.Verify(s => s.SaveChanges(), Times.Once);
     }
 }

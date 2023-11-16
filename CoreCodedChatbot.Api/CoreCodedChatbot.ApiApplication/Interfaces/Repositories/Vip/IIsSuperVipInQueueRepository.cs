@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IIsSuperVipInQueueRepository
 {
-    public interface IIsSuperVipInQueueRepository
-    {
-        bool IsSuperVipInQueue();
-    }
+    bool IsSuperVipInQueue();
 }

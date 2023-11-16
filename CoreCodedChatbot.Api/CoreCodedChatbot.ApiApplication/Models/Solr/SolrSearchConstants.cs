@@ -1,8 +1,7 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Models.Solr
+﻿namespace CoreCodedChatbot.ApiApplication.Models.Solr;
+
+public class SolrSearchConstants
 {
-    public class SolrSearchConstants
-    {
-        public const string SongName = "SongName";
-        public const string ArtistName = "SongArtist";
-    }
+    public const string SongName = "SongName";
+    public const string ArtistName = "SongArtist";
 }

@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IEditSuperVipRequestRepository
 {
-    public interface IEditSuperVipRequestRepository
-    {
-        int Edit(string username, string newText, int songId);
-    }
+    int Edit(string username, string newText, int songId);
 }

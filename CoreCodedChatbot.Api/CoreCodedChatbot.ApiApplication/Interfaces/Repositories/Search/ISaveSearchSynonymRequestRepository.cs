@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
+
+public interface ISaveSearchSynonymRequestRepository
 {
-    public interface ISaveSearchSynonymRequestRepository
-    {
-        void Save(string synonymRequest, string username);
-    }
+    void Save(string synonymRequest, string username);
 }

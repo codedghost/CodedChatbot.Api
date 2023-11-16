@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+
+public interface IGiftVipCommand
 {
-    public interface IGiftVipCommand
-    {
-        bool GiftVip(string donorUsername, string receivingUsername, int vipsToGift);
-    }
+    bool GiftVip(string donorUsername, string receivingUsername, int vipsToGift);
 }

@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+
+public interface ICompleteGuessingGameRepository
 {
-    public interface ICompleteGuessingGameRepository
-    {
-        void CompleteCurrentGuessingGame(decimal finalPercentage);
-    }
+    void CompleteCurrentGuessingGame(decimal finalPercentage);
 }

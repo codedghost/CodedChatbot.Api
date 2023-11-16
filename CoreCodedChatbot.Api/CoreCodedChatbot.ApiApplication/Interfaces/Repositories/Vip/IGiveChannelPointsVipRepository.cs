@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IGiveChannelPointsVipRepository
 {
-    public interface IGiveChannelPointsVipRepository
-    {
-        void GiveChannelPointsVip(string username);
-    }
+    void GiveChannelPointsVip(string username);
 }

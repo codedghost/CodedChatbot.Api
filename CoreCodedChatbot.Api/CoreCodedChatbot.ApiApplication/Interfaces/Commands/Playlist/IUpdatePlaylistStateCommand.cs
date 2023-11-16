@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiContract.Enums.Playlist;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IUpdatePlaylistStateCommand
 {
-    public interface IUpdatePlaylistStateCommand
-    {
-        bool UpdatePlaylistState(PlaylistState state);
-    }
+    bool UpdatePlaylistState(PlaylistState state);
 }

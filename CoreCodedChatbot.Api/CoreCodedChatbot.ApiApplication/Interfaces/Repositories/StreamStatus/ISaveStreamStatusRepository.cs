@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
+
+public interface ISaveStreamStatusRepository
 {
-    public interface ISaveStreamStatusRepository
-    {
-        bool Save(PutStreamStatusRequest request);
-    }
+    bool Save(PutStreamStatusRequest request);
 }

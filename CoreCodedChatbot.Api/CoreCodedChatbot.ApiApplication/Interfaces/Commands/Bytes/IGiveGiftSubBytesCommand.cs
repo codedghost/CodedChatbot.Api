@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
+
+public interface IGiveGiftSubBytesCommand
 {
-    public interface IGiveGiftSubBytesCommand
-    {
-        void Give(string username);
-    }
+    void Give(string username);
 }

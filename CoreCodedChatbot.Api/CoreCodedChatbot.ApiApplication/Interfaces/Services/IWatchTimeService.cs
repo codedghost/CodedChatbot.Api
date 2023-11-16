@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+
+public interface IWatchTimeService
 {
-    public interface IWatchTimeService
-    {
-        Task<TimeSpan> GetWatchTime(string username);
-    }
+    Task<TimeSpan> GetWatchTime(string username);
 }

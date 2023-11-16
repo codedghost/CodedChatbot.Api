@@ -5,28 +5,27 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("WatchTime/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class WatchTimeController : Controller
 {
-    [Route("WatchTime/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class WatchTimeController : Controller
+    private readonly IWatchTimeService _watchTimeService;
+
+    public WatchTimeController(IWatchTimeService watchTimeService)
     {
-        private readonly IWatchTimeService _watchTimeService;
+        _watchTimeService = watchTimeService;
+    }
 
-        public WatchTimeController(IWatchTimeService watchTimeService)
+    [HttpGet]
+    public async Task<GetWatchTimeResponse> GetWatchTime(string username)
+    {
+        var watchTime = await _watchTimeService.GetWatchTime(username);
+
+        return new GetWatchTimeResponse
         {
-            _watchTimeService = watchTimeService;
-        }
-
-        [HttpGet]
-        public async Task<GetWatchTimeResponse> GetWatchTime(string username)
-        {
-            var watchTime = await _watchTimeService.GetWatchTime(username);
-
-            return new GetWatchTimeResponse
-            {
-                WatchTime = watchTime
-            };
-        }
+            WatchTime = watchTime
+        };
     }
 }

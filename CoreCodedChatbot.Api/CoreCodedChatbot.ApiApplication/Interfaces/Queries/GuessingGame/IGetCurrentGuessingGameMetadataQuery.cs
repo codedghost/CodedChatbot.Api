@@ -1,9 +1,8 @@
 ﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
+
+public interface IGetCurrentGuessingGameMetadataQuery
 {
-    public interface IGetCurrentGuessingGameMetadataQuery
-    {
-        FinishedGuessingGameMetadata Get();
-    }
+    FinishedGuessingGameMetadata Get();
 }

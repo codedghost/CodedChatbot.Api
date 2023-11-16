@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+
+public interface IOpenGuessingGameRepository
 {
-    public interface IOpenGuessingGameRepository
-    {
-        bool Open(string songName);
-    }
+    bool Open(string songName);
 }

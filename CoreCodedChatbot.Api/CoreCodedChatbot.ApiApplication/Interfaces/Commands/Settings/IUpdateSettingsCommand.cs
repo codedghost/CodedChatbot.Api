@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
+
+public interface IUpdateSettingsCommand
 {
-    public interface IUpdateSettingsCommand
-    {
-        void Update(string key, string value);
-    }
+    void Update(string key, string value);
 }

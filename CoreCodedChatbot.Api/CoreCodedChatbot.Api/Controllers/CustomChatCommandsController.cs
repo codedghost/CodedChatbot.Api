@@ -7,79 +7,78 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("CustomChatCommands/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class CustomChatCommandsController : Controller
 {
-    [Route("CustomChatCommands/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class CustomChatCommandsController : Controller
+    private readonly IChatCommandService _chatCommandService;
+    private readonly ILogger<CustomChatCommandsController> _logger;
+
+    public CustomChatCommandsController(
+        IChatCommandService chatCommandService, 
+        ILogger<CustomChatCommandsController> logger)
     {
-        private readonly IChatCommandService _chatCommandService;
-        private readonly ILogger<CustomChatCommandsController> _logger;
+        _chatCommandService = chatCommandService;
+        _logger = logger;
+    }
 
-        public CustomChatCommandsController(
-            IChatCommandService chatCommandService, 
-            ILogger<CustomChatCommandsController> logger)
+    [HttpGet]
+    public IActionResult GetCommandText(string keyword)
+    {
+        try
         {
-            _chatCommandService = chatCommandService;
-            _logger = logger;
+            var commandText = _chatCommandService.GetCommandText(keyword);
+
+            return new JsonResult(new GetCommandTextResponse
+            {
+                CommandText = commandText
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error encountered when getting custom command text", new {keyword});
         }
 
-        [HttpGet]
-        public IActionResult GetCommandText(string keyword)
+        return BadRequest();
+    }
+
+    [HttpGet]
+    public IActionResult GetCommandHelpText(string keyword)
+    {
+        try
         {
-            try
-            {
-                var commandText = _chatCommandService.GetCommandText(keyword);
+            var helpText = _chatCommandService.GetCommandHelpText(keyword);
 
-                return new JsonResult(new GetCommandTextResponse
-                {
-                    CommandText = commandText
-                });
-            }
-            catch (Exception e)
+            return new JsonResult(new GetCommandHelpTextResponse
             {
-                _logger.LogError(e, "Error encountered when getting custom command text", new {keyword});
-            }
-
-            return BadRequest();
+                HelpText = helpText
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error encountered when getting custom command text", new {keyword});
         }
 
-        [HttpGet]
-        public IActionResult GetCommandHelpText(string keyword)
+        return BadRequest();
+    }
+
+    [HttpPost]
+    public IActionResult AddCommand([FromBody] AddCommandRequest request)
+    {
+        try
         {
-            try
-            {
-                var helpText = _chatCommandService.GetCommandHelpText(keyword);
+            _chatCommandService.AddCommand(request.Aliases, request.InformationText, request.HelpText,
+                request.Username);
 
-                return new JsonResult(new GetCommandHelpTextResponse
-                {
-                    HelpText = helpText
-                });
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error encountered when getting custom command text", new {keyword});
-            }
-
-            return BadRequest();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error encountered when adding a custom command", new  {request.Aliases, request.InformationText, request.HelpText, request.Username});
         }
 
-        [HttpPost]
-        public IActionResult AddCommand([FromBody] AddCommandRequest request)
-        {
-            try
-            {
-                _chatCommandService.AddCommand(request.Aliases, request.InformationText, request.HelpText,
-                    request.Username);
-
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error encountered when adding a custom command", new  {request.Aliases, request.InformationText, request.HelpText, request.Username});
-            }
-
-            return BadRequest();
-        }
+        return BadRequest();
     }
 }

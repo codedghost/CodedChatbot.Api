@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
+
+public interface IGetUsersGiftedVipsQuery
 {
-    public interface IGetUsersGiftedVipsQuery
-    {
-        int GetUsersGiftedVips(string username);
-    }
+    int GetUsersGiftedVips(string username);
 }

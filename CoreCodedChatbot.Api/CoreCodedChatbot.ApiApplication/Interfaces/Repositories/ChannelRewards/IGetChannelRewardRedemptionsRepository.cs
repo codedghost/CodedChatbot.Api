@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
+
+public interface IGetChannelRewardRedemptionsRepository
 {
-    public interface IGetChannelRewardRedemptionsRepository
-    {
-        public Task<IEnumerable<ChannelRewardRedemption>> Get(bool includeNonCommandTypes);
-    }
+    public Task<IEnumerable<ChannelRewardRedemption>> Get(bool includeNonCommandTypes);
 }

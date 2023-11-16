@@ -3,25 +3,24 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
+
+public class GetChannelRewardRepository : IGetChannelRewardRepository
 {
-    public class GetChannelRewardRepository : IGetChannelRewardRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetChannelRewardRepository(IChatbotContextFactory chatbotContextFactory)
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetChannelRewardRepository(IChatbotContextFactory chatbotContextFactory)
+    public ChannelReward GetById(Guid id)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var channelReward = context.ChannelRewards.Find(id);
 
-        public ChannelReward GetById(Guid id)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var channelReward = context.ChannelRewards.Find(id);
-
-                return channelReward;
-            }
+            return channelReward;
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IUpdateDonationVipsRepository
 {
-    public interface IUpdateDonationVipsRepository
-    {
-        void Update(string username, double bitsToVip, double donationAmountToVip);
-    }
+    void Update(string username, double bitsToVip, double donationAmountToVip);
 }

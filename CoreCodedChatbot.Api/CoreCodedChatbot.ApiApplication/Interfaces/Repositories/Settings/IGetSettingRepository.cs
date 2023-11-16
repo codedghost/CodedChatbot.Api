@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
+
+public interface IGetSettingRepository
 {
-    public interface IGetSettingRepository
-    {
-        T Get<T>(string settingKey);
-    }
+    T Get<T>(string settingKey);
 }

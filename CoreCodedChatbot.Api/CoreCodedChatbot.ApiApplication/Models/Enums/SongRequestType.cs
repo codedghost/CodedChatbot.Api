@@ -1,10 +1,9 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Models.Enums
+﻿namespace CoreCodedChatbot.ApiApplication.Models.Enums;
+
+public enum SongRequestType
 {
-    public enum SongRequestType
-    {
-        Regular,
-        Vip,
-        SuperVip,
-        Any
-    }
+    Regular,
+    Vip,
+    SuperVip,
+    Any
 }

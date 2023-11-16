@@ -1,34 +1,33 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class AddSongToDriveRepository : IAddSongToDriveRepository
 {
-    public class AddSongToDriveRepository : IAddSongToDriveRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public AddSongToDriveRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public AddSongToDriveRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public bool AddSongToDrive(int songRequestId)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
+            var songRequest = context.SongRequests.Find(songRequestId);
+
+            if (songRequest == null || songRequest.Played || songRequest.InDrive)
+                return false;
+
+            songRequest.InDrive = true;
+
+            context.SaveChanges();
         }
 
-        public bool AddSongToDrive(int songRequestId)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var songRequest = context.SongRequests.Find(songRequestId);
-
-                if (songRequest == null || songRequest.Played || songRequest.InDrive)
-                    return false;
-
-                songRequest.InDrive = true;
-
-                context.SaveChanges();
-            }
-
-            return true;
-        }
+        return true;
     }
 }

@@ -1,16 +1,15 @@
 ﻿using SolrNet.Attributes;
 
-namespace CoreCodedChatbot.ApiApplication.Models.Solr
+namespace CoreCodedChatbot.ApiApplication.Models.Solr;
+
+public class SongSearch
 {
-    public class SongSearch
-    {
-        [SolrUniqueKey("SongId")]
-        public int SongId { get; set; }
+    [SolrUniqueKey("SongId")]
+    public int SongId { get; set; }
 
-        [SolrField("SongName")]
-        public string SongName { get; set; }
+    [SolrField("SongName")]
+    public string SongName { get; set; }
 
-        [SolrField("SongArtist")]
-        public string SongArtist { get; set; }
-    }
+    [SolrField("SongArtist")]
+    public string SongArtist { get; set; }
 }

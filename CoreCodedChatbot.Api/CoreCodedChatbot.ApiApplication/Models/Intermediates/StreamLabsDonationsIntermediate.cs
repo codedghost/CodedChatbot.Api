@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace CoreCodedChatbot.ApiApplication.Models.Intermediates
+namespace CoreCodedChatbot.ApiApplication.Models.Intermediates;
+
+public class StreamLabsDonationsIntermediate
 {
-    public class StreamLabsDonationsIntermediate
-    {
-        [JsonProperty("data")]
-        public StreamLabsDonationIntermediate[] StreamLabsDonations { get; set; }
-    }
+    [JsonProperty("data")]
+    public StreamLabsDonationIntermediate[] StreamLabsDonations { get; set; }
 }

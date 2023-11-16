@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
+
+public interface ITransferUserAccountCommand
 {
-    public interface ITransferUserAccountCommand
-    {
-        void Transfer(string moderatorUsername, string oldUsername, string newUsername);
-    }
+    void Transfer(string moderatorUsername, string oldUsername, string newUsername);
 }

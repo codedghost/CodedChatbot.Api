@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+
+public interface IConvertBytesRepository
 {
-    public interface IConvertBytesRepository
-    {
-        int Convert(string username, int tokensToConvert, int byteConversion);
-    }
+    int Convert(string username, int tokensToConvert, int byteConversion);
 }

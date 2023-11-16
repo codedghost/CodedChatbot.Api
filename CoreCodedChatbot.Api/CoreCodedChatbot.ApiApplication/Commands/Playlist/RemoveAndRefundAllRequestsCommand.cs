@@ -8,56 +8,55 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.Config;
 
-namespace CoreCodedChatbot.ApiApplication.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Commands.Playlist;
+
+public class RemoveAndRefundAllRequestsCommand : IRemoveAndRefundAllRequestsCommand
 {
-    public class RemoveAndRefundAllRequestsCommand : IRemoveAndRefundAllRequestsCommand
+    private readonly IGetCurrentRequestsRepository _getCurrentRequestsRepository;
+    private readonly IClearRequestsRepository _clearRequestsRepository;
+    private readonly IRefundVipCommand _refundVipCommand;
+    private readonly IConfigService _configService;
+    private readonly IVipService _vipService;
+
+    public RemoveAndRefundAllRequestsCommand(
+        IGetCurrentRequestsRepository getCurrentRequestsRepository,
+        IClearRequestsRepository clearRequestsRepository,
+        IRefundVipCommand refundVipCommand,
+        IConfigService configService,
+        IVipService vipService
+    )
     {
-        private readonly IGetCurrentRequestsRepository _getCurrentRequestsRepository;
-        private readonly IClearRequestsRepository _clearRequestsRepository;
-        private readonly IRefundVipCommand _refundVipCommand;
-        private readonly IConfigService _configService;
-        private readonly IVipService _vipService;
+        _getCurrentRequestsRepository = getCurrentRequestsRepository;
+        _clearRequestsRepository = clearRequestsRepository;
+        _refundVipCommand = refundVipCommand;
+        _configService = configService;
+        _vipService = vipService;
+    }
 
-        public RemoveAndRefundAllRequestsCommand(
-            IGetCurrentRequestsRepository getCurrentRequestsRepository,
-            IClearRequestsRepository clearRequestsRepository,
-            IRefundVipCommand refundVipCommand,
-            IConfigService configService,
-            IVipService vipService
-            )
-        {
-            _getCurrentRequestsRepository = getCurrentRequestsRepository;
-            _clearRequestsRepository = clearRequestsRepository;
-            _refundVipCommand = refundVipCommand;
-            _configService = configService;
-            _vipService = vipService;
-        }
+    public async Task RemoveAndRefundAllRequests()
+    {
+        var currentRequests = _getCurrentRequestsRepository.GetCurrentRequests();
 
-        public async Task RemoveAndRefundAllRequests()
-        {
-            var currentRequests = _getCurrentRequestsRepository.GetCurrentRequests();
+        if (currentRequests == null)
+            return;
 
-            if (currentRequests == null)
-                return;
-
-            var refundVips = currentRequests?.VipRequests?.Where(sr => sr.IsSuperVip || sr.IsVip).Select(sr =>
-                new VipRefund
-                {
-                    Username = sr.Username,
-                    VipsToRefund = sr.IsSuperVip ? _configService.Get<int>("SuperVipCost") :
-                        sr.IsVip ? 1 :
-                            0
-                }).ToList() ?? new List<VipRefund>();
-
-            _refundVipCommand.Refund(refundVips);
-
-            foreach (var refund in refundVips)
+        var refundVips = currentRequests?.VipRequests?.Where(sr => sr.IsSuperVip || sr.IsVip).Select(sr =>
+            new VipRefund
             {
-                await _vipService.UpdateClientVips(refund.Username).ConfigureAwait(false);
-            }
+                Username = sr.Username,
+                VipsToRefund = sr.IsSuperVip ? _configService.Get<int>("SuperVipCost") :
+                    sr.IsVip ? 1 :
+                    0
+            }).ToList() ?? new List<VipRefund>();
 
-            _clearRequestsRepository.ClearRequests(currentRequests.RegularRequests);
-            _clearRequestsRepository.ClearRequests(currentRequests.VipRequests);
+        _refundVipCommand.Refund(refundVips);
+
+        foreach (var refund in refundVips)
+        {
+            await _vipService.UpdateClientVips(refund.Username).ConfigureAwait(false);
         }
+
+        _clearRequestsRepository.ClearRequests(currentRequests.RegularRequests);
+        _clearRequestsRepository.ClearRequests(currentRequests.VipRequests);
     }
 }

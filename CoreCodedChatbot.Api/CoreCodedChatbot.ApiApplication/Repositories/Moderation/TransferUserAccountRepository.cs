@@ -2,26 +2,25 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Moderation
+namespace CoreCodedChatbot.ApiApplication.Repositories.Moderation;
+
+public class TransferUserAccountRepository : ITransferUserAccountRepository
 {
-    public class TransferUserAccountRepository : ITransferUserAccountRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public TransferUserAccountRepository(IChatbotContextFactory chatbotContextFactory)
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public TransferUserAccountRepository(IChatbotContextFactory chatbotContextFactory)
+    public void Transfer(string moderatorUsername, string oldUsername, string newUsername)
+    {
+        // All users should exist int the db at this point
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            context.TransferUser(moderatorUsername, oldUsername, newUsername);
 
-        public void Transfer(string moderatorUsername, string oldUsername, string newUsername)
-        {
-            // All users should exist int the db at this point
-            using (var context = _chatbotContextFactory.Create())
-            {
-                context.TransferUser(moderatorUsername, oldUsername, newUsername);
-
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

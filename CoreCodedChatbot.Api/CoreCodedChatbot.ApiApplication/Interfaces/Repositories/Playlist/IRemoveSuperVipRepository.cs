@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IRemoveSuperVipRepository
 {
-    public interface IRemoveSuperVipRepository
-    {
-        void Remove(string username);
-    }
+    void Remove(string username);
 }

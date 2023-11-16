@@ -2,31 +2,30 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
+
+public class UseVipRepository : IUseVipRepository
 {
-    public class UseVipRepository : IUseVipRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public UseVipRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public UseVipRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public void UseVip(string username, int vips)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var user = context.Users.Find(username);
 
-        public void UseVip(string username, int vips)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.Users.Find(username);
+            if (user == null) throw new UnauthorizedAccessException("User does not exist");
 
-                if (user == null) throw new UnauthorizedAccessException("User does not exist");
+            user.UsedVipRequests += vips;
 
-                user.UsedVipRequests += vips;
-
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

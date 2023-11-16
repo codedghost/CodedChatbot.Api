@@ -2,41 +2,40 @@
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.DbExtensions;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Vip
+namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
+
+public class GetUsersVipCountRepository : IGetUsersVipCountRepository
 {
-    public class GetUsersVipCountRepository : IGetUsersVipCountRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetUsersVipCountRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetUsersVipCountRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public int GetVips(string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var user = context.GetOrCreateUser(username);
 
-        public int GetVips(string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var user = context.GetOrCreateUser(username);
+            if (user == null) return 0;
 
-                if (user == null) return 0;
+            var vipsReceived = user.DonationOrBitsVipRequests +
+                               user.FollowVipRequest +
+                               user.ModGivenVipRequests +
+                               user.SubVipRequests +
+                               user.TokenVipRequests +
+                               user.ReceivedGiftVipRequests +
+                               user.Tier2Vips +
+                               (user.Tier3Vips * 2) + 
+                               user.ChannelPointVipRequests;
 
-                var vipsReceived = user.DonationOrBitsVipRequests +
-                                   user.FollowVipRequest +
-                                   user.ModGivenVipRequests +
-                                   user.SubVipRequests +
-                                   user.TokenVipRequests +
-                                   user.ReceivedGiftVipRequests +
-                                   user.Tier2Vips +
-                                   (user.Tier3Vips * 2) + 
-                                   user.ChannelPointVipRequests;
+            var vipsUsed = user.UsedVipRequests + user.SentGiftVipRequests;
 
-                var vipsUsed = user.UsedVipRequests + user.SentGiftVipRequests;
-
-                return vipsReceived - vipsUsed;
-            }
+            return vipsReceived - vipsUsed;
         }
     }
 }

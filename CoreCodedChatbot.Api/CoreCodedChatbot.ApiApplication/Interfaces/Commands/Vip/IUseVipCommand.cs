@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+
+public interface IUseVipCommand
 {
-    public interface IUseVipCommand
-    {
-        void UseVip(string username, int vips);
-    }
+    void UseVip(string username, int vips);
 }

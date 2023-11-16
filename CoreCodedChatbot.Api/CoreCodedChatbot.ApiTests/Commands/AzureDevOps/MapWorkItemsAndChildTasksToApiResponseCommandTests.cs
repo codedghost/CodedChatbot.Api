@@ -8,104 +8,103 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps
+namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps;
+
+[TestFixture]
+public class MapWorkItemsAndChildTasksToApiResponseCommandTests
 {
-    [TestFixture]
-    public class MapWorkItemsAndChildTasksToApiResponseCommandTests
+    private Mock<IMapWorkItemToTaskCommand> _mapWorkItemToTaskCommand;
+
+    private MapWorkItemsAndChildTasksToApiResponseModelsCommand _subject;
+
+    [SetUp]
+    public void Setup()
     {
-        private Mock<IMapWorkItemToTaskCommand> _mapWorkItemToTaskCommand;
+        _mapWorkItemToTaskCommand = new Mock<IMapWorkItemToTaskCommand>();
+        _mapWorkItemToTaskCommand.Setup(s => s.Map(It.IsAny<WorkItem>())).Returns(new DevOpsTask());
 
-        private MapWorkItemsAndChildTasksToApiResponseModelsCommand _subject;
+        _subject = new MapWorkItemsAndChildTasksToApiResponseModelsCommand(_mapWorkItemToTaskCommand.Object);
+    }
 
-        [SetUp]
-        public void Setup()
-        {
-            _mapWorkItemToTaskCommand = new Mock<IMapWorkItemToTaskCommand>();
-            _mapWorkItemToTaskCommand.Setup(s => s.Map(It.IsAny<WorkItem>())).Returns(new DevOpsTask());
+    [Test, AutoData]
+    public void GeneratesDevOpsProductBacklogItem(WorkItem workItem, List<WorkItem> childWorkItems)
+    {
+        workItem.Fields[AzureDevOpsFields.WorkItemType] = "Product Backlog Item";
+        childWorkItems.ForEach(t => t.Fields[AzureDevOpsFields.WorkItemType] = "Task");
 
-            _subject = new MapWorkItemsAndChildTasksToApiResponseModelsCommand(_mapWorkItemToTaskCommand.Object);
-        }
+        var result = _subject.Map(workItem, childWorkItems);
 
-        [Test, AutoData]
-        public void GeneratesDevOpsProductBacklogItem(WorkItem workItem, List<WorkItem> childWorkItems)
-        {
-            workItem.Fields[AzureDevOpsFields.WorkItemType] = "Product Backlog Item";
-            childWorkItems.ForEach(t => t.Fields[AzureDevOpsFields.WorkItemType] = "Task");
+        _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(childWorkItems.Count));
 
-            var result = _subject.Map(workItem, childWorkItems);
+        Assert.IsTrue(typeof(DevOpsProductBacklogItem) == result.GetType());
 
-            _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(childWorkItems.Count));
+        var castResult = (DevOpsProductBacklogItem) result;
+        Assert.AreEqual(workItem.Id, castResult.Id);
+        Assert.AreEqual(workItem.Title(), castResult.Title);
+        Assert.AreEqual(workItem.State(), castResult.State);
+        Assert.AreEqual(workItem.AssignedTo(), castResult.AssignedTo);
+        Assert.AreEqual(workItem.Description(), castResult.Description);
+        Assert.AreEqual(childWorkItems.Count, castResult.Tasks.Count);
+    }
 
-            Assert.IsTrue(typeof(DevOpsProductBacklogItem) == result.GetType());
+    [Test, AutoData]
+    public void GeneratesDevOpsBug(WorkItem workItem, List<WorkItem> childWorkItems)
+    {
+        workItem.Fields[AzureDevOpsFields.WorkItemType] = "Bug";
+        childWorkItems.ForEach(t => t.Fields[AzureDevOpsFields.WorkItemType] = "Task");
 
-            var castResult = (DevOpsProductBacklogItem) result;
-            Assert.AreEqual(workItem.Id, castResult.Id);
-            Assert.AreEqual(workItem.Title(), castResult.Title);
-            Assert.AreEqual(workItem.State(), castResult.State);
-            Assert.AreEqual(workItem.AssignedTo(), castResult.AssignedTo);
-            Assert.AreEqual(workItem.Description(), castResult.Description);
-            Assert.AreEqual(childWorkItems.Count, castResult.Tasks.Count);
-        }
+        var result = _subject.Map(workItem, childWorkItems);
 
-        [Test, AutoData]
-        public void GeneratesDevOpsBug(WorkItem workItem, List<WorkItem> childWorkItems)
-        {
-            workItem.Fields[AzureDevOpsFields.WorkItemType] = "Bug";
-            childWorkItems.ForEach(t => t.Fields[AzureDevOpsFields.WorkItemType] = "Task");
+        _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(childWorkItems.Count));
 
-            var result = _subject.Map(workItem, childWorkItems);
+        Assert.IsTrue(typeof(DevOpsBug) == result.GetType());
 
-            _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(childWorkItems.Count));
+        var castResult = (DevOpsBug) result;
+        Assert.AreEqual(workItem.Id, castResult.Id);
+        Assert.AreEqual(workItem.Title(), castResult.Title);
+        Assert.AreEqual(workItem.State(), castResult.State);
+        Assert.AreEqual(workItem.AssignedTo(), castResult.AssignedTo);
+        Assert.AreEqual(workItem.AcceptanceCriteria(), castResult.AcceptanceCriteria);
+        Assert.AreEqual(workItem.ReproSteps(), castResult.ReproSteps);
+        Assert.AreEqual(workItem.SystemInfo(), castResult.SystemInfo);
+        Assert.AreEqual(childWorkItems.Count, castResult.Tasks.Count);
+    }
 
-            Assert.IsTrue(typeof(DevOpsBug) == result.GetType());
+    [Test, AutoData]
+    public void ReturnsNullWhen_InvalidWorkItems(WorkItem workItem, List<WorkItem> childWorkItems)
+    {
+        var result = _subject.Map(workItem, childWorkItems);
 
-            var castResult = (DevOpsBug) result;
-            Assert.AreEqual(workItem.Id, castResult.Id);
-            Assert.AreEqual(workItem.Title(), castResult.Title);
-            Assert.AreEqual(workItem.State(), castResult.State);
-            Assert.AreEqual(workItem.AssignedTo(), castResult.AssignedTo);
-            Assert.AreEqual(workItem.AcceptanceCriteria(), castResult.AcceptanceCriteria);
-            Assert.AreEqual(workItem.ReproSteps(), castResult.ReproSteps);
-            Assert.AreEqual(workItem.SystemInfo(), castResult.SystemInfo);
-            Assert.AreEqual(childWorkItems.Count, castResult.Tasks.Count);
-        }
+        Assert.IsNull(result);
+    }
 
-        [Test, AutoData]
-        public void ReturnsNullWhen_InvalidWorkItems(WorkItem workItem, List<WorkItem> childWorkItems)
-        {
-            var result = _subject.Map(workItem, childWorkItems);
+    [Test]
+    public void ReturnsNullWhen_NullItems()
+    {
+        var result = _subject.Map(null, null);
 
-            Assert.IsNull(result);
-        }
+        Assert.IsNull(result);
+    }
 
-        [Test]
-        public void ReturnsNullWhen_NullItems()
-        {
-            var result = _subject.Map(null, null);
+    [Test, AutoData]
+    public void ReturnsValidItemsWhen_NullChildItems(WorkItem workItem)
+    {
+        workItem.Fields[AzureDevOpsFields.WorkItemType] = "Bug";
 
-            Assert.IsNull(result);
-        }
+        var result = _subject.Map(workItem, null);
 
-        [Test, AutoData]
-        public void ReturnsValidItemsWhen_NullChildItems(WorkItem workItem)
-        {
-            workItem.Fields[AzureDevOpsFields.WorkItemType] = "Bug";
+        _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(0));
 
-            var result = _subject.Map(workItem, null);
+        Assert.IsTrue(typeof(DevOpsBug) == result.GetType());
 
-            _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(0));
-
-            Assert.IsTrue(typeof(DevOpsBug) == result.GetType());
-
-            var castResult = (DevOpsBug)result;
-            Assert.AreEqual(workItem.Id, castResult.Id);
-            Assert.AreEqual(workItem.Title(), castResult.Title);
-            Assert.AreEqual(workItem.State(), castResult.State);
-            Assert.AreEqual(workItem.AssignedTo(), castResult.AssignedTo);
-            Assert.AreEqual(workItem.AcceptanceCriteria(), castResult.AcceptanceCriteria);
-            Assert.AreEqual(workItem.ReproSteps(), castResult.ReproSteps);
-            Assert.AreEqual(workItem.SystemInfo(), castResult.SystemInfo);
-            Assert.AreEqual(0, castResult.Tasks.Count);
-        }
+        var castResult = (DevOpsBug)result;
+        Assert.AreEqual(workItem.Id, castResult.Id);
+        Assert.AreEqual(workItem.Title(), castResult.Title);
+        Assert.AreEqual(workItem.State(), castResult.State);
+        Assert.AreEqual(workItem.AssignedTo(), castResult.AssignedTo);
+        Assert.AreEqual(workItem.AcceptanceCriteria(), castResult.AcceptanceCriteria);
+        Assert.AreEqual(workItem.ReproSteps(), castResult.ReproSteps);
+        Assert.AreEqual(workItem.SystemInfo(), castResult.SystemInfo);
+        Assert.AreEqual(0, castResult.Tasks.Count);
     }
 }

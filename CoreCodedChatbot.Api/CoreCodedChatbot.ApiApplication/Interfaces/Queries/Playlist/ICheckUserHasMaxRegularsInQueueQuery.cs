@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+
+public interface ICheckUserHasMaxRegularsInQueueQuery
 {
-    public interface ICheckUserHasMaxRegularsInQueueQuery
-    {
-        bool UserHasMaxRegularsInQueue(string username);
-    }
+    bool UserHasMaxRegularsInQueue(string username);
 }

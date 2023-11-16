@@ -4,48 +4,47 @@ using CoreCodedChatbot.ApiApplication.Extensions;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps
+namespace CoreCodedChatbot.ApiTests.Commands.AzureDevOps;
+
+[TestFixture]
+public class MapWorkItemToTaskCommandTests
 {
-    [TestFixture]
-    public class MapWorkItemToTaskCommandTests
+    private MapWorkItemToTaskCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private MapWorkItemToTaskCommand _subject;
+        _subject = new MapWorkItemToTaskCommand();
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _subject = new MapWorkItemToTaskCommand();
-        }
+    [Test]
+    public void ReturnsNullWhen_NullWorkItemProvided()
+    {
+        var result = _subject.Map(null);
 
-        [Test]
-        public void ReturnsNullWhen_NullWorkItemProvided()
-        {
-            var result = _subject.Map(null);
+        Assert.IsNull(result);
+    }
 
-            Assert.IsNull(result);
-        }
+    [Test, AutoData]
+    public void ReturnsNullWhen_NotATaskProvided(WorkItem workItem)
+    {
+        var result = _subject.Map(workItem);
 
-        [Test, AutoData]
-        public void ReturnsNullWhen_NotATaskProvided(WorkItem workItem)
-        {
-            var result = _subject.Map(workItem);
+        Assert.IsNull(result);
+    }
 
-            Assert.IsNull(result);
-        }
+    [Test, AutoData]
+    public void ReturnsDevOpsTaskWhen_ValidTaskProvided(WorkItem workItem)
+    {
+        workItem.Fields[AzureDevOpsFields.WorkItemType] = "Task";
 
-        [Test, AutoData]
-        public void ReturnsDevOpsTaskWhen_ValidTaskProvided(WorkItem workItem)
-        {
-            workItem.Fields[AzureDevOpsFields.WorkItemType] = "Task";
+        var result = _subject.Map(workItem);
 
-            var result = _subject.Map(workItem);
-
-            Assert.AreEqual(workItem.Id, result.Id);
-            Assert.AreEqual(workItem.Title(), result.Title);
-            Assert.AreEqual(workItem.Description(), result.Description);
-            Assert.AreEqual(workItem.State(), result.State);
-            Assert.AreEqual(workItem.AssignedTo(), result.AssignedTo);
-            Assert.AreEqual(workItem.RemainingWork(), result.RemainingWork);
-        }
+        Assert.AreEqual(workItem.Id, result.Id);
+        Assert.AreEqual(workItem.Title(), result.Title);
+        Assert.AreEqual(workItem.Description(), result.Description);
+        Assert.AreEqual(workItem.State(), result.State);
+        Assert.AreEqual(workItem.AssignedTo(), result.AssignedTo);
+        Assert.AreEqual(workItem.RemainingWork(), result.RemainingWork);
     }
 }

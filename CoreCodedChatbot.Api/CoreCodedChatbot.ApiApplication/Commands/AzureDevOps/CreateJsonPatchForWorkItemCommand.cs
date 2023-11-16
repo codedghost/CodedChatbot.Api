@@ -4,24 +4,23 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
-namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
+
+public class CreateJsonPatchForWorkItemCommand : ICreateJsonPatchForWorkItemCommand
 {
-    public class CreateJsonPatchForWorkItemCommand : ICreateJsonPatchForWorkItemCommand
+    public CreateJsonPatchForWorkItemCommand() { }
+
+    public JsonPatchDocument Create(string twitchUsername, DevOpsWorkItem workItem)
     {
-        public CreateJsonPatchForWorkItemCommand() { }
+        var jsonPatchDocument = new JsonPatchDocument();
 
-        public JsonPatchDocument Create(string twitchUsername, DevOpsWorkItem workItem)
-        {
-            var jsonPatchDocument = new JsonPatchDocument();
+        jsonPatchDocument
+            .AddTitle($"{twitchUsername} - {workItem.Title}")
+            .AddAcceptanceCriteria(workItem.AcceptanceCriteria);
 
-            jsonPatchDocument
-                .AddTitle($"{twitchUsername} - {workItem.Title}")
-                .AddAcceptanceCriteria(workItem.AcceptanceCriteria);
+        if (workItem.Tags != null && workItem.Tags.Any())
+            jsonPatchDocument.AddTags(workItem.Tags);
 
-            if (workItem.Tags != null && workItem.Tags.Any())
-                jsonPatchDocument.AddTags(workItem.Tags);
-
-            return jsonPatchDocument;
-        }
+        return jsonPatchDocument;
     }
 }

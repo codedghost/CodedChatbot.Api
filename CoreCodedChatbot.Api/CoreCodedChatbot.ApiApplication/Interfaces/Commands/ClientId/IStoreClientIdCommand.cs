@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
+
+public interface IStoreClientIdCommand
 {
-    public interface IStoreClientIdCommand
-    {
-        void Store(string hubType, string clientId, string username);
-    }
+    void Store(string hubType, string clientId, string username);
 }

@@ -3,33 +3,32 @@ using System.Linq;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame
+namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
+
+public class CompleteGuessingGameRepository : ICompleteGuessingGameRepository
 {
-    public class CompleteGuessingGameRepository : ICompleteGuessingGameRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public CompleteGuessingGameRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public CompleteGuessingGameRepository(
-            IChatbotContextFactory chatbotContextFactory
-        )
+    public void CompleteCurrentGuessingGame(decimal finalPercentage)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var currentGuessingGame = context.SongGuessingRecords.FirstOrDefault(sr => sr.IsInProgress);
 
-        public void CompleteCurrentGuessingGame(decimal finalPercentage)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var currentGuessingGame = context.SongGuessingRecords.FirstOrDefault(sr => sr.IsInProgress);
+            if (currentGuessingGame == null)
+                throw new NullReferenceException("No current guessing games available"); 
 
-                if (currentGuessingGame == null)
-                    throw new NullReferenceException("No current guessing games available"); 
+            currentGuessingGame.IsInProgress = false;
+            currentGuessingGame.FinalPercentage = finalPercentage;
 
-                currentGuessingGame.IsInProgress = false;
-                currentGuessingGame.FinalPercentage = finalPercentage;
-
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

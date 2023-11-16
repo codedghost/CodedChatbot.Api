@@ -7,71 +7,70 @@ using CoreCodedChatbot.Config;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.Playlist
+namespace CoreCodedChatbot.ApiTests.Commands.Playlist;
+
+[TestFixture]
+public class ProcessRegularSongRequestCommandTests
 {
-    [TestFixture]
-    public class ProcessRegularSongRequestCommandTests
+    private Mock<IConfigService> _configService;
+    private Mock<ICheckUserHasMaxRegularsInQueueQuery> _checkUserHasMaxRegularsInQueueQuery;
+    private Mock<IAddRequestRepository> _addRequestRepository;
+
+    private ProcessRegularSongRequestCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<IConfigService> _configService;
-        private Mock<ICheckUserHasMaxRegularsInQueueQuery> _checkUserHasMaxRegularsInQueueQuery;
-        private Mock<IAddRequestRepository> _addRequestRepository;
+        var maxRegulars = 1;
 
-        private ProcessRegularSongRequestCommand _subject;
+        _configService = new Mock<IConfigService>();
+        _checkUserHasMaxRegularsInQueueQuery = new Mock<ICheckUserHasMaxRegularsInQueueQuery>();
+        _addRequestRepository = new Mock<IAddRequestRepository>();
 
-        [SetUp]
-        public void SetUp()
-        {
-            var maxRegulars = 1;
+        _configService.Setup(c => c.Get<int>("MaxRegularSongsPerUser")).Returns(maxRegulars);
+        _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsAny<int>()))
+            .Returns(new AddSongResult
+            {
+                AddRequestResult = AddRequestResult.Success,
+                MaximumRegularRequests = maxRegulars
+            });
+    }
 
-            _configService = new Mock<IConfigService>();
-            _checkUserHasMaxRegularsInQueueQuery = new Mock<ICheckUserHasMaxRegularsInQueueQuery>();
-            _addRequestRepository = new Mock<IAddRequestRepository>();
+    private void SetUserHasMaxRegulars(bool hasMaxRegulars)
+    {
+        _checkUserHasMaxRegularsInQueueQuery.Setup(c => c.UserHasMaxRegularsInQueue(It.IsAny<string>()))
+            .Returns(hasMaxRegulars);
+    }
 
-            _configService.Setup(c => c.Get<int>("MaxRegularSongsPerUser")).Returns(maxRegulars);
-            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, false, It.IsAny<int>()))
-                .Returns(new AddSongResult
-                {
-                    AddRequestResult = AddRequestResult.Success,
-                    MaximumRegularRequests = maxRegulars
-                });
-        }
+    private void SetUpSubject()
+    {
+        _subject = new ProcessRegularSongRequestCommand(_configService.Object,
+            _checkUserHasMaxRegularsInQueueQuery.Object,
+            _addRequestRepository.Object);
+    }
 
-        private void SetUserHasMaxRegulars(bool hasMaxRegulars)
-        {
-            _checkUserHasMaxRegularsInQueueQuery.Setup(c => c.UserHasMaxRegularsInQueue(It.IsAny<string>()))
-                .Returns(hasMaxRegulars);
-        }
+    [Test]
+    public void SuccessWhen_UserHasNoRegulars()
+    {
+        SetUserHasMaxRegulars(false);
+        SetUpSubject();
 
-        private void SetUpSubject()
-        {
-            _subject = new ProcessRegularSongRequestCommand(_configService.Object,
-                _checkUserHasMaxRegularsInQueueQuery.Object,
-                _addRequestRepository.Object);
-        }
+        var result = _subject.Process("Username", "Request Text", It.IsAny<int>());
 
-        [Test]
-        public void SuccessWhen_UserHasNoRegulars()
-        {
-            SetUserHasMaxRegulars(false);
-            SetUpSubject();
+        Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
+    }
 
-            var result = _subject.Process("Username", "Request Text", It.IsAny<int>());
+    [Test]
+    public void FailureWhen_UserHasMaxRegulars()
+    {
+        SetUserHasMaxRegulars(true);
+        SetUpSubject();
 
-            Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
-        }
+        var maxRequests = _configService.Object.Get<int>("MaxRegularSongsPerUser");
 
-        [Test]
-        public void FailureWhen_UserHasMaxRegulars()
-        {
-            SetUserHasMaxRegulars(true);
-            SetUpSubject();
+        var result = _subject.Process("Username", "Request Text", It.IsAny<int>());
 
-            var maxRequests = _configService.Object.Get<int>("MaxRegularSongsPerUser");
-
-            var result = _subject.Process("Username", "Request Text", It.IsAny<int>());
-
-            Assert.AreEqual(AddRequestResult.MaximumRegularRequests, result.AddRequestResult);
-            Assert.AreEqual(maxRequests, result.MaximumRegularRequests);
-        }
+        Assert.AreEqual(AddRequestResult.MaximumRegularRequests, result.AddRequestResult);
+        Assert.AreEqual(maxRequests, result.MaximumRegularRequests);
     }
 }

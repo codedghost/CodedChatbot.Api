@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Services
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+
+public interface IDownloadChartService
 {
-    public interface IDownloadChartService
-    {
-        Task Download(string downloadUrl, int directoryId);
-    }
+    Task Download(string downloadUrl, int directoryId);
 }

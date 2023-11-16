@@ -8,62 +8,61 @@ using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.Playlist
+namespace CoreCodedChatbot.ApiTests.Commands.Playlist;
+
+[TestFixture]
+public class ProcessSuperVipSongRequestCommandTests
 {
-    [TestFixture]
-    public class ProcessSuperVipSongRequestCommandTests
+    private Mock<IIsSuperVipInQueueQuery> _isSuperVipInQueueQuery;
+    private Mock<IVipService> _vipService;
+    private Mock<IAddRequestRepository> _addRequestRepository;
+
+    private ProcessSuperVipSongRequestCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<IIsSuperVipInQueueQuery> _isSuperVipInQueueQuery;
-        private Mock<IVipService> _vipService;
-        private Mock<IAddRequestRepository> _addRequestRepository;
+        _isSuperVipInQueueQuery = new Mock<IIsSuperVipInQueueQuery>();
+        _vipService = new Mock<IVipService>();
+        _addRequestRepository = new Mock<IAddRequestRepository>();
 
-        private ProcessSuperVipSongRequestCommand _subject;
-
-        [SetUp]
-        public void SetUp()
+        _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, true, It.IsAny<int>())).Returns(new AddSongResult
         {
-            _isSuperVipInQueueQuery = new Mock<IIsSuperVipInQueueQuery>();
-            _vipService = new Mock<IVipService>();
-            _addRequestRepository = new Mock<IAddRequestRepository>();
+            AddRequestResult = AddRequestResult.Success
+        });
+    }
 
-            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), false, true, It.IsAny<int>())).Returns(new AddSongResult
-            {
-                AddRequestResult = AddRequestResult.Success
-            });
-        }
+    private void SetSuperVipInQueue(bool superInQueue)
+    {
+        _isSuperVipInQueueQuery.Setup(v => v.IsSuperVipInQueue()).Returns(superInQueue);
+    }
 
-        private void SetSuperVipInQueue(bool superInQueue)
-        {
-            _isSuperVipInQueueQuery.Setup(v => v.IsSuperVipInQueue()).Returns(superInQueue);
-        }
+    private void SetUserHasSuperVip(bool userHasSuperVip)
+    {
+        _vipService.Setup(v => v.UseSuperVip(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(userHasSuperVip);
+    }
 
-        private void SetUserHasSuperVip(bool userHasSuperVip)
-        {
-            _vipService.Setup(v => v.UseSuperVip(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(userHasSuperVip);
-        }
+    private void SetUpSubject()
+    {
+        _subject = new ProcessSuperVipSongRequestCommand(
+            _isSuperVipInQueueQuery.Object,
+            _vipService.Object,
+            _addRequestRepository.Object);
+    }
 
-        private void SetUpSubject()
-        {
-            _subject = new ProcessSuperVipSongRequestCommand(
-                _isSuperVipInQueueQuery.Object,
-                _vipService.Object,
-                _addRequestRepository.Object);
-        }
+    [TestCase(false, true, AddRequestResult.Success, TestName = "SuccessWhen_NoSuperVipInQueue_UserHasSuperVip")]
+    [TestCase(false, false, AddRequestResult.NotEnoughVips, TestName = "FailureWhen_NoSuperVipInQueue_UserHasNoSuperVip")]
+    [TestCase(true, false, AddRequestResult.OnlyOneSuper, TestName = "FailureWhen_SuperVipInQueue_UserHasNoSuperVip")]
+    [TestCase(true, true, AddRequestResult.OnlyOneSuper, TestName = "FailureWhen_SuperVipInQueue_UserHasSuperVip")]
+    public async Task Test(bool superVipInQueue, bool userHasSuperVip, AddRequestResult expectedResult)
+    {
+        SetSuperVipInQueue(superVipInQueue);
+        SetUserHasSuperVip(userHasSuperVip);
 
-        [TestCase(false, true, AddRequestResult.Success, TestName = "SuccessWhen_NoSuperVipInQueue_UserHasSuperVip")]
-        [TestCase(false, false, AddRequestResult.NotEnoughVips, TestName = "FailureWhen_NoSuperVipInQueue_UserHasNoSuperVip")]
-        [TestCase(true, false, AddRequestResult.OnlyOneSuper, TestName = "FailureWhen_SuperVipInQueue_UserHasNoSuperVip")]
-        [TestCase(true, true, AddRequestResult.OnlyOneSuper, TestName = "FailureWhen_SuperVipInQueue_UserHasSuperVip")]
-        public async Task Test(bool superVipInQueue, bool userHasSuperVip, AddRequestResult expectedResult)
-        {
-            SetSuperVipInQueue(superVipInQueue);
-            SetUserHasSuperVip(userHasSuperVip);
+        SetUpSubject();
 
-            SetUpSubject();
+        var result = await _subject.Process("Username", "Request Text", 0);
 
-            var result = await _subject.Process("Username", "Request Text", 0);
-
-            Assert.AreEqual(expectedResult, result.AddRequestResult);
-        }
+        Assert.AreEqual(expectedResult, result.AddRequestResult);
     }
 }

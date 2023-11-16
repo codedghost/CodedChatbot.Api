@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
+
+public interface IConvertAllBytesCommand
 {
-    public interface IConvertAllBytesCommand
-    {
-        int Convert(string username);
-    }
+    int Convert(string username);
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
+
+public interface IStoreChannelRewardRedemptionRepository
 {
-    public interface IStoreChannelRewardRedemptionRepository
-    {
-        void Store(Guid channelRewardsRedemptionId, Guid channelRewardId, string redeemedBy, bool processed);
-    }
+    void Store(Guid channelRewardsRedemptionId, Guid channelRewardId, string redeemedBy, bool processed);
 }

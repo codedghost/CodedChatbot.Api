@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
+
+public interface IUpdateTotalBitsCommand
 {
-    public interface IUpdateTotalBitsCommand
-    {
-        void Update(string username, int totalBits);
-    }
+    void Update(string username, int totalBits);
 }

@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
+
+public interface IGetAllBacklogWorkItemsQuery
 {
-    public interface IGetAllBacklogWorkItemsQuery
-    {
-        Task<GetAllBacklogWorkItemsResponse> Get();
-    }
+    Task<GetAllBacklogWorkItemsResponse> Get();
 }

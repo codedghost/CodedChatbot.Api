@@ -1,10 +1,9 @@
 ﻿using System;
 using CoreCodedChatbot.Database.Context.Models;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChannelRewards
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChannelRewards;
+
+public interface IGetChannelRewardQuery
 {
-    public interface IGetChannelRewardQuery
-    {
-        ChannelReward GetChannelReward(Guid channelId);
-    }
+    ChannelReward GetChannelReward(Guid channelId);
 }

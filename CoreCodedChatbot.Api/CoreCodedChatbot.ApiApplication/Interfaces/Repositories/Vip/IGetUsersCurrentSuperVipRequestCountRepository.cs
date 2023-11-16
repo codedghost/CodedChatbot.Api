@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip
+﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+
+public interface IGetUsersCurrentSuperVipRequestCountRepository
 {
-    public interface IGetUsersCurrentSuperVipRequestCountRepository
-    {
-        int GetUsersCurrentSuperVipRequestCount(string username);
-    }
+    int GetUsersCurrentSuperVipRequestCount(string username);
 }

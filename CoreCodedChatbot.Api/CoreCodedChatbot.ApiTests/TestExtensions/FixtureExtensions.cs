@@ -1,12 +1,11 @@
 ﻿using AutoFixture;
 
-namespace CoreCodedChatbot.ApiTests.TestExtensions
+namespace CoreCodedChatbot.ApiTests.TestExtensions;
+
+public static class FixtureExtensions
 {
-    public static class FixtureExtensions
+    public static T Get<T>(this IFixture fixture)
     {
-        public static T Get<T>(this IFixture fixture)
-        {
-            return fixture.Build<T>().Create();
-        }
+        return fixture.Build<T>().Create();
     }
 }

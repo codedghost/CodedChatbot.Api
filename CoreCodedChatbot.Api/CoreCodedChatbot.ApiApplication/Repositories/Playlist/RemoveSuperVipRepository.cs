@@ -3,45 +3,44 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
+
+public class RemoveSuperVipRepository : IRemoveSuperVipRepository
 {
-    public class RemoveSuperVipRepository : IRemoveSuperVipRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+    private readonly IConfigService _configService;
+
+    public RemoveSuperVipRepository(
+        IChatbotContextFactory chatbotContextFactory,
+        IConfigService configService
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
-        private readonly IConfigService _configService;
+        _chatbotContextFactory = chatbotContextFactory;
+        _configService = configService;
+    }
 
-        public RemoveSuperVipRepository(
-            IChatbotContextFactory chatbotContextFactory,
-            IConfigService configService
-        )
+    public void Remove(string username)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-            _configService = configService;
-        }
-
-        public void Remove(string username)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var superVip = context.SongRequests.SingleOrDefault(sr =>
-                    !sr.Played &&
-                    sr.SuperVipRequestTime != null &&
-                    sr.Username == username
-                );
+            var superVip = context.SongRequests.SingleOrDefault(sr =>
+                !sr.Played &&
+                sr.SuperVipRequestTime != null &&
+                sr.Username == username
+            );
                 
-                if (superVip == null) return;
+            if (superVip == null) return;
 
-                var user = context.Users.Find(username);
+            var user = context.Users.Find(username);
 
-                if (user == null) return;
+            if (user == null) return;
 
-                var superVipCost = _configService.Get<int>("SuperVipCost");
+            var superVipCost = _configService.Get<int>("SuperVipCost");
 
-                user.ModGivenVipRequests += superVipCost;
-                superVip.Played = true;
+            user.ModGivenVipRequests += superVipCost;
+            superVip.Played = true;
 
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
     }
 }

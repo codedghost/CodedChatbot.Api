@@ -7,59 +7,58 @@ using CoreCodedChatbot.ApiContract.Enums.Playlist;
 using Moq;
 using NUnit.Framework;
 
-namespace CoreCodedChatbot.ApiTests.Commands.Playlist
+namespace CoreCodedChatbot.ApiTests.Commands.Playlist;
+
+[TestFixture]
+public class ProcessVipSongRequestCommandTests
 {
-    [TestFixture]
-    public class ProcessVipSongRequestCommandTests
+    private Mock<IVipService> _vipService;
+    private Mock<IAddRequestRepository> _addRequestRepository;
+
+    private ProcessVipSongRequestCommand _subject;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<IVipService> _vipService;
-        private Mock<IAddRequestRepository> _addRequestRepository;
+        _vipService = new Mock<IVipService>();
+        _addRequestRepository = new Mock<IAddRequestRepository>();
 
-        private ProcessVipSongRequestCommand _subject;
+        _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), true, false, It.IsAny<int>())).Returns(
+            new AddSongResult
+            {
+                AddRequestResult = AddRequestResult.Success
+            });
+    }
 
-        [SetUp]
-        public void SetUp()
-        {
-            _vipService = new Mock<IVipService>();
-            _addRequestRepository = new Mock<IAddRequestRepository>();
+    private void SetUserHasVip(bool hasVip)
+    {
+        _vipService.Setup(v => v.UseVip(It.IsAny<string>())).ReturnsAsync(hasVip);
+    }
 
-            _addRequestRepository.Setup(a => a.AddRequest(It.IsAny<string>(), It.IsAny<string>(), true, false, It.IsAny<int>())).Returns(
-                new AddSongResult
-                {
-                    AddRequestResult = AddRequestResult.Success
-                });
-        }
+    private void SetUpSubject()
+    {
+        _subject = new ProcessVipSongRequestCommand(_vipService.Object, _addRequestRepository.Object);
+    }
 
-        private void SetUserHasVip(bool hasVip)
-        {
-            _vipService.Setup(v => v.UseVip(It.IsAny<string>())).ReturnsAsync(hasVip);
-        }
+    [Test]
+    public async Task SuccessWhen_UserHasVip()
+    {
+        SetUserHasVip(true);
+        SetUpSubject();
 
-        private void SetUpSubject()
-        {
-            _subject = new ProcessVipSongRequestCommand(_vipService.Object, _addRequestRepository.Object);
-        }
+        var result = await _subject.Process("Username", "Request Text", It.IsAny<int>());
 
-        [Test]
-        public async Task SuccessWhen_UserHasVip()
-        {
-            SetUserHasVip(true);
-            SetUpSubject();
+        Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
+    }
 
-            var result = await _subject.Process("Username", "Request Text", It.IsAny<int>());
+    [Test]
+    public async Task FailureWhen_UserHasNoVips()
+    {
+        SetUserHasVip(false);
+        SetUpSubject();
 
-            Assert.AreEqual(AddRequestResult.Success, result.AddRequestResult);
-        }
+        var result = await _subject.Process("Username", "Request Text", It.IsAny<int>());
 
-        [Test]
-        public async Task FailureWhen_UserHasNoVips()
-        {
-            SetUserHasVip(false);
-            SetUpSubject();
-
-            var result = await _subject.Process("Username", "Request Text", It.IsAny<int>());
-
-            Assert.AreEqual(AddRequestResult.NotEnoughVips, result.AddRequestResult);
-        }
+        Assert.AreEqual(AddRequestResult.NotEnoughVips, result.AddRequestResult);
     }
 }

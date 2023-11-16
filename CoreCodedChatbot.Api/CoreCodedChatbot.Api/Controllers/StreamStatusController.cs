@@ -8,53 +8,52 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreCodedChatbot.Api.Controllers
+namespace CoreCodedChatbot.Api.Controllers;
+
+[Route("StreamStatus/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class StreamStatusController : Controller
 {
-    [Route("StreamStatus/[action]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class StreamStatusController : Controller
+    private readonly IGetStreamStatusQuery _getStreamStatusQuery;
+    private readonly ISaveStreamStatusCommand _saveStreamStatusCommand;
+    private readonly ILogger<StreamStatusController> _logger;
+
+    public StreamStatusController(
+        IGetStreamStatusQuery getStreamStatusQuery,
+        ISaveStreamStatusCommand saveStreamStatusCommand,
+        ILogger<StreamStatusController> logger
+    )
     {
-        private readonly IGetStreamStatusQuery _getStreamStatusQuery;
-        private readonly ISaveStreamStatusCommand _saveStreamStatusCommand;
-        private readonly ILogger<StreamStatusController> _logger;
+        _getStreamStatusQuery = getStreamStatusQuery;
+        _saveStreamStatusCommand = saveStreamStatusCommand;
+        _logger = logger;
+    }
 
-        public StreamStatusController(
-            IGetStreamStatusQuery getStreamStatusQuery,
-            ISaveStreamStatusCommand saveStreamStatusCommand,
-            ILogger<StreamStatusController> logger
-            )
+    [HttpGet]
+    public IActionResult GetStreamStatus(string broadcasterUsername)
+    {
+        var isStreamOnline = _getStreamStatusQuery.Get(broadcasterUsername);
+
+        return new JsonResult(new GetStreamStatusResponse
         {
-            _getStreamStatusQuery = getStreamStatusQuery;
-            _saveStreamStatusCommand = saveStreamStatusCommand;
-            _logger = logger;
+            IsOnline = isStreamOnline
+        });
+    }
+
+    [HttpPut]
+    public IActionResult PutStreamStatus([FromBody] PutStreamStatusRequest streamStatusRequest)
+    {
+        try
+        {
+            if (_saveStreamStatusCommand.Save(streamStatusRequest))
+                return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error in PutStreamStatus");
+            Console.Error.WriteLine($"Could not save stream status. Exception: {e} - {e.InnerException}");
         }
 
-        [HttpGet]
-        public IActionResult GetStreamStatus(string broadcasterUsername)
-        {
-            var isStreamOnline = _getStreamStatusQuery.Get(broadcasterUsername);
-
-            return new JsonResult(new GetStreamStatusResponse
-            {
-                IsOnline = isStreamOnline
-            });
-        }
-
-        [HttpPut]
-        public IActionResult PutStreamStatus([FromBody] PutStreamStatusRequest streamStatusRequest)
-        {
-            try
-            {
-                if (_saveStreamStatusCommand.Save(streamStatusRequest))
-                    return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Error in PutStreamStatus");
-                Console.Error.WriteLine($"Could not save stream status. Exception: {e} - {e.InnerException}");
-            }
-
-            return BadRequest();
-        }
+        return BadRequest();
     }
 }

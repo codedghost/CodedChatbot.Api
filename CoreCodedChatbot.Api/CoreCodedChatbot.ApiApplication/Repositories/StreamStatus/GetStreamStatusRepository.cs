@@ -2,27 +2,26 @@
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamStatus;
 using CoreCodedChatbot.Database.Context.Interfaces;
 
-namespace CoreCodedChatbot.ApiApplication.Repositories.StreamStatus
+namespace CoreCodedChatbot.ApiApplication.Repositories.StreamStatus;
+
+public class GetStreamStatusRepository : IGetStreamStatusRepository
 {
-    public class GetStreamStatusRepository : IGetStreamStatusRepository
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+
+    public GetStreamStatusRepository(
+        IChatbotContextFactory chatbotContextFactory
+    )
     {
-        private readonly IChatbotContextFactory _chatbotContextFactory;
+        _chatbotContextFactory = chatbotContextFactory;
+    }
 
-        public GetStreamStatusRepository(
-            IChatbotContextFactory chatbotContextFactory
-            )
+    public bool GetStreamStatus(string broadcasterUsername)
+    {
+        using (var context = _chatbotContextFactory.Create())
         {
-            _chatbotContextFactory = chatbotContextFactory;
-        }
+            var status = context.StreamStatuses.FirstOrDefault(s => s.BroadcasterUsername == broadcasterUsername);
 
-        public bool GetStreamStatus(string broadcasterUsername)
-        {
-            using (var context = _chatbotContextFactory.Create())
-            {
-                var status = context.StreamStatuses.FirstOrDefault(s => s.BroadcasterUsername == broadcasterUsername);
-
-                return status?.IsOnline ?? false;
-            }
+            return status?.IsOnline ?? false;
         }
     }
 }

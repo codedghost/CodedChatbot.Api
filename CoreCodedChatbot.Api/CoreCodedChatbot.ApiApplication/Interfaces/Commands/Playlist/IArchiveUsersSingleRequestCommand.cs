@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
+
+public interface IArchiveUsersSingleRequestCommand
 {
-    public interface IArchiveUsersSingleRequestCommand
-    {
-        Task<bool> ArchiveAndRefundVips(string username, SongRequestType songRequestType, int currentSongRequestId);
-    }
+    Task<bool> ArchiveAndRefundVips(string username, SongRequestType songRequestType, int currentSongRequestId);
 }

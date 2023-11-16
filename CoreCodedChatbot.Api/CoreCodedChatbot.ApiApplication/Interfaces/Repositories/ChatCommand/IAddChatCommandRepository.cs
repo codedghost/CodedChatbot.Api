@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
+
+public interface IAddChatCommandRepository
 {
-    public interface IAddChatCommandRepository
-    {
-        void Add(List<string> keywords, string informationText, string helpText, string username);
-    }
+    void Add(List<string> keywords, string informationText, string helpText, string username);
 }

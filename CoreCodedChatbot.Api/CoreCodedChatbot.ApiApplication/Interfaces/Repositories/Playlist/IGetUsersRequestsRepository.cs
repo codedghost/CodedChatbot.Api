@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 
-namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+
+public interface IGetUsersRequestsRepository
 {
-    public interface IGetUsersRequestsRepository
-    {
-        List<UsersRequestsIntermediate> GetUsersRequests(string username);
-    }
+    List<UsersRequestsIntermediate> GetUsersRequests(string username);
 }

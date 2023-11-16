@@ -1,7 +1,6 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Constants
+﻿namespace CoreCodedChatbot.ApiApplication.Constants;
+
+public static class SettingsKeys
 {
-    public static class SettingsKeys
-    {
-        public const string GuessingGameStateSettingKey = "IsGuessingGameInProgress";
-    }
+    public const string GuessingGameStateSettingKey = "IsGuessingGameInProgress";
 }
