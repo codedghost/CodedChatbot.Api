@@ -1,35 +1,31 @@
 ﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class RefundVipsRepository : IRefundVipsRepository
+public class RefundVipsRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public RefundVipsRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void RefundVips(IEnumerable<VipRefund> refunds)
+    public async Task RefundVips(IEnumerable<VipRefund> refunds)
     {
-        using (var context = _chatbotContextFactory.Create())
+        foreach (var refund in refunds)
         {
-            foreach (var refund in refunds)
-            {
-                var user = context.Users.Find(refund.Username);
+            var user = await GetByIdOrNullAsync(refund.Username);
 
-                if (user == null) continue;
+            if (user == null) continue;
 
-                user.ModGivenVipRequests += refund.VipsToRefund;
-            }
-
-            context.SaveChanges();
+            user.ModGivenVipRequests += refund.VipsToRefund;
         }
+
+        await Context.SaveChangesAsync();
     }
 }

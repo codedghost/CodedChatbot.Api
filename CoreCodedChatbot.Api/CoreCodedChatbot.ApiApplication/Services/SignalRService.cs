@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class SignalRService : ISignalRService
+public class SignalRService : IBaseService, ISignalRService
 {
     private readonly IConfigService _configService;
     private readonly ISecretService _secretService;

@@ -1,27 +1,22 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+﻿using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class GetUsersGiftedVipsRepository : IGetUsersGiftedVipsRepository
+public class GetUsersGiftedVipsRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetUsersGiftedVipsRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public int GetUsersGiftedVips(string username)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+        var user = Context.GetOrCreateUser(username);
 
-            return user.SentGiftVipRequests;
-        }
+        return user.SentGiftVipRequests;
     }
 }

@@ -5,17 +5,13 @@ using System.Threading;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamLabs;
+using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public interface IStreamLabsService
-{
-    void Initialise();
-}
-
-public class StreamLabsService : IStreamLabsService
+public class StreamLabsService : IBaseService, IStreamLabsService
 {
     private readonly IGetRecentDonationsQuery _getRecentDonationsQuery;
     private readonly ISaveStreamLabsDonationsRepository _saveStreamLabsDonationsRepository;

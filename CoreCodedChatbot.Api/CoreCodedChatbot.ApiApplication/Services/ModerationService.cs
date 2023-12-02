@@ -3,7 +3,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class ModerationService : IModerationService
+public class ModerationService : IBaseService, IModerationService
 {
     private readonly ITransferUserAccountCommand _transferUserAccountCommand;
 

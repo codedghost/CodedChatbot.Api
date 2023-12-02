@@ -5,7 +5,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class ChatCommandService : IChatCommandService
+public class ChatCommandService : IBaseService, IChatCommandService
 {
     private readonly IGetCommandTextByKeywordQuery _getCommandTextByKeywordQuery;
     private readonly IGetCommandHelpTextByKeywordQuery _getCommandHelpTextByKeywordQuery;

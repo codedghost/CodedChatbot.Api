@@ -11,7 +11,7 @@ using SolrNet.Commands.Parameters;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class SolrService : ISolrService
+public class SolrService : IBaseService, ISolrService
 {
     private readonly ISolrOperations<SongSearch> _songSearchOperations;
     private readonly IGetSongsFromSearchResultsQuery _getSongsFromSearchResultsQuery;

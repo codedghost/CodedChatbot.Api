@@ -14,7 +14,7 @@ using ApiQuote = CoreCodedChatbot.ApiContract.ResponseModels.Quotes.ChildModels.
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class QuoteService : IQuoteService
+public class QuoteService : IBaseService, IQuoteService
 {
     private readonly IQuoteRepository _quoteRepository;
     private readonly IChatService _chatService;

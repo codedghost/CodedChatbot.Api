@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class PlaylistService : IPlaylistService
+public class PlaylistService : IBaseService, IPlaylistService
 {
     private readonly IGetSongRequestByIdQuery _getSongRequestByIdQuery;
     private readonly IGetPlaylistStateQuery _getPlaylistStateQuery;

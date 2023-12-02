@@ -1,31 +1,27 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class GiftVipRepository : IGiftVipRepository
+public class GiftVipRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GiftVipRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void GiftVip(string donorUsername, string receivingUsername, int vipsToGift)
+    public async Task GiftVip(string donorUsername, string receivingUsername, int vipsToGift)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var donorUser = context.Users.Find(donorUsername);
-            var receivingUser = context.GetOrCreateUser(receivingUsername);
+        var donorUser = await GetByIdAsync(donorUsername);
+        var receivingUser = Context.GetOrCreateUser(receivingUsername);
 
-            donorUser.SentGiftVipRequests += vipsToGift;
-            receivingUser.ReceivedGiftVipRequests += vipsToGift;
+        donorUser.SentGiftVipRequests += vipsToGift;
+        receivingUser.ReceivedGiftVipRequests += vipsToGift;
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
     }
 }

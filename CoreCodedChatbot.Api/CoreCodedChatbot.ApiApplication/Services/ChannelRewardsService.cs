@@ -12,7 +12,7 @@ using TwitchLib.Api;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class ChannelRewardsService : IChannelRewardsService
+public class ChannelRewardsService : IBaseService, IChannelRewardsService
 {
     private readonly ICreateOrUpdateChannelRewardCommand _createOrUpdateChannelRewardCommand;
     private readonly IStoreChannelRewardRedemptionCommand _storeChannelRewardRedemptionCommand;

@@ -1,36 +1,34 @@
 ﻿using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class EditSuperVipRequestRepository : IEditSuperVipRequestRepository
+public class EditSuperVipRequestRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public EditSuperVipRequestRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public int Edit(string username, string newText, int songId)
+    public async Task<int> Edit(string username, string newText, int songId)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var superVip = context.SongRequests.SingleOrDefault(sr =>
-                !sr.Played &&
-                sr.SuperVipRequestTime != null &&
-                sr.Username == username
-            );
+        var superVip = Context.SongRequests.SingleOrDefault(sr =>
+            !sr.Played &&
+            sr.SuperVipRequestTime != null &&
+            sr.Username == username
+        );
 
-            if (superVip == null) return 0;
+        if (superVip == null) return 0;
 
-            superVip.RequestText = newText;
-            superVip.SongId = songId != 0 ? songId : (int?)null;
+        superVip.RequestText = newText;
+        superVip.SongId = songId != 0 ? songId : (int?) null;
 
-            return superVip.SongRequestId;
-        }
+        await Context.SaveChangesAsync();
+
+        return superVip.SongRequestId;
     }
 }

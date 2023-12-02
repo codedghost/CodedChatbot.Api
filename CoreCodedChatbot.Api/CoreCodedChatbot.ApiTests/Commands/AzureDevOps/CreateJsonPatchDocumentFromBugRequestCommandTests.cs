@@ -2,7 +2,7 @@
 using System.Linq;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
-using CoreCodedChatbot.ApiApplication.Extensions;
+using CoreCodedChatbot.ApiApplication.Constants;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;

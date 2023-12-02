@@ -34,7 +34,7 @@
     <Folder Include="Models\Intermediates\MapperProfiles\" />
     <Folder Include="Queries\ChannelRewards\" />
     <Folder Include="Repositories\Abstractions\" />
-    <Folder Include="Repositories\Counter\" />
+    <Folder Include="Repositories\Counters\" />
   </ItemGroup>
 
 </Project>

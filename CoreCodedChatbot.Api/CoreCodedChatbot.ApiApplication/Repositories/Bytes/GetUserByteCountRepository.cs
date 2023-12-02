@@ -1,27 +1,22 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+﻿using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes;
 
-public class GetUserByteCountRepository : IGetUserByteCountRepository
+public class GetUserByteCountRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetUserByteCountRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public float Get(string username, int byteConversion)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+        var user = Context.GetOrCreateUser(username);
 
-            return user.TokenBytes / (float) byteConversion;
-        }
+        return user.TokenBytes / (float) byteConversion;
     }
 }

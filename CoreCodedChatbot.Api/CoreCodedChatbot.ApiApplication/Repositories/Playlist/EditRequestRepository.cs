@@ -1,34 +1,30 @@
 ﻿using System;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class EditRequestRepository : IEditRequestRepository
+public class EditRequestRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public EditRequestRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Edit(int songRequestId, string requestText, string username, bool isMod, int songId)
+    public async Task Edit(int songRequestId, string requestText, string username, bool isMod, int songId)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var songRequest = context.SongRequests.Find(songRequestId);
+        var songRequest = await GetByIdOrNullAsync(songRequestId);
 
-            if (songRequest.Username != username && !isMod)
-                throw new UnauthorizedAccessException(
-                    $"{username} attempted to edit a request which was not theirs: {songRequestId}");
+        if (songRequest == null || (songRequest.Username != username && !isMod))
+            throw new UnauthorizedAccessException(
+                $"{username} attempted to edit a request which was not theirs: {songRequestId}");
 
-            songRequest.RequestText = requestText;
-            songRequest.SongId = songId != 0 ? songId : (int?)null;
-            songRequest.InDrive = songId != 0;
-            context.SaveChanges();
-        }
+        songRequest.RequestText = requestText;
+        songRequest.SongId = songId != 0 ? songId : (int?) null;
+        songRequest.InDrive = songId != 0;
+        await Context.SaveChangesAsync();
     }
 }

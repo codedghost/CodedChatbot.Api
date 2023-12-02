@@ -1,36 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class ClearRequestsRepository : IClearRequestsRepository
+public class ClearRequestsRepository : BaseRepository<SongRequest>
 {
     private readonly IChatbotContextFactory _chatbotContextFactory;
 
     public ClearRequestsRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
         _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void ClearRequests(List<BasicSongRequest> requestsToRemove)
+    public async Task ClearRequests(List<BasicSongRequest> requestsToRemove)
     {
         if (requestsToRemove == null || !requestsToRemove.Any()) return;
 
-        using (var context = _chatbotContextFactory.Create())
+        foreach (var request in requestsToRemove)
         {
-            foreach (var request in requestsToRemove)
-            {
-                var songRequest = context.SongRequests.Find(request.SongRequestId);
+            var songRequest = await GetByIdAsync(request.SongRequestId);
 
-                songRequest.Played = true;
-            }
-
-            context.SaveChanges();
+            songRequest.Played = true;
         }
+
+        await Context.SaveChangesAsync();
     }
 }

@@ -1,37 +1,34 @@
 ﻿using System;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChatCommand;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.ChatCommand;
 
-public class GetCommandHelpTextByKeywordRepository : IGetCommandHelpTextByKeywordRepository
+public class GetCommandHelpTextByKeywordRepository : BaseRepository<InfoCommand>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetCommandHelpTextByKeywordRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public string Get(string keyword)
+    public async Task<string> Get(string keyword)
     {
-        using (var context = _chatbotContextFactory.Create())
+        var commandKeyword = Context.InfoCommandKeywords.FirstOrDefault(ik => ik.InfoCommandKeywordText == keyword);
+
+        if (commandKeyword == null) return string.Empty;
+
+        var command = await GetByIdOrNullAsync(commandKeyword.InfoCommandId);
+
+        if (command == null)
         {
-            var commandKeyword = context.InfoCommandKeywords.FirstOrDefault(ik => ik.InfoCommandKeywordText == keyword);
-
-            if (commandKeyword != null)
-            {
-                var command = context.InfoCommands.Single(ic => ic.InfoCommandId == commandKeyword.InfoCommandId);
-
-                if (command == null) throw new Exception("Command keyword does not have a valid InfoCommandId");
-
-                return command.InfoHelpText;
-            }
+            throw new Exception("Command keyword does not have a valid InfoCommandId");
         }
 
-        return string.Empty;
+        return command.InfoHelpText;
+
     }
 }

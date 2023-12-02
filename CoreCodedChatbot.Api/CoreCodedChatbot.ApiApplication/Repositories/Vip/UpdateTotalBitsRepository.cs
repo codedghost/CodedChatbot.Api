@@ -1,29 +1,25 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class UpdateTotalBitsRepository : IUpdateTotalBitsRepository
+public class UpdateTotalBitsRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public UpdateTotalBitsRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Update(string username, int totalBits)
+    public async Task Update(string username, int totalBits)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+        var user = Context.GetOrCreateUser(username);
 
-            user.TotalBitsDropped = totalBits;
+        user.TotalBitsDropped = totalBits;
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
     }
 }

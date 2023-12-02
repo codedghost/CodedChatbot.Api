@@ -5,7 +5,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class ClientIdService : IClientIdService
+public class ClientIdService : IBaseService, IClientIdService
 {
     private readonly IStoreClientIdCommand _storeClientIdCommand;
     private readonly IRemoveClientIdCommand _removeClientIdCommand;

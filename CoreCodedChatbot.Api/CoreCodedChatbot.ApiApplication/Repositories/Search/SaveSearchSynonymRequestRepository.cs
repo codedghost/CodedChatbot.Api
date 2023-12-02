@@ -1,33 +1,26 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Search;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Search;
 
-public class SaveSearchSynonymRequestRepository : ISaveSearchSynonymRequestRepository
+public class SaveSearchSynonymRequestRepository : BaseRepository<SearchSynonymRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public SaveSearchSynonymRequestRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Save(string synonymRequest, string username)
+    public async Task Save(string synonymRequest, string username)
     {
-        using (var context = _chatbotContextFactory.Create())
+        var request = new SearchSynonymRequest
         {
-            var request = new SearchSynonymRequest
-            {
-                SynonymRequest = synonymRequest,
-                Username = username
-            };
+            SynonymRequest = synonymRequest,
+            Username = username
+        };
 
-            context.SearchSynonymRequests.Add(request);
-
-            context.SaveChanges();
-        }
+        await CreateAndSaveAsync(request);
     }
 }

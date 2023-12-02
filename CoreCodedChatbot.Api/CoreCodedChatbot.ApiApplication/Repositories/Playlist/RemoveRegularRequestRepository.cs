@@ -1,38 +1,34 @@
 ﻿using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class RemoveRegularRequestRepository : IRemoveRegularRequestRepository
+public class RemoveRegularRequestRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public RemoveRegularRequestRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public bool Remove(string username)
+    public async Task<bool> Remove(string username)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var usersRegularRequests = context.SongRequests.SingleOrDefault(sr =>
-                !sr.Played &&
-                sr.Username == username &&
-                sr.VipRequestTime == null &&
-                sr.SuperVipRequestTime == null
-            );
+        var usersRegularRequests = Context.SongRequests.SingleOrDefault(sr =>
+            !sr.Played &&
+            sr.Username == username &&
+            sr.VipRequestTime == null &&
+            sr.SuperVipRequestTime == null
+        );
 
-            if (usersRegularRequests == null) return false;
+        if (usersRegularRequests == null) return false;
 
-            usersRegularRequests.Played = true;
+        usersRegularRequests.Played = true;
 
-            context.SaveChanges();
+        await Context.SaveChangesAsync();
 
-            return true;
-        }
+        return true;
     }
 }

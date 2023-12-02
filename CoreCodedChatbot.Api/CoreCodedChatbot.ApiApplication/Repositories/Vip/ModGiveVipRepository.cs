@@ -1,29 +1,25 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class ModGiveVipRepository : IModGiveVipRepository
+public class ModGiveVipRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public ModGiveVipRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void ModGiveVip(string username, int vipsToGive)
+    public async Task ModGiveVip(string username, int vipsToGive)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+        var user = Context.GetOrCreateUser(username);
 
-            user.ModGivenVipRequests += vipsToGive;
+        user.ModGivenVipRequests += vipsToGive;
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
     }
 }

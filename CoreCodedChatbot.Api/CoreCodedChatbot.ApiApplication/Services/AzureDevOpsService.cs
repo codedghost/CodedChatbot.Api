@@ -2,25 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.Logging;
+using Microsoft.TeamFoundation.Build.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class AzureDevOpsService : IAzureDevOpsService
+public class AzureDevOpsService : IBaseService, IAzureDevOpsService
 {
     private readonly IConfigService _configService;
-    private readonly ICreateJsonPatchDocumentFromBugRequestCommand _createJsonPatchDocumentFromBugRequestCommand;
-    private readonly ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand _createJsonPatchDocumentFromProductBacklogItemRequestCommand;
     private readonly IGetDevOpsWorkItemIdsFromQueryId _getDevOpsWorkItemIdsFromQueryId;
     private readonly ILogger<AzureDevOpsService> _logger;
     private readonly WorkItemTrackingHttpClient _workItemTrackingClient;
@@ -29,15 +29,11 @@ public class AzureDevOpsService : IAzureDevOpsService
     public AzureDevOpsService(
         ISecretService secretService,
         IConfigService configService,
-        ICreateJsonPatchDocumentFromBugRequestCommand createJsonPatchDocumentFromBugRequestCommand,
-        ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand createJsonPatchDocumentFromProductBacklogItemRequestCommand,
         IGetDevOpsWorkItemIdsFromQueryId getDevOpsWorkItemIdsFromQueryId,
         ILogger<AzureDevOpsService> logger
     )
     {
         _configService = configService;
-        _createJsonPatchDocumentFromBugRequestCommand = createJsonPatchDocumentFromBugRequestCommand;
-        _createJsonPatchDocumentFromProductBacklogItemRequestCommand = createJsonPatchDocumentFromProductBacklogItemRequestCommand;
         _getDevOpsWorkItemIdsFromQueryId = getDevOpsWorkItemIdsFromQueryId;
         _logger = logger;
         var vssConnection = new VssConnection(
@@ -47,7 +43,6 @@ public class AzureDevOpsService : IAzureDevOpsService
         _workItemTrackingClient = vssConnection.GetClient<WorkItemTrackingHttpClient>();
 
         //_workClient = vssConnection.GetClient<WorkHttpClient>();
-
     }
 
     public async Task<List<WorkItem>> GetCommittedPbisForThisIteration()
@@ -139,9 +134,14 @@ public class AzureDevOpsService : IAzureDevOpsService
     {
         try
         {
-            var jsonPatch = _createJsonPatchDocumentFromBugRequestCommand.Create(twitchUsername, bugInfo);
+            var jsonPatchDocument = BuildJsonDocForWorkItem(twitchUsername, bugInfo);
 
-            await _workItemTrackingClient.CreateWorkItemAsync(jsonPatch, _configService.Get<string>("DevOpsProjectName"), "Bug");
+            jsonPatchDocument
+                .AddReproSteps(bugInfo.ReproSteps)
+                .AddSystemInfo(bugInfo.SystemInfo);
+
+            await _workItemTrackingClient.CreateWorkItemAsync(jsonPatchDocument,
+                _configService.Get<string>("DevOpsProjectName"), "Bug");
 
             return true;
         }
@@ -155,10 +155,26 @@ public class AzureDevOpsService : IAzureDevOpsService
 
     public async void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest)
     {
-        var jsonPatch = _createJsonPatchDocumentFromProductBacklogItemRequestCommand.Create(twitchUsername, songRequest);
+        var jsonPatchDocument = BuildJsonDocForWorkItem(twitchUsername, songRequest);
 
-        await _workItemTrackingClient.CreateWorkItemAsync(jsonPatch,
+        jsonPatchDocument
+            .AddDescription(songRequest.Description);
+
+        await _workItemTrackingClient.CreateWorkItemAsync(jsonPatchDocument,
             _configService.Get<string>("DevOpsProjectName"), "Product Backlog Item");
+    }
+
+    private JsonPatchDocument BuildJsonDocForWorkItem(string twitchUsername, DevOpsWorkItem workItem)
+    {
+        var jsonPatchDocument = new JsonPatchDocument();
+        
+        jsonPatchDocument
+        .AddTitle($"{twitchUsername} - {workItem.Title}")
+            .AddAcceptanceCriteria(workItem.AcceptanceCriteria);
+        if (workItem.Tags != null && workItem.Tags.Any())
+            jsonPatchDocument.AddTags(workItem.Tags);
+
+        return jsonPatchDocument;
     }
 
     //public async Task<string> GetCurrentSprintBurndownChart()
@@ -177,7 +193,7 @@ public class AzureDevOpsService : IAzureDevOpsService
     //    {
     //        throw;
     //    }
-            
+
 
     //}
 }

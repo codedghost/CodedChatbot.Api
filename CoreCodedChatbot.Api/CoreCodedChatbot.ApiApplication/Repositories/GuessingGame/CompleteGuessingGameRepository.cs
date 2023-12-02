@@ -1,34 +1,31 @@
 ﻿using System;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 
-public class CompleteGuessingGameRepository : ICompleteGuessingGameRepository
+public class CompleteGuessingGameRepository : BaseRepository<SongGuessingRecord>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public CompleteGuessingGameRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public void CompleteCurrentGuessingGame(decimal finalPercentage)
     {
-        using (var context = _chatbotContextFactory.Create())
+        var currentGuessingGame = Context.SongGuessingRecords.FirstOrDefault(sr => sr.IsInProgress);
+
+        if (currentGuessingGame == null)
         {
-            var currentGuessingGame = context.SongGuessingRecords.FirstOrDefault(sr => sr.IsInProgress);
-
-            if (currentGuessingGame == null)
-                throw new NullReferenceException("No current guessing games available"); 
-
-            currentGuessingGame.IsInProgress = false;
-            currentGuessingGame.FinalPercentage = finalPercentage;
-
-            context.SaveChanges();
+            throw new NullReferenceException("No current guessing games available");
         }
+
+        currentGuessingGame.IsInProgress = false;
+        currentGuessingGame.FinalPercentage = finalPercentage;
+
+        Context.SaveChanges();
     }
 }

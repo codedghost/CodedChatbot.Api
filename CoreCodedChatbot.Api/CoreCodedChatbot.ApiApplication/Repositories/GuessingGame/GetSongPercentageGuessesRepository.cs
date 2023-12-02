@@ -1,30 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 
-public class GetSongPercentageGuessesRepository : IGetSongPercentageGuessesRepository
+public class GetSongPercentageGuessesRepository : BaseRepository<SongPercentageGuess>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetSongPercentageGuessesRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public List<SongPercentageGuess> Get(int guessingGameRecordId)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var potentialWinnerModels = context.SongPercentageGuesses
-                .Where(g => g.SongGuessingRecord.SongGuessingRecordId == guessingGameRecordId).ToList();
+        var potentialWinnerModels = Context.SongPercentageGuesses
+            .Where(g => g.SongGuessingRecord.SongGuessingRecordId == guessingGameRecordId).ToList();
 
-            return potentialWinnerModels;
-        }
+        return potentialWinnerModels;
     }
 }

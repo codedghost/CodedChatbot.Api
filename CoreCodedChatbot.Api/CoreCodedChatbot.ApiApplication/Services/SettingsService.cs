@@ -3,7 +3,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class SettingsService : ISettingsService
+public class SettingsService : IBaseService, ISettingsService
 {
     private readonly IUpdateSettingsCommand _updateSettingsCommand;
 

@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Settings;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.StreamLabs;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
+using CoreCodedChatbot.ApiApplication.Repositories.Settings;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.StreamLabs;
 
-public class SaveStreamLabsDonationsRepository : ISaveStreamLabsDonationsRepository
+public class SaveStreamLabsDonationsRepository : BaseRepository<User>
 {
     private readonly IChatbotContextFactory _chatbotContextFactory;
-    private readonly ISetOrCreateSettingRepository _setOrCreateSettingRepository;
 
     public SaveStreamLabsDonationsRepository(
-        IChatbotContextFactory chatbotContextFactory,
-        ISetOrCreateSettingRepository setOrCreateSettingRepository)
+        IChatbotContextFactory chatbotContextFactory
+    ) : base(chatbotContextFactory)
     {
         _chatbotContextFactory = chatbotContextFactory;
-        _setOrCreateSettingRepository = setOrCreateSettingRepository;
     }
 
-    public void Save(List<StreamLabsDonationIntermediate> donations)
+    public async Task Save(List<StreamLabsDonationIntermediate> donations)
     {
         var latestDonationId = donations.OrderByDescending(d => d.CreateAt).FirstOrDefault()?.DonationId ?? 0;
         if (latestDonationId == 0) return;
@@ -36,17 +36,17 @@ public class SaveStreamLabsDonationsRepository : ISaveStreamLabsDonationsReposit
                 amount = (int) Math.Round(d.Sum(rec => rec.Amount) * 100)
             });
 
-        using (var context = _chatbotContextFactory.Create())
+        foreach (var donation in groupedDonations)
         {
-            foreach (var donation in groupedDonations)
-            {
-                var user = context.GetOrCreateUser(donation.name);
-                user.TotalDonated += donation.amount;
-            }
+            var user = Context.GetOrCreateUser(donation.name);
+            user.TotalDonated += donation.amount;
 
-            context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        _setOrCreateSettingRepository.Set("LatestDonationId", latestDonationId.ToString());
+        using (var setOrCreateSettingRepository = new SetOrCreateSettingRepository(_chatbotContextFactory))
+        {
+            await setOrCreateSettingRepository.Set("LatestDonationId", latestDonationId.ToString());
+        }
     }
 }

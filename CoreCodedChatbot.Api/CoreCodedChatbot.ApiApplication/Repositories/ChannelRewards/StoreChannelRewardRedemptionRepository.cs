@@ -1,40 +1,36 @@
 ﻿using System;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
 
-public class StoreChannelRewardRedemptionRepository : IStoreChannelRewardRedemptionRepository
+public class StoreChannelRewardRedemptionRepository : BaseRepository<ChannelRewardRedemption>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public StoreChannelRewardRedemptionRepository(IChatbotContextFactory chatbotContextFactory)
+        : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Store(Guid channelRewardsRedemptionId, Guid channelRewardId, string redeemedBy, bool processed)
+    public async Task Store(Guid channelRewardsRedemptionId, Guid channelRewardId, string redeemedBy, bool processed)
     {
-        using (var context = _chatbotContextFactory.Create())
+        var redemption = await GetByIdOrNullAsync(channelRewardsRedemptionId);
+
+        if (redemption == null)
         {
-            var redemption = context.ChannelRewardRedemptions.Find(channelRewardsRedemptionId);
-
-            if (redemption == null)
+            redemption = new ChannelRewardRedemption
             {
-                redemption = new ChannelRewardRedemption
-                {
-                    ChannelRewardId = channelRewardId,
-                    Username = redeemedBy,
-                    RedeemedAt = DateTime.Now
-                };
-
-                context.ChannelRewardRedemptions.Add(redemption);
+                ChannelRewardId = channelRewardId,
+                Username = redeemedBy,
+                RedeemedAt = DateTime.Now
             };
 
-            redemption.Processed = processed;
-
-            context.SaveChanges();
+            await CreateAsync(redemption);
         }
+
+        redemption.Processed = processed;
+
+        await Context.SaveChangesAsync();
     }
 }

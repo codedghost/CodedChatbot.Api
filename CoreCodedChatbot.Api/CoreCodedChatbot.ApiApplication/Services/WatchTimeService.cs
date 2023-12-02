@@ -5,7 +5,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class WatchTimeService : IWatchTimeService
+public class WatchTimeService : IBaseService, IWatchTimeService
 {
     private readonly IGetWatchTimeRepository _getWatchTimeRepository;
 

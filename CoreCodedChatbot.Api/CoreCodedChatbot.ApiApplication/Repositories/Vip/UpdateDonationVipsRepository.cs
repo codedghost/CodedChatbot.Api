@@ -1,36 +1,32 @@
 ﻿using System;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class UpdateDonationVipsRepository : IUpdateDonationVipsRepository
+public class UpdateDonationVipsRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public UpdateDonationVipsRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Update(string username, double bitsToVip, double donationAmountToVip)
+    public async Task Update(string username, double bitsToVip, double donationAmountToVip)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+        var user = Context.GetOrCreateUser(username);
 
-            var totalBitsGiven = user.TotalBitsDropped;
-            var totalDonated = user.TotalDonated;
+        var totalBitsGiven = user.TotalBitsDropped;
+        var totalDonated = user.TotalDonated;
 
-            var bitsVipPercentage = (double)totalBitsGiven / bitsToVip;
-            var donationVipPercentage = (double) totalDonated / donationAmountToVip;
+        var bitsVipPercentage = (double) totalBitsGiven / bitsToVip;
+        var donationVipPercentage = (double) totalDonated / donationAmountToVip;
 
-            user.DonationOrBitsVipRequests = (int)Math.Floor(bitsVipPercentage + donationVipPercentage);
+        user.DonationOrBitsVipRequests = (int) Math.Floor(bitsVipPercentage + donationVipPercentage);
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
     }
 }

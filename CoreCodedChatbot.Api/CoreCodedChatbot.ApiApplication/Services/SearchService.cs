@@ -1,38 +1,56 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Search;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class SearchService : ISearchService
+public class SearchService : IBaseService, ISearchService
 {
-    private readonly ISaveSearchSynonymRequestCommand _saveSearchSynonymRequestCommand;
     private readonly IGetSongBySearchIdQuery _getSongBySearchIdQuery;
     private readonly IDownloadChartService _downloadChartService;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+    private readonly ILogger<SearchService> _logger;
 
     public SearchService(
-        ISaveSearchSynonymRequestCommand saveSearchSynonymRequestCommand,
         IGetSongBySearchIdQuery getSongBySearchIdQuery,
         IDownloadChartService downloadChartService,
-        IServiceProvider serviceProvider
+        IServiceProvider serviceProvider,
+        IChatbotContextFactory chatbotContextFactory,
+        ILogger<SearchService> logger
     )
     {
-        _saveSearchSynonymRequestCommand = saveSearchSynonymRequestCommand;
         _getSongBySearchIdQuery = getSongBySearchIdQuery;
         _downloadChartService = downloadChartService;
         _serviceProvider = serviceProvider;
+        _chatbotContextFactory = chatbotContextFactory;
+        _logger = logger;
     }
 
-    public bool SaveSearchSynonymRequest(SaveSearchSynonymRequest request)
+    public async Task<bool> SaveSearchSynonymRequest(SaveSearchSynonymRequest request)
     {
-        return _saveSearchSynonymRequestCommand.Save(request.SearchSynonymRequest, request.Username);
+        try
+        {
+            using (var repository = new SaveSearchSynonymRequestRepository(_chatbotContextFactory))
+            {
+                await repository.Save(request.SearchSynonymRequest, request.Username);
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error when saving synonym");
+            return false;
+        }
     }
 
     public async Task DownloadSongToOneDrive(int requestSongId)

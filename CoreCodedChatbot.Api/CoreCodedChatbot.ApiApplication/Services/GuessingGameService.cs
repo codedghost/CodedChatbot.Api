@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class GuessingGameService : IGuessingGameService
+public class GuessingGameService : IBaseService, IGuessingGameService
 {
     private readonly IConfigService _configService;
     private readonly ILogger<IGuessingGameService> _logger;

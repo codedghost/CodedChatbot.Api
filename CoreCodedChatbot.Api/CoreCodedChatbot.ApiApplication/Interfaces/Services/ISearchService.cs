@@ -5,7 +5,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 public interface ISearchService
 {
-    bool SaveSearchSynonymRequest(SaveSearchSynonymRequest request);
+    Task<bool> SaveSearchSynonymRequest(SaveSearchSynonymRequest request);
     Task DownloadSongToOneDrive(int requestSongId);
     Task<int> FindChartAndDownload(string requestText);
 }

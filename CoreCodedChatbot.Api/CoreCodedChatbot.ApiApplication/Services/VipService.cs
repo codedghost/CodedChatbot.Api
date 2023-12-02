@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class VipService : IVipService
+public class VipService : IBaseService, IVipService
 {
     private readonly IGiftVipCommand _giftVipCommand;
     private readonly IRefundVipCommand _refundVipCommand;

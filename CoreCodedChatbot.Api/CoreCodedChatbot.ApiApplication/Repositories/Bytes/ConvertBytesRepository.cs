@@ -1,25 +1,21 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
+﻿using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Bytes;
 
-public class ConvertBytesRepository : IConvertBytesRepository
+public class ConvertBytesRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public ConvertBytesRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public int Convert(string username, int tokensToConvert, int byteConversion)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+            var user = Context.GetOrCreateUser(username);
 
             if (tokensToConvert < 0 || (user.TokenBytes < byteConversion * tokensToConvert)) return 0;
 
@@ -28,9 +24,8 @@ public class ConvertBytesRepository : IConvertBytesRepository
             user.TokenBytes -= bytesToRemove;
             user.TokenVipRequests += tokensToConvert;
 
-            context.SaveChanges();
+            Context.SaveChanges();
 
             return tokensToConvert;
-        }
     }
 }

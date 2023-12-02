@@ -1,49 +1,42 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Extensions;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class PromoteUserRequestRepository : IPromoteUserRequestRepository
+public class PromoteUserRequestRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public PromoteUserRequestRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public int PromoteUserRequest(string username, int songRequestId, bool useSuperVip = false)
+    public async Task<int> PromoteUserRequest(string username, int songRequestId, bool useSuperVip = false)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            SongRequest request;
-            if (songRequestId == 0)
-                request = context.SongRequests.SingleOrDefault(sr =>
-                    sr.Username == username && !sr.Played && sr.VipRequestTime == null &&
-                    sr.SuperVipRequestTime == null);
-            else
-                request = context.SongRequests.SingleOrDefault(sr =>
-                    sr.SongRequestId == songRequestId);
+        var request = songRequestId == 0
+            ? Context.SongRequests.SingleOrDefault(sr =>
+                sr.Username == username && !sr.Played && sr.VipRequestTime == null &&
+                sr.SuperVipRequestTime == null)
+            : Context.SongRequests.SingleOrDefault(sr =>
+                sr.SongRequestId == songRequestId);
 
-            if (request == null)
-                return 0;
+        if (request == null)
+            return 0;
 
-            request.VipRequestTime = DateTime.UtcNow;
+        request.VipRequestTime = DateTime.UtcNow;
 
-            if (useSuperVip) request.SuperVipRequestTime = DateTime.UtcNow;
-                
-            context.SaveChanges();
+        if (useSuperVip) request.SuperVipRequestTime = DateTime.UtcNow;
 
-            var newSongIndex = context.SongRequests.Where(sr => !sr.Played).OrderRequests()
-                .FindIndex(sr => sr.SongRequestId == request.SongRequestId) + 1;
+        await Context.SaveChangesAsync();
 
-            return newSongIndex;
-        }
+        var newSongIndex = Context.SongRequests.Where(sr => !sr.Played).OrderRequests()
+            .FindIndex(sr => sr.SongRequestId == request.SongRequestId) + 1;
+
+        return newSongIndex;
     }
 }

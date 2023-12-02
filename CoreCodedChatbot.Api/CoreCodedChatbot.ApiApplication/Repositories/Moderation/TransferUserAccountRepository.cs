@@ -1,26 +1,23 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Moderation;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Moderation;
 
-public class TransferUserAccountRepository : ITransferUserAccountRepository
+public class TransferUserAccountRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public TransferUserAccountRepository(IChatbotContextFactory chatbotContextFactory)
+        : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Transfer(string moderatorUsername, string oldUsername, string newUsername)
+    public async Task Transfer(string moderatorUsername, string oldUsername, string newUsername)
     {
         // All users should exist int the db at this point
-        using (var context = _chatbotContextFactory.Create())
-        {
-            context.TransferUser(moderatorUsername, oldUsername, newUsername);
+        Context.TransferUser(moderatorUsername, oldUsername, newUsername);
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
     }
 }

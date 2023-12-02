@@ -8,7 +8,7 @@ using ApiCounter = CoreCodedChatbot.ApiContract.ResponseModels.Counters.ChildMod
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class CounterService : ICounterService
+public class CounterService : IBaseService, ICounterService
 {
     private readonly ICounterRepository _counterRepository;
     private readonly IMapper _mapper;

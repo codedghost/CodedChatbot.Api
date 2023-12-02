@@ -1,32 +1,28 @@
 ﻿using System;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class GetIsUserInChatRepository : IGetIsUserInChatRepository
+public class GetIsUserInChatRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetIsUserInChatRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public bool IsUserInChat(string username)
+    public async Task<bool> IsUserInChat(string username)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.Users.SingleOrDefault(u => u.Username == username);
+        var user = await GetByIdOrNullAsync(username);
 
-            if (user == null) return false;
+        if (user == null) return false;
 
-            var tmiReportedInChat = user.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
+        var tmiReportedInChat = user.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
 
-            return tmiReportedInChat;
-        }
+        return tmiReportedInChat;
     }
 }

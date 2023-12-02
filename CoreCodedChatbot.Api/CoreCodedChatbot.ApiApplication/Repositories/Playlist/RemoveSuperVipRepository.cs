@@ -1,46 +1,43 @@
 ﻿using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class RemoveSuperVipRepository : IRemoveSuperVipRepository
+public class RemoveSuperVipRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IConfigService _configService;
 
     public RemoveSuperVipRepository(
         IChatbotContextFactory chatbotContextFactory,
         IConfigService configService
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
         _configService = configService;
     }
 
-    public void Remove(string username)
+    public async Task Remove(string username)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var superVip = context.SongRequests.SingleOrDefault(sr =>
-                !sr.Played &&
-                sr.SuperVipRequestTime != null &&
-                sr.Username == username
-            );
-                
-            if (superVip == null) return;
+        var superVip = Context.SongRequests.SingleOrDefault(sr =>
+            !sr.Played &&
+            sr.SuperVipRequestTime != null &&
+            sr.Username == username
+        );
 
-            var user = context.Users.Find(username);
+        if (superVip == null) return;
 
-            if (user == null) return;
+        var user = await Context.Users.FindAsync(username);
 
-            var superVipCost = _configService.Get<int>("SuperVipCost");
+        if (user == null) return;
 
-            user.ModGivenVipRequests += superVipCost;
-            superVip.Played = true;
+        var superVipCost = _configService.Get<int>("SuperVipCost");
 
-            context.SaveChanges();
-        }
+        user.ModGivenVipRequests += superVipCost;
+        superVip.Played = true;
+
+        await Context.SaveChangesAsync();
     }
 }

@@ -1,49 +1,41 @@
-﻿using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+﻿using System;
+using System.Linq;
 using CoreCodedChatbot.ApiApplication.Models.Enums;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class GetSingleSongRequestIdRepository : IGetSingleSongRequestIdRepository
+public class GetSingleSongRequestIdRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetSingleSongRequestIdRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public int Get(string username, SongRequestType songRequestType)
     {
-        using (var context = _chatbotContextFactory.Create())
+        var songRequests = Context.SongRequests.Where(sr => sr.Username == username && !sr.Played);
+
+        var singleRequest = songRequestType switch
         {
-            var songRequests = context.SongRequests.Where(sr => sr.Username == username && !sr.Played);
+            SongRequestType.Regular => 
+                songRequests.SingleOrDefault(sr =>
+                    sr.SuperVipRequestTime == null &&
+                    sr.VipRequestTime == null),
+            SongRequestType.Vip =>
+                songRequests.SingleOrDefault(sr =>
+                    sr.SuperVipRequestTime == null &&
+                    sr.VipRequestTime != null),
+            SongRequestType.SuperVip =>
+                songRequests.SingleOrDefault(sr =>
+                    sr.SuperVipRequestTime != null),
+            SongRequestType.Any => throw new ArgumentOutOfRangeException(nameof(songRequestType), songRequestType, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(songRequestType), songRequestType, null)
+        };
 
-            SongRequest singleRequest = null;
-
-            switch (songRequestType)
-            {
-                case SongRequestType.Regular:
-                    singleRequest = songRequests.SingleOrDefault(sr =>
-                        sr.SuperVipRequestTime == null &&
-                        sr.VipRequestTime == null);
-                    break;
-                case SongRequestType.Vip:
-                    singleRequest = songRequests.SingleOrDefault(sr =>
-                        sr.SuperVipRequestTime == null &&
-                        sr.VipRequestTime != null);
-                    break;
-                case SongRequestType.SuperVip:
-                    singleRequest = songRequests.SingleOrDefault(sr =>
-                        sr.SuperVipRequestTime != null);
-                    break;
-            }
-
-            return singleRequest?.SongRequestId ?? 0;
-        }
+        return singleRequest?.SongRequestId ?? 0;
     }
 }

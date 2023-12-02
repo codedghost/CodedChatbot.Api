@@ -51,7 +51,7 @@ public class Startup
             .AddTwitchServices()
             .AddApplicationServices()
             .AddAutoMapper()
-            .AddSolr(secretService)
+            .ConfigureSolr(secretService)
             .AddRabbitConnectionServices()
             .AddPrintfulClient(secretService)
             .AddFactories();

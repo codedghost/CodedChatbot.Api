@@ -1,27 +1,24 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Vip;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Vip;
 
-public class GiveChannelPointsVipRepository : IGiveChannelPointsVipRepository
+public class GiveChannelPointsVipRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GiveChannelPointsVipRepository(IChatbotContextFactory chatbotContextFactory)
+        : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void GiveChannelPointsVip(string username)
+    public async Task GiveChannelPointsVip(string username)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = context.GetOrCreateUser(username);
+        var user = Context.GetOrCreateUser(username);
 
-            user.ChannelPointVipRequests++;
+        user.ChannelPointVipRequests++;
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
     }
 }

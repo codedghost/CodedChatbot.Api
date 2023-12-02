@@ -1,26 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.WatchTime;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.WatchTime;
 
-public class GetWatchTimeRepository : IGetWatchTimeRepository
+public class GetWatchTimeRepository : BaseRepository<User>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public GetWatchTimeRepository(IChatbotContextFactory chatbotContextFactory)
+        : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public async Task<TimeSpan> Get(string username)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var user = await context.Users.FindAsync(username);
+        var user = await GetByIdOrNullAsync(username);
 
-            return user == null ? TimeSpan.Zero : TimeSpan.FromMinutes(user.WatchTime);
-        }
+        return user == null ? TimeSpan.Zero : TimeSpan.FromMinutes(user.WatchTime);
     }
 }

@@ -1,52 +1,43 @@
 ﻿using System;
 using System.Linq;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 
-public class CloseGuessingGameRepository : ICloseGuessingGameRepository
+public class CloseGuessingGameRepository : BaseRepository<SongGuessingRecord>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-    private readonly ILogger<ICloseGuessingGameRepository> _logger;
+    private readonly ILogger<CloseGuessingGameRepository> _logger;
 
     public CloseGuessingGameRepository(
         IChatbotContextFactory chatbotContextFactory,
-        ILogger<ICloseGuessingGameRepository> logger
-    )
+        ILogger<CloseGuessingGameRepository> logger
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
         _logger = logger;
     }
 
-    public bool Close()
+    public async Task<bool> Close()
     {
         try
         {
-            using (var context = _chatbotContextFactory.Create())
+            var currentGuessingGameRecords = Context.SongGuessingRecords.Where(x => x.UsersCanGuess);
+
+            if (!currentGuessingGameRecords.Any())
             {
-                var currentGuessingGameRecords = context.SongGuessingRecords.Where(x => x.UsersCanGuess);
-
-                if (!currentGuessingGameRecords.Any())
-                {
-                    _logger.LogInformation("Looks like this game is already closed");
-                    return false;
-                }
-
-                var currentGuessingGameRecord = currentGuessingGameRecords.FirstOrDefault();
-
-                if (currentGuessingGameRecord == null)
-                {
-                    _logger.LogWarning("This really shouldn't happen, currentGuessingGameRecord is null");
-                    return false;
-                }
-
-                currentGuessingGameRecord.UsersCanGuess = false;
-                context.SaveChanges();
-
-                return true;
+                _logger.LogInformation("Looks like this game is already closed");
+                return false;
             }
+
+            var currentGuessingGameRecord = currentGuessingGameRecords.First();
+
+            currentGuessingGameRecord.UsersCanGuess = false;
+            await Context.SaveChangesAsync();
+
+            return true;
         }
         catch (Exception e)
         {

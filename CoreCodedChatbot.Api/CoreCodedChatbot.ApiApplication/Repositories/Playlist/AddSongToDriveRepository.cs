@@ -1,32 +1,28 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Playlist;
 
-public class AddSongToDriveRepository : IAddSongToDriveRepository
+public class AddSongToDriveRepository : BaseRepository<SongRequest>
 {
-    private readonly IChatbotContextFactory _chatbotContextFactory;
-
     public AddSongToDriveRepository(
         IChatbotContextFactory chatbotContextFactory
-    )
+    ) : base(chatbotContextFactory)
     {
-        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public bool AddSongToDrive(int songRequestId)
+    public async Task<bool> AddSongToDrive(int songRequestId)
     {
-        using (var context = _chatbotContextFactory.Create())
-        {
-            var songRequest = context.SongRequests.Find(songRequestId);
+        var songRequest = await GetByIdOrNullAsync(songRequestId);
 
-            if (songRequest == null || songRequest.Played || songRequest.InDrive)
-                return false;
+        if (songRequest == null || songRequest.Played || songRequest.InDrive)
+            return false;
 
-            songRequest.InDrive = true;
+        songRequest.InDrive = true;
 
-            context.SaveChanges();
-        }
+        await Context.SaveChangesAsync();
 
         return true;
     }

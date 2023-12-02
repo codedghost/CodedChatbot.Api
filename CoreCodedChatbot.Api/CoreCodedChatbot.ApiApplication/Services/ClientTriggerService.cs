@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class ClientTriggerService : IClientTriggerService
+public class ClientTriggerService : IBaseService, IClientTriggerService
 {
     private readonly IHubContext<BackgroundSongHub> _backgroundSongHubContext;
     private readonly IConfigService _configService;

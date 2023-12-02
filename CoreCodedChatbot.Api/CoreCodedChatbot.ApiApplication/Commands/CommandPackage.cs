@@ -1,5 +1,4 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
-using CoreCodedChatbot.ApiApplication.Commands.Bytes;
+﻿using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Commands.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Commands.ClientId;
@@ -9,7 +8,6 @@ using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChatCommand;
@@ -29,20 +27,6 @@ public static class CommandPackage
 {
     public static IServiceCollection AddApiCommands(this IServiceCollection services)
     {
-        // Azure DevOps
-        services
-            .AddSingleton<ICreateJsonPatchDocumentFromBugRequestCommand,
-                CreateJsonPatchDocumentFromBugRequestCommand>();
-        services
-            .AddSingleton<ICreateJsonPatchDocumentFromProductBacklogItemRequestCommand,
-                CreateJsonPatchDocumentFromProductBacklogItemRequestCommand>();
-        services.AddSingleton<ICreateJsonPatchForWorkItemCommand, CreateJsonPatchForWorkItemCommand>();
-        services
-            .AddSingleton<IMapWorkItemsAndChildTasksToApiResponseModelsCommand,
-                MapWorkItemsAndChildTasksToApiResponseModelsCommand>();
-        services.AddSingleton<IMapWorkItemToParentWorkItemCommand, MapWorkItemToParentWorkItemCommand>();
-        services.AddSingleton<IMapWorkItemToTaskCommand, MapWorkItemToTaskCommand>();
-
         // Bytes
         services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
         services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();

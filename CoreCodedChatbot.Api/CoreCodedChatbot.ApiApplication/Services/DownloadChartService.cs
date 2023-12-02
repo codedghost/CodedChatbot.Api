@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class DownloadChartService : IDownloadChartService
+public class DownloadChartService : IBaseService, IDownloadChartService
 {
     private readonly ISecretService _secretService;
     private readonly ILogger<IDownloadChartService> _logger;

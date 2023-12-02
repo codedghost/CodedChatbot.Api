@@ -9,13 +9,13 @@ namespace CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 
 public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> where TDbEntity : class
 {
-    public readonly IChatbotContext _context;
+    public readonly IChatbotContext Context;
 
     public BaseRepository(IChatbotContextFactory chatbotContextFactory)
     {
-        _context = chatbotContextFactory.Create();
+        Context = chatbotContextFactory.Create();
 
-        if (typeof(TDbEntity).GetInterfaces().All(i => i.Name != nameof(IEntity)))
+        if (typeof(TDbEntity).GetInterfaces().All(i => i.IsAssignableTo(typeof(IEntity))))
         {
             throw new ArgumentException(
                 $"Given TDbSet Type: {nameof(TDbEntity)} does not implement the required IEntity interface");
@@ -24,7 +24,7 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
 
     public IQueryable<TDbEntity> GetAll()
     {
-        var dbSet = _context.Set<TDbEntity>();
+        var dbSet = Context.Set<TDbEntity>();
 
         return dbSet;
     }
@@ -41,7 +41,7 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
         var pageSizeValue = pageSize ?? 50;
         var descValue = desc ?? false;
 
-        var dbSet = _context.Set<TDbEntity>();
+        var dbSet = Context.Set<TDbEntity>();
 
         if (string.IsNullOrWhiteSpace(orderByColumnName))
             orderByColumnName = DbSetExtensions.GetKeyField(typeof(TDbEntity));
@@ -67,7 +67,7 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
 
     public async Task<TDbEntity?> GetByIdOrNullAsync<TKeyType>(TKeyType id) where TKeyType : notnull
     {
-        var dbSet = _context.Set<TDbEntity>();
+        var dbSet = Context.Set<TDbEntity>();
 
         var result = await dbSet.FindAsync(id);
 
@@ -76,13 +76,18 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
 
     public async Task CreateAsync(TDbEntity entity)
     {
-        _context.Set<TDbEntity>().Add(entity);
-        await _context.SaveChangesAsync();
+        await Context.Set<TDbEntity>().AddAsync(entity);
+    }
+
+    public async Task CreateAndSaveAsync(TDbEntity entity)
+    {
+        await CreateAsync(entity);
+        await Context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync<TKey>(TKey id)
     {
-        var dbSet = _context.Set<TDbEntity>();
+        var dbSet = Context.Set<TDbEntity>();
 
         var entity = await dbSet.FindAsync(id);
 
@@ -91,8 +96,8 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
             dbSet.Remove(entity);
         }
 
-        await _context.SaveChangesAsync();
+        await Context.SaveChangesAsync();
     }
 
-    public void Dispose() => _context.Dispose();
+    public void Dispose() => Context.Dispose();
 }

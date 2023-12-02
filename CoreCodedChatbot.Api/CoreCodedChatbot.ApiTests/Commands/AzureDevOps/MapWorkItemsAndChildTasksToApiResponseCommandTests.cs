@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AutoFixture.NUnit3;
 using CoreCodedChatbot.ApiApplication.Commands.AzureDevOps;
+using CoreCodedChatbot.ApiApplication.Constants;
 using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.AzureDevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
@@ -32,7 +33,7 @@ public class MapWorkItemsAndChildTasksToApiResponseCommandTests
         workItem.Fields[AzureDevOpsFields.WorkItemType] = "Product Backlog Item";
         childWorkItems.ForEach(t => t.Fields[AzureDevOpsFields.WorkItemType] = "Task");
 
-        var result = _subject.Map(workItem, childWorkItems);
+        var result = workItem.ToDevOpsWorkItem(childWorkItems);
 
         _mapWorkItemToTaskCommand.Verify(s => s.Map(It.IsAny<WorkItem>()), Times.Exactly(childWorkItems.Count));
 

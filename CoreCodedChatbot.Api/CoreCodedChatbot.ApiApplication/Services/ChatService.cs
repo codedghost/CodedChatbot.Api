@@ -16,7 +16,7 @@ using TwitchLib.Api.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class ChatService : IChatService
+public class ChatService : IBaseService, IChatService
 {
     private readonly IGiveViewershipBytesRepository _giveViewershipBytesRepository;
     private readonly IUpdateWatchTimeRepository _updateWatchTimeRepository;
