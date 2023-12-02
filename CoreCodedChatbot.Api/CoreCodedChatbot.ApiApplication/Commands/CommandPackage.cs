@@ -9,7 +9,6 @@ using CoreCodedChatbot.ApiApplication.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
@@ -30,9 +29,6 @@ public static class CommandPackage
         services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
         services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
         services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
-
-        // Chat Command
-        services.AddSingleton<IAddChatCommandCommand, AddChatCommandCommand>();
 
         // ClientId Command
         services.AddSingleton<IStoreClientIdCommand, StoreClientIdCommand>();

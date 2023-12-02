@@ -6,10 +6,10 @@ using CodedChatbot.ServiceBusContract;
 using CodedChatbot.TwitchFactories.Interfaces;
 using CodedGhost.AzureServiceBus.Abstractions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.WatchTime;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
 using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Secrets;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Api.Interfaces;
@@ -18,8 +18,7 @@ namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class ChatService : IBaseService, IChatService
 {
-    private readonly IGiveViewershipBytesRepository _giveViewershipBytesRepository;
-    private readonly IUpdateWatchTimeRepository _updateWatchTimeRepository;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IGetStreamStatusQuery _getStreamStatusQuery;
     private readonly IConfigService _configService;
     private readonly ISecretService _secretService;
@@ -28,16 +27,14 @@ public class ChatService : IBaseService, IChatService
     private Timer _checkChatTimer;
 
     public ChatService(
-        IGiveViewershipBytesRepository giveViewershipBytesRepository,
-        IUpdateWatchTimeRepository updateWatchTimeRepository,
+        IChatbotContextFactory chatbotContextFactory,
         IGetStreamStatusQuery getStreamStatusQuery,
         IConfigService configService,
         ISecretService secretService,
         ITwitchApiFactory twitchApiFactory,
         ILogger<IChatService> logger)
     {
-        _giveViewershipBytesRepository = giveViewershipBytesRepository;
-        _updateWatchTimeRepository = updateWatchTimeRepository;
+        _chatbotContextFactory = chatbotContextFactory;
         _getStreamStatusQuery = getStreamStatusQuery;
         _configService = configService;
         _secretService = secretService;
@@ -82,9 +79,11 @@ public class ChatService : IBaseService, IChatService
                 if (!chattersResponse.Data.Any()) return;
 
                 var chatters = chattersResponse.Data.Select(d => d.UserLogin).ToList();
-                    
-                await _giveViewershipBytesRepository.Give(chatters);
-                await _updateWatchTimeRepository.Update(chatters);
+
+                using (var repo = new UsersRepository(_chatbotContextFactory))
+                {
+                    await repo.UpdateWatchTime(chatters);
+                }
             }
         }
         catch (Exception e)
