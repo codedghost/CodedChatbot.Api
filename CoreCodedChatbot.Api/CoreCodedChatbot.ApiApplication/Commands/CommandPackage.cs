@@ -30,10 +30,6 @@ public static class CommandPackage
         services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
         services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
 
-        // ClientId Command
-        services.AddSingleton<IStoreClientIdCommand, StoreClientIdCommand>();
-        services.AddSingleton<IRemoveClientIdCommand, RemoveClientIdCommand>();
-
         // Guessing Game
         services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
         services.AddSingleton<IGiveGuessingGameWinnersBytesCommand, GiveGuessingGameWinnersBytesCommand>();

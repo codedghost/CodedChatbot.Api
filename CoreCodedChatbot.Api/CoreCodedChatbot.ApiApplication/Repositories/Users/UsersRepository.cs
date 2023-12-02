@@ -19,6 +19,46 @@ public class UsersRepository : BaseRepository<User>
 
     #endregion
 
+    #region ClientIds
+
+    public async Task<List<string>> GetClientIds(string username, string hubType)
+    {
+        var user = await GetByIdOrNullAsync(username);
+
+        if (user == null) return new List<string>();
+
+        var clientIds = user.GetClientIdsDictionary();
+
+        return clientIds.ContainsKey(hubType) ? clientIds[hubType] : new List<string>();
+    }
+
+    public async Task RemoveClientId(string hubType, string clientId)
+    {
+        Context.Users.RemoveClientId(hubType, clientId);
+
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task StoreClientId(string hubType, string username, string clientId)
+    {
+        var user = Context.GetOrCreateUser(username);
+
+        var clientIds = user.GetClientIdsDictionary();
+
+        if (!clientIds.ContainsKey(hubType))
+        {
+            clientIds.Add(hubType, new List<string>());
+        }
+
+        clientIds[hubType].Add(clientId);
+
+        user.UpdateClientIdsDictionary(clientIds);
+
+        await Context.SaveChangesAsync();
+    }
+
+    #endregion
+
     #region WatchTime
 
     public async Task<TimeSpan> GetWatchTime(string username)

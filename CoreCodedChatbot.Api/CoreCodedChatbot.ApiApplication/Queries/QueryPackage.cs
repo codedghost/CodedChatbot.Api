@@ -34,9 +34,6 @@ public static class QueryPackage
         // Bytes
         services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
 
-        // Client Ids
-        services.AddSingleton<IGetClientIdsQuery, GetClientIdsQuery>();
-
         // Guessing Game
         services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
         services.AddSingleton<IGetPotentialWinnersQuery, GetPotentialWinnersQuery>();

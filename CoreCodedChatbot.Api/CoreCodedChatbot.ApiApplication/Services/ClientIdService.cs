@@ -1,38 +1,51 @@
 ﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
+using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
+using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class ClientIdService : IBaseService, IClientIdService
 {
-    private readonly IStoreClientIdCommand _storeClientIdCommand;
-    private readonly IRemoveClientIdCommand _removeClientIdCommand;
-    private readonly IGetClientIdsQuery _getClientIdsQuery;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
 
     public ClientIdService(
-        IStoreClientIdCommand storeClientIdCommand,
-        IRemoveClientIdCommand removeClientIdCommand,
-        IGetClientIdsQuery getClientIdsQuery)
+        IChatbotContextFactory chatbotContextFactory
+        )
     {
-        _storeClientIdCommand = storeClientIdCommand;
-        _removeClientIdCommand = removeClientIdCommand;
-        _getClientIdsQuery = getClientIdsQuery;
+        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void SaveClientId(string hubType, string clientId, string username)
+    public async Task SaveClientId(string hubType, string clientId, string username)
     {
-        _storeClientIdCommand.Store(hubType, clientId, username);
+        hubType.AssertNonNull();
+        clientId.AssertNonNull();
+        username.AssertNonNull();
+
+        using (var repo = new UsersRepository(_chatbotContextFactory))
+        {
+            await repo.StoreClientId(hubType, clientId, username);
+        }
     }
 
-    public void RemoveClientId(string hubType, string clientId)
+    public async Task RemoveClientId(string hubType, string clientId)
     {
-        _removeClientIdCommand.Remove(hubType, clientId);
+        hubType.AssertNonNull();
+        clientId.AssertNonNull();
+
+        using (var repo = new UsersRepository(_chatbotContextFactory))
+        {
+            await repo.RemoveClientId(hubType, clientId);
+        }
     }
 
-    public List<string> GetClientIds(string username, string hubType)
+    public async Task<List<string>> GetClientIds(string username, string hubType)
     {
-        return _getClientIdsQuery.Get(username, hubType);
+        using (var repo = new UsersRepository(_chatbotContextFactory))
+        {
+            return await repo.GetClientIds(username, hubType);
+        }
     }
 }
