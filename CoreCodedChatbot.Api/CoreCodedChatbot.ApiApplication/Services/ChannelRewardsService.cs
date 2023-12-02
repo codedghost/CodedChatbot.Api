@@ -1,41 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CodedChatbot.TwitchFactories.Interfaces;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChannelRewards;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChannelRewards;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
 using CoreCodedChatbot.Database.Context.Enums;
+using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using TwitchLib.Api;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class ChannelRewardsService : IBaseService, IChannelRewardsService
 {
-    private readonly ICreateOrUpdateChannelRewardCommand _createOrUpdateChannelRewardCommand;
-    private readonly IStoreChannelRewardRedemptionCommand _storeChannelRewardRedemptionCommand;
-    private readonly IGetChannelRewardQuery _getChannelRewardQuery;
-    private readonly IGetChannelRewardRedemptionsRepository _getChannelRewardRedemptionsRepository;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IVipService _vipService;
 
     private Timer _updateChannelRewardsTimer;
     private readonly TwitchAPI _twitchApi;
 
     public ChannelRewardsService(
-        ICreateOrUpdateChannelRewardCommand createOrUpdateChannelRewardCommand,
-        IStoreChannelRewardRedemptionCommand storeChannelRewardRedemptionCommand,
-        IGetChannelRewardQuery getChannelRewardQuery,
-        IGetChannelRewardRedemptionsRepository getChannelRewardRedemptionsRepository,
+        IChatbotContextFactory chatbotContextFactory,
         ITwitchApiFactory twitchApiFactory,
         IVipService vipService
     )
     {
-        _createOrUpdateChannelRewardCommand = createOrUpdateChannelRewardCommand;
-        _storeChannelRewardRedemptionCommand = storeChannelRewardRedemptionCommand;
-        _getChannelRewardQuery = getChannelRewardQuery;
-        _getChannelRewardRedemptionsRepository = getChannelRewardRedemptionsRepository;
+        _chatbotContextFactory = chatbotContextFactory;
         _vipService = vipService;
 
         _twitchApi = twitchApiFactory.Get();
@@ -45,7 +37,7 @@ public class ChannelRewardsService : IBaseService, IChannelRewardsService
     {
         _updateChannelRewardsTimer = new Timer(e =>
             {
-                UpdateChannelRewards();
+                UpdateChannelRewards().Wait();
                 ProcessUnprocessedRedemptions().Wait();
             },
             null,
@@ -53,7 +45,7 @@ public class ChannelRewardsService : IBaseService, IChannelRewardsService
             TimeSpan.FromHours(1));
     }
 
-    private async void UpdateChannelRewards()
+    private async Task UpdateChannelRewards()
     {
         var loggedInUser = await _twitchApi.Helix.Users.GetUsersAsync();
         var channelRewardsRequest =
@@ -63,20 +55,29 @@ public class ChannelRewardsService : IBaseService, IChannelRewardsService
 
         foreach (var reward in channelRewardsRequest.Data)
         {
-            CreateOrUpdate(Guid.Parse(reward.Id), reward.Title, reward.Prompt);
+            await CreateOrUpdate(Guid.Parse(reward.Id), reward.Title, reward.Prompt);
         }
     }
 
-    public void CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription)
+    public async Task CreateOrUpdate(Guid rewardId, string rewardTitle, string rewardDescription)
     {
-        _createOrUpdateChannelRewardCommand.CreateOrUpdate(rewardId, rewardTitle, rewardDescription);
+        using (var repo = new ChannelRewardsRepository(_chatbotContextFactory))
+        {
+            await repo.CreateOrUpdate(rewardId, rewardTitle, rewardDescription);
+        }
     }
 
-    public ApiContract.Enums.ChannelRewards.CommandTypes Store(Guid channelRewardId, string redeemedBy, Guid channelRewardsRedemptionId)
+    public async Task<ApiContract.Enums.ChannelRewards.CommandTypes> Store(Guid channelRewardId, string redeemedBy, Guid channelRewardsRedemptionId)
     {
-        var channelReward = _getChannelRewardQuery.GetChannelReward(channelRewardId);
+        ChannelReward? channelReward;
+
+        using (var repo = new ChannelRewardsRepository(_chatbotContextFactory))
+        {
+            channelReward = await repo.GetByIdOrNullAsync(channelRewardId);
+        }
 
         if (channelReward == null) return ApiContract.Enums.ChannelRewards.CommandTypes.None;
+
         var processed = false;
 
         switch (channelReward.CommandType)
@@ -91,18 +92,25 @@ public class ChannelRewardsService : IBaseService, IChannelRewardsService
                 return ApiContract.Enums.ChannelRewards.CommandTypes.None;
         }
 
-        _storeChannelRewardRedemptionCommand.Store(channelRewardsRedemptionId, channelRewardId, redeemedBy, processed);
-
+        using (var repo = new ChannelRewardRedemptionsRepository(_chatbotContextFactory))
+        {
+            await repo.Store(channelRewardsRedemptionId, channelRewardId, redeemedBy, processed);
+        }
+        
         return Enum.Parse<ApiContract.Enums.ChannelRewards.CommandTypes>(channelReward.CommandType.ToString());
     }
 
     public async Task ProcessUnprocessedRedemptions()
     {
-        var unprocessedRedemptions = await _getChannelRewardRedemptionsRepository.Get(false).ConfigureAwait(false);
+        IEnumerable<ChannelRewardRedemption> unprocessedRedemptions;
+        using (var repo = new ChannelRewardRedemptionsRepository(_chatbotContextFactory))
+        {
+            unprocessedRedemptions = await repo.Get(false);
+        }
 
         foreach (var redemption in unprocessedRedemptions)
         {
-            Store(redemption.ChannelRewardId, redemption.Username, redemption.ChannelRewardRedemptionId);
+            await Store(redemption.ChannelRewardId, redemption.Username, redemption.ChannelRewardRedemptionId);
         }
     }
 }

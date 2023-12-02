@@ -30,9 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Queries\ChannelRewards\" />
     <Folder Include="Models\Intermediates\MapperProfiles\" />
-    <Folder Include="Queries\ChannelRewards\" />
     <Folder Include="Repositories\Abstractions\" />
     <Folder Include="Repositories\Counters\" />
   </ItemGroup>

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
+﻿using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
+using System.Threading.Tasks;
+using System;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.ChannelRewards;
 
-public class CreateOrUpdateChannelRewardRepository : BaseRepository<ChannelReward>
+public class ChannelRewardsRepository : BaseRepository<ChannelReward>
 {
-    public CreateOrUpdateChannelRewardRepository(IChatbotContextFactory chatbotContextFactory)
-        : base(chatbotContextFactory)
+    public ChannelRewardsRepository(IChatbotContextFactory chatbotContextFactory) : base(chatbotContextFactory)
     {
     }
 

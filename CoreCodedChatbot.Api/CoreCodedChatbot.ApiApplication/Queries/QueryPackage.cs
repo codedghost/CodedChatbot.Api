@@ -11,7 +11,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Queries.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
@@ -37,9 +36,6 @@ public static class QueryPackage
 
         // Bytes
         services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
-
-        // Channel Points
-        services.AddSingleton<IGetChannelRewardQuery, GetChannelRewardQuery>();
 
         // Chat Command
         services.AddSingleton<IGetCommandHelpTextByKeywordQuery, GetCommandHelpTextByKeywordQuery>();
