@@ -1,6 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
@@ -9,7 +8,6 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Search;
@@ -24,13 +22,6 @@ public static class QueryPackage
 {
     public static IServiceCollection AddApiQueries(this IServiceCollection services)
     {
-        // Azure DevOps
-        services.AddSingleton<IGetAllBacklogWorkItemsQuery, GetAllBacklogWorkItemsQuery>();
-        services.AddSingleton<IGetAllCurrentWorkItemsQuery, GetAllCurrentWorkItemsQuery>();
-        services.AddSingleton<IGetDevOpsWorkItemIdsFromQueryId, GetDevOpsWorkItemIdsFromQueryId>();
-        services.AddSingleton<IGetWorkItemByIdQuery, GetWorkItemByIdQuery>();
-        services.AddSingleton<IRaiseBugQuery, RaiseBugQuery>();
-
         // Bytes
         services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
 

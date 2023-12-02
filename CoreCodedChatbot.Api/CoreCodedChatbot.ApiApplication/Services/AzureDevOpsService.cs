@@ -14,6 +14,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using TwitchLib.Communication.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
@@ -48,8 +49,7 @@ public class AzureDevOpsService : IBaseService, IAzureDevOpsService
     {
         var currentIterationPbisQueryId = Guid.Parse(_configService.Get<string>("DevOpsCurrentPBIsQueryId"));
 
-        var pbiIds =
-            await _getDevOpsWorkItemIdsFromQueryId.Get(_workItemTrackingClient, currentIterationPbisQueryId);
+        var pbiIds = await GetItemIds(currentIterationPbisQueryId);
 
         if (pbiIds == null || !pbiIds.Any())
             return new List<WorkItem>();
@@ -71,7 +71,7 @@ public class AzureDevOpsService : IBaseService, IAzureDevOpsService
     {
         var backlogItemsQueryId = Guid.Parse(_configService.Get<string>("DevOpsBacklogPBIsQueryId"));
 
-        var itemIds = await _getDevOpsWorkItemIdsFromQueryId.Get(_workItemTrackingClient, backlogItemsQueryId);
+        var itemIds = await GetItemIds(backlogItemsQueryId);
 
         if (itemIds == null || !itemIds.Any())
             return new List<WorkItem>();
@@ -174,6 +174,24 @@ public class AzureDevOpsService : IBaseService, IAzureDevOpsService
             jsonPatchDocument.AddTags(workItem.Tags);
 
         return jsonPatchDocument;
+    }
+
+    private async Task<List<int>?> GetItemIds(Guid queryId)
+    {
+        try
+        {
+            var queryResult = await _workItemTrackingClient.QueryByIdAsync(queryId);
+
+            if (queryResult == null || !queryResult.WorkItems.Any())
+                return new List<int>();
+
+            return queryResult.WorkItems.Select(wi => wi.Id).ToList();
+        }
+        catch (VssServiceException e)
+        {
+            _logger.LogError(e, $"Could not load Dev Ops Query: {queryId}");
+            return null;
+        }
     }
 
     //public async Task<string> GetCurrentSprintBurndownChart()

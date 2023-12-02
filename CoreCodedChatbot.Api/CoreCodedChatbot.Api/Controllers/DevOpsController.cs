@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
@@ -46,11 +47,24 @@ public class DevOpsController : Controller
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWorkItemById(int id)
     {
-        var workItem = await _getWorkItemByIdQuery.Get(id);
+        var workItem = await _azureDevOpsService.GetWorkItemById(id);
+
+        DevOpsWorkItem mappedWorkItem;
+
+        if (workItem.WorkItemType() != "Task")
+        {
+            var workItems = await _azureDevOpsService.GetChildWorkItemsByPbi(workItem);
+            
+            mappedWorkItem = workItem.ToDevOpsWorkItem(workItems);
+        }
+        else
+        {
+            mappedWorkItem = workItem.ToDevOpsTask();
+        }
 
         var response = new GetWorkItemByIdResponse
         {
-            DevOpsWorkItem = workItem
+            DevOpsWorkItem = mappedWorkItem
         };
         return Json(response, GetJsonSerializerSettings.Get());
     }
@@ -58,17 +72,41 @@ public class DevOpsController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAllCurrentWorkItems()
     {
-        var workItems = await _getAllCurrentWorkItemsQuery.Get();
+        var currentPbis = await _azureDevOpsService.GetCommittedPbisForThisIteration();
 
-        return Json(workItems, GetJsonSerializerSettings.Get());
+        var mappedPbis = currentPbis.Select(parentWorkItem =>
+        {
+            var workItems = _azureDevOpsService.GetChildWorkItemsByPbi(parentWorkItem);
+
+            var mapParentWorkItem = parentWorkItem.ToDevOpsWorkItem(workItems.Result);
+
+            return mapParentWorkItem;
+        });
+        
+        return Json(new GetAllCurrentWorkItemsResponse
+        {
+            WorkItems = mappedPbis.ToList()
+        }, GetJsonSerializerSettings.Get());
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllBacklogWorkItems()
     {
-        var workItems = await _getAllBacklogWorkItemsQuery.Get();
+        var backlogItems = await _azureDevOpsService.GetBacklogWorkItems();
 
-        return Json(workItems, GetJsonSerializerSettings.Get());
+        var mappedItems = backlogItems.Select(parentWorkItem =>
+        {
+            var workItems = _azureDevOpsService.GetChildWorkItemsByPbi(parentWorkItem);
+
+            var mapParentWorkItem = parentWorkItem.ToDevOpsWorkItem(workItems.Result);
+
+            return mapParentWorkItem;
+        });
+
+        return Json(new GetAllBacklogWorkItemsResponse
+        {
+            WorkItems = mappedItems.ToList()
+        }, GetJsonSerializerSettings.Get());
     }
 
     [HttpPut]
@@ -84,7 +122,7 @@ public class DevOpsController : Controller
             return BadRequest();
         }
 
-        var success = await _raiseBugQuery.Raise(raiseBugRequest.TwitchUsername, raiseBugRequest.BugInfo);
+        var success = await _azureDevOpsService.RaiseBugInBacklog(raiseBugRequest.TwitchUsername, raiseBugRequest.BugInfo);
 
         return Json(success, GetJsonSerializerSettings.Get());
     }
