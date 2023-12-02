@@ -5,9 +5,9 @@ using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Counters;
 
-public class CounterRepository : BaseRepository<Counter>
+public class CountersRepository : BaseRepository<Counter>
 {
-    public CounterRepository(IChatbotContextFactory chatbotContextFactory) : base(chatbotContextFactory)
+    public CountersRepository(IChatbotContextFactory chatbotContextFactory) : base(chatbotContextFactory)
     {
     }
 

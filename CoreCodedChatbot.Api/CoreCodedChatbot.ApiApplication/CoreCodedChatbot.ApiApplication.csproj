@@ -32,7 +32,6 @@
   <ItemGroup>
     <Folder Include="Models\Intermediates\MapperProfiles\" />
     <Folder Include="Repositories\Abstractions\" />
-    <Folder Include="Repositories\Counters\" />
     <Folder Include="Repositories\Users\" />
   </ItemGroup>
 

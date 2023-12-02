@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Counter;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Counters;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 using ApiCounter = CoreCodedChatbot.ApiContract.ResponseModels.Counters.ChildModels.Counter;
 
@@ -10,14 +11,14 @@ namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class CounterService : IBaseService, ICounterService
 {
-    private readonly ICounterRepository _counterRepository;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IMapper _mapper;
 
     public CounterService(
-        ICounterRepository counterRepository,
+        IChatbotContextFactory chatbotContextFactory,
         IMapper mapper)
     {
-        _counterRepository = counterRepository;
+        _chatbotContextFactory = chatbotContextFactory;
         _mapper = mapper;
     }
 
@@ -30,28 +31,40 @@ public class CounterService : IBaseService, ICounterService
             CounterValue = initialCountValue ?? 0
         };
 
-        await _counterRepository.CreateAsync(newEntity);
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            await repo.CreateAsync(newEntity);
+        }
     }
 
     public async Task<ApiCounter> GetCounter(string counterName)
     {
-        var counter = await _counterRepository.GetByIdAsync(counterName);
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            var counter = await repo.GetByIdAsync(counterName);
 
-        return _mapper.Map<ApiCounter>(counter);
+            return _mapper.Map<ApiCounter>(counter);
+        }
     }
 
     public async Task<List<ApiCounter>> GetCounters(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue)
     {
-        var counters = await _counterRepository.GetAllPagedAsync(page, pageSize, orderByColumnName, desc,
-            filterByColumn, filterValue);
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            var counters = await repo.GetAllPagedAsync(page, pageSize, orderByColumnName, desc,
+                filterByColumn, filterValue);
 
-        return _mapper.Map<List<ApiCounter>>(counters);
+            return _mapper.Map<List<ApiCounter>>(counters);
+        }
     }
 
     public async Task<ApiCounter> UpdateCounter(string counterName)
     {
-        var counter = await _counterRepository.UpdateCounter(counterName);
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            var counter = await repo.UpdateCounter(counterName);
 
-        return _mapper.Map<ApiCounter>(counter);
+            return _mapper.Map<ApiCounter>(counter);
+        }
     }
 }

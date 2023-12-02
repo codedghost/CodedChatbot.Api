@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Extensions;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps.ChildModels;
 using CoreCodedChatbot.Config;
@@ -14,14 +13,12 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
-using TwitchLib.Communication.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class AzureDevOpsService : IBaseService, IAzureDevOpsService
 {
     private readonly IConfigService _configService;
-    private readonly IGetDevOpsWorkItemIdsFromQueryId _getDevOpsWorkItemIdsFromQueryId;
     private readonly ILogger<AzureDevOpsService> _logger;
     private readonly WorkItemTrackingHttpClient _workItemTrackingClient;
     //private readonly WorkHttpClient _workClient;
@@ -29,12 +26,10 @@ public class AzureDevOpsService : IBaseService, IAzureDevOpsService
     public AzureDevOpsService(
         ISecretService secretService,
         IConfigService configService,
-        IGetDevOpsWorkItemIdsFromQueryId getDevOpsWorkItemIdsFromQueryId,
         ILogger<AzureDevOpsService> logger
     )
     {
         _configService = configService;
-        _getDevOpsWorkItemIdsFromQueryId = getDevOpsWorkItemIdsFromQueryId;
         _logger = logger;
         var vssConnection = new VssConnection(
             new Uri(secretService.GetSecret<string>("DevOpsChatbotCollectionUrl")),
