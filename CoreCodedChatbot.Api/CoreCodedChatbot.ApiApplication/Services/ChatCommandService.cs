@@ -1,43 +1,43 @@
 ﻿using System.Collections.Generic;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ChatCommand;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.ChatCommand;
+using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class ChatCommandService : IBaseService, IChatCommandService
 {
-    private readonly IGetCommandTextByKeywordQuery _getCommandTextByKeywordQuery;
-    private readonly IGetCommandHelpTextByKeywordQuery _getCommandHelpTextByKeywordQuery;
-    private readonly IAddChatCommandCommand _addChatCommandCommand;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
 
     public ChatCommandService(
-        IGetCommandTextByKeywordQuery getCommandTextByKeywordQuery,
-        IGetCommandHelpTextByKeywordQuery getCommandHelpTextByKeywordQuery,
-        IAddChatCommandCommand addChatCommandCommand
+        IChatbotContextFactory chatbotContextFactory
     )
     {
-        _getCommandTextByKeywordQuery = getCommandTextByKeywordQuery;
-        _getCommandHelpTextByKeywordQuery = getCommandHelpTextByKeywordQuery;
-        _addChatCommandCommand = addChatCommandCommand;
+        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public string GetCommandText(string keyword)
+    public async Task<string> GetCommandText(string keyword)
     {
-        var commandText = _getCommandTextByKeywordQuery.Get(keyword);
-
-        return commandText;
+        using (var repo = new ChatCommandsRepository(_chatbotContextFactory))
+        {
+            return await repo.GetCommandText(keyword);
+        }
     }
 
-    public string GetCommandHelpText(string keyword)
+    public async Task<string> GetCommandHelpText(string keyword)
     {
-        var commandHelpText = _getCommandHelpTextByKeywordQuery.Get(keyword);
-
-        return commandHelpText;
+        using (var repo = new ChatCommandsRepository(_chatbotContextFactory))
+        {
+            return await repo.GetHelp(keyword);
+        }
     }
 
-    public void AddCommand(List<string> keywords, string informationText, string helpText, string username)
+    public async Task AddCommand(List<string> keywords, string informationText, string helpText, string username)
     {
-        _addChatCommandCommand.Add(keywords, informationText, helpText, username);
+        using (var repo = new ChatCommandsRepository(_chatbotContextFactory))
+        {
+            await repo.Add(keywords, informationText, helpText, username);
+        }
     }
 }

@@ -180,7 +180,7 @@ public class AzureDevOpsService : IBaseService, IAzureDevOpsService
     //{
     //    try
     //    {
-    //        var projectName = _configService.Get<string>("DevOpsProjectName");
+    //        var projectName = _configService.GetCommandText<string>("DevOpsProjectName");
     //        var iterations = await _workClient.GetTeamIterationsAsync(new TeamContext(projectName), "Current");
     //        var boardImage = await _workClient.GetIterationChartImageAsync(
     //            new TeamContext(projectName, "CodedChatbot Team"), iterations.First().Id,

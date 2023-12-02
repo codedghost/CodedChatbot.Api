@@ -318,7 +318,7 @@ public class PlaylistService : IBaseService, IPlaylistService
 
         var requestString = formattedRequests.Any()
             ? string.Join(", ", formattedRequests)
-            : "Looks like you don't have any requests right now. Get some in there! !howtorequest";
+            : "Looks like you don't have any requests right now. GetCommandText some in there! !howtorequest";
 
         return requestString;
     }

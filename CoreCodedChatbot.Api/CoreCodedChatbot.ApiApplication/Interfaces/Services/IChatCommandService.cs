@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 public interface IChatCommandService
 {
-    string GetCommandText(string keyword);
-    string GetCommandHelpText(string keyword);
-    void AddCommand(List<string> keywords, string informationText, string helpText, string username);
+    Task<string> GetCommandText(string keyword);
+    Task<string> GetCommandHelpText(string keyword);
+    Task AddCommand(List<string> keywords, string informationText, string helpText, string username);
 }

@@ -1,6 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChannelRewards;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ChatCommand;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
@@ -10,8 +9,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
-using CoreCodedChatbot.ApiApplication.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Queries.ChatCommand;
+using CoreCodedChatbot.ApiApplication.Queries.Bytes
 using CoreCodedChatbot.ApiApplication.Queries.ClientId;
 using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
@@ -36,10 +34,6 @@ public static class QueryPackage
 
         // Bytes
         services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
-
-        // Chat Command
-        services.AddSingleton<IGetCommandHelpTextByKeywordQuery, GetCommandHelpTextByKeywordQuery>();
-        services.AddSingleton<IGetCommandTextByKeywordQuery, GetCommandTextByKeywordQuery>();
 
         // Client Ids
         services.AddSingleton<IGetClientIdsQuery, GetClientIdsQuery>();
