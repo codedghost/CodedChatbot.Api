@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
 using CoreCodedChatbot.ApiContract.RequestModels.Vip.ChildModels;
 using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
@@ -25,11 +26,8 @@ public class VipService : IBaseService, IVipService
     private readonly IGetUserVipCountQuery _getUserVipCountQuery;
     private readonly IGiveSubscriptionVipsCommand _giveSubscriptionVipsCommand;
     private readonly IUpdateTotalBitsCommand _updateTotalBitsCommand;
-    private readonly IGetUserByteCountQuery _getUserByteCountQuery;
-    private readonly IConvertBytesCommand _convertBytesCommand;
-    private readonly IConvertAllBytesCommand _convertAllBytesCommand;
-    private readonly IGiveGiftSubBytesCommand _giveGiftSubBytesCommand;
     private readonly IGiveChannelPointsVipCommand _giveChannelPointsVipCommand;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IConfigService _configService;
     private readonly ISignalRService _signalRService;
     private readonly IClientIdService _clientIdService;
@@ -46,11 +44,11 @@ public class VipService : IBaseService, IVipService
         IGetUserVipCountQuery getUserVipCountQuery,
         IGiveSubscriptionVipsCommand giveSubscriptionVipsCommand,
         IUpdateTotalBitsCommand updateTotalBitsCommand,
-        IGetUserByteCountQuery getUserByteCountQuery,
         IConvertBytesCommand convertBytesCommand,
         IConvertAllBytesCommand convertAllBytesCommand,
         IGiveGiftSubBytesCommand giveGiftSubBytesCommand,
         IGiveChannelPointsVipCommand giveChannelPointsVipCommand,
+        IChatbotContextFactory chatbotContextFactory,
         IConfigService configService,
         ISignalRService signalRService,
         IClientIdService clientIdService,
@@ -66,11 +64,11 @@ public class VipService : IBaseService, IVipService
         _getUserVipCountQuery = getUserVipCountQuery;
         _giveSubscriptionVipsCommand = giveSubscriptionVipsCommand;
         _updateTotalBitsCommand = updateTotalBitsCommand;
-        _getUserByteCountQuery = getUserByteCountQuery;
         _convertBytesCommand = convertBytesCommand;
         _convertAllBytesCommand = convertAllBytesCommand;
         _giveGiftSubBytesCommand = giveGiftSubBytesCommand;
         _giveChannelPointsVipCommand = giveChannelPointsVipCommand;
+        _chatbotContextFactory = chatbotContextFactory;
         _configService = configService;
         _signalRService = signalRService;
         _clientIdService = clientIdService;
@@ -81,7 +79,7 @@ public class VipService : IBaseService, IVipService
     {
         var vips = GetUserVipCount(username);
 
-        var clientIds = _clientIdService.GetClientIds(username, "SongList");
+        var clientIds = await _clientIdService.GetClientIds(username, "SongList");
 
         foreach (var clientId in clientIds)
         {
@@ -98,9 +96,9 @@ public class VipService : IBaseService, IVipService
 
     public async Task UpdateClientBytes(string username)
     {
-        var bytes = _getUserByteCountQuery.Get(username);
+        var bytes = Get(username);
 
-        var clientIds = _clientIdService.GetClientIds(username, "SongList");
+        var clientIds = await _clientIdService.GetClientIds(username, "SongList");
             
         await _signalRService.UpdateBytes(clientIds, bytes).ConfigureAwait(false);
     }
@@ -276,14 +274,20 @@ public class VipService : IBaseService, IVipService
 
     public string GetUserByteCount(string username)
     {
-        var bytes = _getUserByteCountQuery.Get(username);
+        var bytes = Get(username);
 
         return bytes;
     }
 
     public async Task<int> ConvertBytes(string username, int requestedVips)
     {
-        var bytesConverted = _convertBytesCommand.Convert(username, requestedVips);
+        var conversionAmount = _configService.Get<int>("BytesToVip");
+
+        int bytesConverted;
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        {
+            bytesConverted = await repo.ConvertBytes(username, requestedVips, conversionAmount);
+        }
 
         await UpdateClientVips(username).ConfigureAwait(false);
         await UpdateClientBytes(username).ConfigureAwait(false);
@@ -293,7 +297,21 @@ public class VipService : IBaseService, IVipService
 
     public async Task<int> ConvertAllBytes(string username)
     {
-        var bytesConverted = _convertAllBytesCommand.Convert(username);
+        var conversionAmount = _configService.Get<int>("BytesToVip");
+
+        float usersBytes;
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        {
+            usersBytes = repo.GetUserByteCount(username, conversionAmount);
+        }
+
+        var closestWholeBytes = (int)Math.Floor(usersBytes);
+
+        int bytesConverted;
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        {
+            bytesConverted = await repo.ConvertBytes(username, closestWholeBytes, conversionAmount);
+        }
 
         await UpdateClientVips(username).ConfigureAwait(false);
         await UpdateClientBytes(username).ConfigureAwait(false);
@@ -301,9 +319,26 @@ public class VipService : IBaseService, IVipService
         return bytesConverted;
     }
 
-    public async void GiveGiftSubBytes(string username)
+    public async Task GiveGiftSubBytes(string username)
     {
-        _giveGiftSubBytesCommand.Give(username);
+        var conversionAmount = _configService.Get<int>("BytesToVip");
+
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        {
+            await repo.GiveGiftSubBytes(username, conversionAmount);
+        }
         await UpdateClientBytes(username).ConfigureAwait(false);
+    }
+
+    private string Get(string username)
+    {
+        var conversionAmount = _configService.Get<int>("BytesToVip");
+
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        {
+            var bytes = repo.GetUserByteCount(username, conversionAmount);
+
+            return bytes.ToString("n3");
+        }
     }
 }

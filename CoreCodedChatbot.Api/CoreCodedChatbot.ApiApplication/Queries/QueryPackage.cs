@@ -1,8 +1,6 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
-using CoreCodedChatbot.ApiApplication.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
@@ -14,9 +12,6 @@ public static class QueryPackage
 {
     public static IServiceCollection AddApiQueries(this IServiceCollection services)
     {
-        // Bytes
-        services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
-
         // Playlist
         services.AddSingleton<ICheckUserHasMaxRegularsInQueueQuery, CheckUserHasMaxRegularsInQueueQuery>();
         services.AddSingleton<IGetCurrentRequestsQuery, GetCurrentRequestsQuery>();

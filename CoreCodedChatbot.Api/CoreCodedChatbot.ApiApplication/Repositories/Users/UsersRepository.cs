@@ -7,9 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CoreCodedChatbot.Config;
-using CoreCodedChatbot.Database.Context;
-using System.Linq;
-using CoreCodedChatbot.ApiApplication.Repositories.Settings;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Users;
 
@@ -26,7 +23,7 @@ public class UsersRepository : BaseRepository<User>
 
     #region Bytes
 
-    public void GiveBytes(List<GiveBytesToUserModel> users)
+    public async Task GiveBytes(List<GiveBytesToUserModel> users)
     {
         foreach (var winner in users)
         {
@@ -36,7 +33,40 @@ public class UsersRepository : BaseRepository<User>
             user.TokenBytes += (int)Math.Round(winner.Bytes * _configService.Get<int>("BytesToVip"));
         }
 
-        Context.SaveChanges();
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task<int> ConvertBytes(string username, int tokensToConvert, int byteConversion)
+    {
+        var user = Context.GetOrCreateUser(username);
+
+        if (tokensToConvert < 0 || (user.TokenBytes < byteConversion * tokensToConvert)) return 0;
+
+        var bytesToRemove = byteConversion * tokensToConvert;
+
+        user.TokenBytes -= bytesToRemove;
+        user.TokenVipRequests += tokensToConvert;
+
+        await Context.SaveChangesAsync();
+
+        return tokensToConvert;
+    }
+
+    public float GetUserByteCount(string username, int byteConversion)
+    {
+        var user = Context.GetOrCreateUser(username);
+
+        return user.TokenBytes / (float)byteConversion;
+    }
+
+    public async Task GiveGiftSubBytes(string username, int conversionAmount)
+    {
+        var user = Context.GetOrCreateUser(username);
+        var totalBytes = conversionAmount / 2;
+
+        user.TokenBytes += totalBytes;
+
+        await Context.SaveChangesAsync();
     }
 
     #endregion

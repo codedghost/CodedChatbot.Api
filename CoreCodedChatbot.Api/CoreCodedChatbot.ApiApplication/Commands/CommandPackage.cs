@@ -1,5 +1,4 @@
-﻿using CoreCodedChatbot.ApiApplication.Commands.Bytes;
-using CoreCodedChatbot.ApiApplication.Commands.Playlist;
+﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,10 +8,6 @@ public static class CommandPackage
 {
     public static IServiceCollection AddApiCommands(this IServiceCollection services)
     {
-        // Bytes
-        services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
-        services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
-        services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
 
         // Playlist
         services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();

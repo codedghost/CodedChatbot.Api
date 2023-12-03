@@ -21,7 +21,7 @@ public interface IVipService
     string GetUserByteCount(string username);
     Task<int> ConvertBytes(string username, int requestedVips);
     Task<int> ConvertAllBytes(string username);
-    void GiveGiftSubBytes(string username);
+    Task GiveGiftSubBytes(string username);
     Task UpdateClientVips(string username);
     void GiveChannelPointsVip(string username);
 }
