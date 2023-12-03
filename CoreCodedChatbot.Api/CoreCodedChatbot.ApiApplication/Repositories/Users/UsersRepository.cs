@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Database.Context;
+using System.Linq;
+using CoreCodedChatbot.ApiApplication.Repositories.Settings;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Users;
 
@@ -84,6 +87,39 @@ public class UsersRepository : BaseRepository<User>
     {
         // All users should exist int the db at this point
         Context.TransferUser(moderatorUsername, oldUsername, newUsername);
+
+        await Context.SaveChangesAsync();
+    }
+
+    #endregion
+
+    #region StreamLabs
+
+    public async Task UpdateUsersDonations(List<StreamLabsDonation> groupedDonations)
+    {
+        foreach (var donation in groupedDonations)
+        {
+            var user = Context.GetOrCreateUser(donation.Name);
+            user.TotalDonated += donation.Amount;
+            await Context.SaveChangesAsync();
+        }
+    }
+
+    #endregion
+
+    #region VIPs
+
+    public async Task UpdateDonationVips(string username, double bitsToVip, double donationAmountToVip)
+    {
+        var user = Context.GetOrCreateUser(username);
+
+        var totalBitsGiven = user.TotalBitsDropped;
+        var totalDonated = user.TotalDonated;
+
+        var bitsVipPercentage = (double)totalBitsGiven / bitsToVip;
+        var donationVipPercentage = (double)totalDonated / donationAmountToVip;
+
+        user.DonationOrBitsVipRequests = (int)Math.Floor(bitsVipPercentage + donationVipPercentage);
 
         await Context.SaveChangesAsync();
     }

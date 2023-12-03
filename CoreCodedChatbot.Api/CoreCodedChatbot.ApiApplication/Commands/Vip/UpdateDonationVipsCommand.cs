@@ -20,9 +20,5 @@ public class UpdateDonationVipsCommand : IUpdateDonationVipsCommand
 
     public void Update(string username)
     {
-        var bitsToVip = _configService.Get<double>("BitsToVip");
-        var donationAmountToVip = _configService.Get<double>("DonationAmountToVip");
-
-        _updateDonationVipsRepository.Update(username, bitsToVip, donationAmountToVip);
     }
 }
