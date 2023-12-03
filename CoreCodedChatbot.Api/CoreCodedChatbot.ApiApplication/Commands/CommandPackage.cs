@@ -1,6 +1,5 @@
 ﻿using CoreCodedChatbot.ApiApplication.Commands.Bytes;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,9 +34,6 @@ public static class CommandPackage
 
         // Search
         services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
-
-        // Stream Status
-        services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();
 
         // Vip
         services.AddSingleton<IGiftVipCommand, GiftVipCommand>();

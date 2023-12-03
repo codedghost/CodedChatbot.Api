@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
+using CoreCodedChatbot.ApiApplication.Repositories.StreamStatuses;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using CoreCodedChatbot.ApiContract.ResponseModels.StreamStatus;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,39 +17,40 @@ namespace CoreCodedChatbot.Api.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class StreamStatusController : Controller
 {
-    private readonly IGetStreamStatusQuery _getStreamStatusQuery;
-    private readonly ISaveStreamStatusCommand _saveStreamStatusCommand;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly ILogger<StreamStatusController> _logger;
 
     public StreamStatusController(
-        IGetStreamStatusQuery getStreamStatusQuery,
-        ISaveStreamStatusCommand saveStreamStatusCommand,
+        IChatbotContextFactory chatbotContextFactory,
         ILogger<StreamStatusController> logger
     )
     {
-        _getStreamStatusQuery = getStreamStatusQuery;
-        _saveStreamStatusCommand = saveStreamStatusCommand;
+        _chatbotContextFactory = chatbotContextFactory;
         _logger = logger;
     }
 
     [HttpGet]
     public IActionResult GetStreamStatus(string broadcasterUsername)
     {
-        var isStreamOnline = _getStreamStatusQuery.Get(broadcasterUsername);
-
-        return new JsonResult(new GetStreamStatusResponse
+        using (var repo = new StreamStatusesRepository(_chatbotContextFactory, _logger))
         {
-            IsOnline = isStreamOnline
-        });
+            return new JsonResult(new GetStreamStatusResponse
+            {
+                IsOnline = repo.GetStreamStatus(broadcasterUsername)
+            });
+        }
     }
 
     [HttpPut]
-    public IActionResult PutStreamStatus([FromBody] PutStreamStatusRequest streamStatusRequest)
+    public async Task<IActionResult> PutStreamStatus([FromBody] PutStreamStatusRequest streamStatusRequest)
     {
         try
         {
-            if (_saveStreamStatusCommand.Save(streamStatusRequest))
-                return Ok();
+            using (var repo = new StreamStatusesRepository(_chatbotContextFactory, _logger))
+            {
+                if (await repo.Save(streamStatusRequest))
+                    return Ok();
+            }
         }
         catch (Exception e)
         {

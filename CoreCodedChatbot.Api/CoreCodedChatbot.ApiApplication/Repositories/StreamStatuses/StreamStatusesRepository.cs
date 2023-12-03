@@ -1,24 +1,31 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
+﻿using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.StreamStatuses;
 
-public class SaveStreamStatusRepository : BaseRepository<StreamStatus>
+public class StreamStatusesRepository : BaseRepository<StreamStatus>
 {
-    private readonly ILogger<SaveStreamStatusRepository> _logger;
+    private readonly ILogger _logger;
 
-    public SaveStreamStatusRepository(
+    public StreamStatusesRepository(
         IChatbotContextFactory chatbotContextFactory,
-        ILogger<SaveStreamStatusRepository> logger
-    ) : base(chatbotContextFactory)
+        ILogger logger) 
+        : base(chatbotContextFactory)
     {
         _logger = logger;
+    }
+
+    public bool GetStreamStatus(string broadcasterUsername)
+    {
+        var status = Context.StreamStatuses.FirstOrDefault(s => s.BroadcasterUsername == broadcasterUsername);
+
+        return status?.IsOnline ?? false;
     }
 
     public async Task<bool> Save(PutStreamStatusRequest request)

@@ -1,13 +1,10 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Search;
-using CoreCodedChatbot.ApiApplication.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,9 +34,6 @@ public static class QueryPackage
         services.AddSingleton<IGetPriorityChartFromSearchResultsQuery, GetPriorityChartFromSearchResultsQuery>();
         services.AddSingleton<IGetSongBySearchIdQuery, GetSongBySearchIdQuery>();
         services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
-
-        // Stream Status
-        services.AddSingleton<IGetStreamStatusQuery, GetStreamStatusQuery>();
 
         // Vip
         services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();
