@@ -1,6 +1,8 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+﻿using System.Threading.Tasks;
+
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 public interface IModerationService
 {
-    void TransferUserAccount(string moderationUsername, string oldUsername, string newUsername);
+    Task TransferUserAccount(string moderationUsername, string oldUsername, string newUsername);
 }

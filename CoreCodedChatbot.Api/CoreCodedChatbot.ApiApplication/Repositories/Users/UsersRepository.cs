@@ -78,6 +78,18 @@ public class UsersRepository : BaseRepository<User>
 
     #endregion
 
+    #region Moderation
+
+    public async Task TransferUser(string moderatorUsername, string oldUsername, string newUsername)
+    {
+        // All users should exist int the db at this point
+        Context.TransferUser(moderatorUsername, oldUsername, newUsername);
+
+        await Context.SaveChangesAsync();
+    }
+
+    #endregion
+
     #region WatchTime
 
     public async Task<TimeSpan> GetWatchTime(string username)

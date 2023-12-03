@@ -1,18 +1,7 @@
 ﻿using CoreCodedChatbot.ApiApplication.Commands.Bytes;
-using CoreCodedChatbot.ApiApplication.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Commands.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Commands.Vip;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.ClientId;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Search;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreCodedChatbot.ApiApplication.Commands;
@@ -25,9 +14,6 @@ public static class CommandPackage
         services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
         services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
         services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
-
-        // Moderation
-        services.AddSingleton<ITransferUserAccountCommand, TransferUserAccountCommand>();
 
         // Playlist
         services.AddSingleton<IAddSongRequestCommand, AddSongRequestCommand>();
@@ -49,9 +35,6 @@ public static class CommandPackage
 
         // Search
         services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
-
-        // Settings
-        services.AddSingleton<IUpdateSettingsCommand, UpdateSettingsCommand>();
 
         // Stream Status
         services.AddSingleton<ISaveStreamStatusCommand, SaveStreamStatusCommand>();

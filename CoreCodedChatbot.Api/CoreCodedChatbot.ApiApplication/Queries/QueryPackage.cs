@@ -1,5 +1,4 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;

@@ -1,22 +1,30 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Moderation;
+﻿using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
+using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class ModerationService : IBaseService, IModerationService
 {
-    private readonly ITransferUserAccountCommand _transferUserAccountCommand;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
+    private readonly IConfigService _configService;
 
-    public ModerationService(ITransferUserAccountCommand transferUserAccountCommand)
+    public ModerationService(IChatbotContextFactory chatbotContextFactory, IConfigService configService)
     {
-        _transferUserAccountCommand = transferUserAccountCommand;
+        _chatbotContextFactory = chatbotContextFactory;
+        _configService = configService;
     }
 
-    public void TransferUserAccount(string moderationUsername, string oldUsername, string newUsername)
+    public async Task TransferUserAccount(string moderationUsername, string oldUsername, string newUsername)
     {
-        _transferUserAccountCommand.Transfer(
-            moderationUsername.Trim('@'),
-            oldUsername.Trim('@'), 
-            newUsername.Trim('@'));
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        {
+            await repo.TransferUser(
+                moderationUsername.Trim('@'),
+                oldUsername.Trim('@'),
+                newUsername.Trim('@'));
+        }
     }
 }
