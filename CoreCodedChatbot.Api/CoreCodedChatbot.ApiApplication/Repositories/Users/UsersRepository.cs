@@ -1,21 +1,40 @@
-﻿using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
+﻿using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 using CoreCodedChatbot.Database.DbExtensions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CoreCodedChatbot.Config;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Users;
 
 public class UsersRepository : BaseRepository<User>
 {
-    public UsersRepository(IChatbotContextFactory chatbotContextFactory) : base(chatbotContextFactory)
+    private readonly IConfigService _configService;
+
+    public UsersRepository(IChatbotContextFactory chatbotContextFactory, IConfigService configService) 
+        : base(chatbotContextFactory)
     {
+        _configService = configService;
     }
 
 
     #region Bytes
+
+    public void GiveBytes(List<GiveBytesToUserModel> users)
+    {
+        foreach (var winner in users)
+        {
+            // Find or add user
+            var user = Context.GetOrCreateUser(winner.Username);
+
+            user.TokenBytes += (int)Math.Round(winner.Bytes * _configService.Get<int>("BytesToVip"));
+        }
+
+        Context.SaveChanges();
+    }
 
     #endregion
 

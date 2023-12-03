@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CodedChatbot.TwitchFactories.Interfaces;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.GuessingGame;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Constants;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
+using CoreCodedChatbot.ApiApplication.Repositories.Settings;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
 using CoreCodedChatbot.Config;
+using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
@@ -16,43 +21,19 @@ public class GuessingGameService : IBaseService, IGuessingGameService
     private readonly IConfigService _configService;
     private readonly ILogger<IGuessingGameService> _logger;
     private readonly ITwitchClientFactory _twitchClientFactory;
-    private readonly IOpenGuessingGameRepository _openGuessingGameRepository;
-    private readonly ICloseGuessingGameRepository _closeGuessingGameRepository;
-    private readonly IGetCurrentGuessingGameMetadataQuery _getCurrentGuessingGameMetadataQuery;
-    private readonly ICompleteGuessingGameCommand _completeGuessingGameCommand;
-    private readonly IGetPotentialWinnersQuery _getPotentialWinnersQuery;
-    private readonly IGiveGuessingGameWinnersBytesCommand _giveGuessingGameWinnersBytesCommand;
-    private readonly ISubmitOrUpdateGuessCommand _submitOrUpdateGuessCommand;
-    private readonly IGetGuessingGameStateQuery _getGuessingGameStateQuery;
-    private readonly ISetGuessingGameStateCommand _setGuessingGameStateCommand;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
 
     public GuessingGameService(
         IConfigService configService,
         ILogger<IGuessingGameService> logger,
         ITwitchClientFactory twitchClientFactory,
-        IOpenGuessingGameRepository openGuessingGameRepository,
-        ICloseGuessingGameRepository closeGuessingGameRepository,
-        IGetCurrentGuessingGameMetadataQuery getCurrentGuessingGameMetadataQuery,
-        ICompleteGuessingGameCommand completeGuessingGameCommand,
-        IGetPotentialWinnersQuery getPotentialWinnersQuery,
-        IGiveGuessingGameWinnersBytesCommand giveGuessingGameWinnersBytesCommand,
-        ISubmitOrUpdateGuessCommand submitOrUpdateGuessCommand,
-        IGetGuessingGameStateQuery getGuessingGameStateQuery,
-        ISetGuessingGameStateCommand setGuessingGameStateCommand
+        IChatbotContextFactory chatbotContextFactory
     )
     {
         _configService = configService;
         _logger = logger;
         _twitchClientFactory = twitchClientFactory;
-        _openGuessingGameRepository = openGuessingGameRepository;
-        _closeGuessingGameRepository = closeGuessingGameRepository;
-        _getCurrentGuessingGameMetadataQuery = getCurrentGuessingGameMetadataQuery;
-        _completeGuessingGameCommand = completeGuessingGameCommand;
-        _getPotentialWinnersQuery = getPotentialWinnersQuery;
-        _giveGuessingGameWinnersBytesCommand = giveGuessingGameWinnersBytesCommand;
-        _submitOrUpdateGuessCommand = submitOrUpdateGuessCommand;
-        _getGuessingGameStateQuery = getGuessingGameStateQuery;
-        _setGuessingGameStateCommand = setGuessingGameStateCommand;
+        _chatbotContextFactory = chatbotContextFactory;
     }
 
 
@@ -67,10 +48,13 @@ public class GuessingGameService : IBaseService, IGuessingGameService
             return;
         }
 
-        if (!_openGuessingGameRepository.Open(songName))
+        using (var repo = new SongGuessingRecordsRepository(_chatbotContextFactory, _logger))
         {
-            twitchClient.SendMessage(streamerChannelName, "I couldn't start the guessing game :S");
-            return;
+            if (!await repo.Open(songName))
+            {
+                twitchClient.SendMessage(streamerChannelName, "I couldn't start the guessing game :S");
+                return;
+            }
         }
 
         SetGuessingGameState(true);
@@ -80,9 +64,13 @@ public class GuessingGameService : IBaseService, IGuessingGameService
 
         await Task.Delay(TimeSpan.FromSeconds(secondsForGuessingGame));
 
-        if (!_closeGuessingGameRepository.Close())
+        using (var repo = new SongGuessingRecordsRepository(_chatbotContextFactory, _logger))
         {
-            twitchClient.SendMessage(streamerChannelName, "I couldn't close the guessing game for some reason... SEND HALP");
+            if (!await repo.Close())
+            {
+                twitchClient.SendMessage(streamerChannelName,
+                    "I couldn't close the guessing game for some reason... SEND HALP");
+            }
         }
 
         twitchClient.SendMessage(streamerChannelName, "The guessing game has now closed. Good luck everyone!");
@@ -90,27 +78,61 @@ public class GuessingGameService : IBaseService, IGuessingGameService
         SetGuessingGameState(false);
     }
 
-
-    public bool SetPercentageAndFinishGame(decimal finalPercentage)
+    public async Task<bool> SetPercentageAndFinishGame(decimal finalPercentage)
     {
         try
         {
             var twitchClient = _twitchClientFactory.Get();
 
-            var currentGuessingGameMetadata = _getCurrentGuessingGameMetadataQuery.Get();
+            SongGuessingRecord? songGuessingRecord;
+            using (var repo = new SongGuessingRecordsRepository(_chatbotContextFactory, _logger))
+            {
+                songGuessingRecord = repo.GetCurrentGuessingGame();
+            }
 
-            _completeGuessingGameCommand.CompleteCurrentGuessingGame(finalPercentage);
+            var finishedGuessingGameMetadata = songGuessingRecord == null
+                ? null
+                : new FinishedGuessingGameMetadata
+                {
+                    GuessingGameRecordId = songGuessingRecord.SongGuessingRecordId,
+                    GuessingGameFinishedPercentage = songGuessingRecord.FinalPercentage
+                };
+
+            using (var repo = new SongGuessingRecordsRepository(_chatbotContextFactory, _logger))
+            {
+                await repo.CompleteCurrentGuessingGame(finalPercentage);
+            }
 
             var streamerChannelName = _configService.Get<string>("StreamerChannel");
 
-            var winners = _getPotentialWinnersQuery.Get(currentGuessingGameMetadata.GuessingGameRecordId,
-                finalPercentage);
+            List<SongPercentageGuess> guesses;
+            using (var repo = new SongPercentageGuessesRepository(_chatbotContextFactory))
+            {
+                guesses = repo.Get(finishedGuessingGameMetadata.GuessingGameRecordId);
+            }
+
+            var potentialWinners = guesses
+                .Select(pg =>
+                    (Math.Floor(Math.Abs(finalPercentage - pg.Guess) * 10) / 10,
+                        pg)).ToList();
+
+            var winners = GuessingGameWinner.Create(potentialWinners);
 
             // No-one guessed?
             if (!winners.Any())
                 twitchClient.SendMessage(streamerChannelName, "Nobody guessed! Good luck next time :)");
 
-            _giveGuessingGameWinnersBytesCommand.Give(winners.Where(w => w.Difference <= 20).ToList());
+            var bytesModel = winners.Select(w =>
+                new GiveBytesToUserModel
+                {
+                    Username = w.Username,
+                    Bytes = w.BytesWon
+                }).ToList();
+
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+            {
+                repo.GiveBytes(bytesModel);
+            }
 
             twitchClient.SendMessage(streamerChannelName,
                 winners[0].Difference > 20
@@ -133,12 +155,26 @@ public class GuessingGameService : IBaseService, IGuessingGameService
         }
     }
 
-    public bool SubmitOrUpdateGuess(string username, decimal percentageGuess)
+    public async Task<bool> SubmitOrUpdateGuess(string username, decimal percentageGuess)
     {
         try
         {
-            _submitOrUpdateGuessCommand.SubmitOrUpdate(username, percentageGuess);
+            int currentGameId;
+            using (var repo = new SongGuessingRecordsRepository(_chatbotContextFactory, _logger))
+            {
+                currentGameId = repo.GetRunningGuessingGame();
+            }
+
+            if (currentGameId == 0)
+                throw new Exception("No game currently running");
+
+            using (var repo = new SongPercentageGuessesRepository(_chatbotContextFactory))
+            {
+                await repo.Submit(currentGameId, username, percentageGuess);
+            }
+
             return true;
+
         }
         catch (Exception e)
         {
@@ -152,9 +188,10 @@ public class GuessingGameService : IBaseService, IGuessingGameService
     {
         try
         {
-            var inProgress = _getGuessingGameStateQuery.InProgress();
-
-            return inProgress;
+            using (var repo = new SettingsRepository(_chatbotContextFactory))
+            {
+                return repo.Get<bool>(SettingsKeys.GuessingGameStateSettingKey);
+            }
         }
         catch (Exception e)
         {
@@ -163,11 +200,14 @@ public class GuessingGameService : IBaseService, IGuessingGameService
         }
     }
 
-    public bool SetGuessingGameState(bool state)
+    public async Task<bool> SetGuessingGameState(bool state)
     {
         try
         {
-            _setGuessingGameStateCommand.Set(state);
+            using (var repo = new SettingsRepository(_chatbotContextFactory))
+            {
+                await repo.Set(SettingsKeys.GuessingGameStateSettingKey, state.ToString().ToLower());
+            }
             return true;
         }
         catch (Exception e)

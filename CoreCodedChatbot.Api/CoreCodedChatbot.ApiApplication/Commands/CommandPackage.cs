@@ -1,8 +1,4 @@
 ﻿using CoreCodedChatbot.ApiApplication.Commands.Bytes;
-using CoreCodedChatbot.ApiApplication.Commands.ChannelRewards;
-using CoreCodedChatbot.ApiApplication.Commands.ChatCommand;
-using CoreCodedChatbot.ApiApplication.Commands.ClientId;
-using CoreCodedChatbot.ApiApplication.Commands.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Commands.Moderation;
 using CoreCodedChatbot.ApiApplication.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Commands.Settings;
@@ -29,12 +25,6 @@ public static class CommandPackage
         services.AddSingleton<IConvertAllBytesCommand, ConvertAllBytesCommand>();
         services.AddSingleton<IConvertBytesCommand, ConvertBytesCommand>();
         services.AddSingleton<IGiveGiftSubBytesCommand, GiveGiftSubBytesCommand>();
-
-        // Guessing Game
-        services.AddSingleton<ICompleteGuessingGameCommand, CompleteGuessingGameCommand>();
-        services.AddSingleton<IGiveGuessingGameWinnersBytesCommand, GiveGuessingGameWinnersBytesCommand>();
-        services.AddSingleton<ISetGuessingGameStateCommand, SetGuessingGameStateCommand>();
-        services.AddSingleton<ISubmitOrUpdateGuessCommand, SubmitOrUpdateGuessCommand>();
 
         // Moderation
         services.AddSingleton<ITransferUserAccountCommand, TransferUserAccountCommand>();

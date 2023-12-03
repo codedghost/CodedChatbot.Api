@@ -1,14 +1,11 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
+﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamLabs;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
-using CoreCodedChatbot.ApiApplication.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Queries.GuessingGame;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Queries.StreamLabs;
@@ -24,10 +21,6 @@ public static class QueryPackage
     {
         // Bytes
         services.AddSingleton<IGetUserByteCountQuery, GetUserByteCountQuery>();
-
-        // Guessing Game
-        services.AddSingleton<IGetCurrentGuessingGameMetadataQuery, GetCurrentGuessingGameMetadataQuery>();
-        services.AddSingleton<IGetPotentialWinnersQuery, GetPotentialWinnersQuery>();
 
         // Playlist
         services.AddSingleton<ICheckUserHasMaxRegularsInQueueQuery, CheckUserHasMaxRegularsInQueueQuery>();
