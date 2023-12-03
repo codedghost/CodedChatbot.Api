@@ -1,6 +1,8 @@
-﻿namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
+﻿using System.Threading.Tasks;
+
+namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 public interface ISettingsService
 {
-    void Update(string key, string value);
+    Task Update(string key, string value);
 }

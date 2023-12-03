@@ -1,19 +1,25 @@
-﻿using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
+﻿using System.Threading.Tasks;
+using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Settings;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Settings;
+using CoreCodedChatbot.Database.Context.Interfaces;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class SettingsService : IBaseService, ISettingsService
 {
-    private readonly IUpdateSettingsCommand _updateSettingsCommand;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
 
-    public SettingsService(IUpdateSettingsCommand updateSettingsCommand)
+    public SettingsService(IChatbotContextFactory chatbotContextFactory)
     {
-        _updateSettingsCommand = updateSettingsCommand;
+        _chatbotContextFactory = chatbotContextFactory;
     }
 
-    public void Update(string key, string value)
+    public async Task Update(string key, string value)
     {
-        _updateSettingsCommand.Update(key, value);
+        using (var repo = new SettingsRepository(_chatbotContextFactory))
+        {
+            await repo.Set(key, value);
+        }
     }
 }
