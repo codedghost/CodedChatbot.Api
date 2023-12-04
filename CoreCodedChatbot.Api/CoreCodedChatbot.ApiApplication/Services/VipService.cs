@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Bytes;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiApplication.Repositories.Users;
@@ -16,17 +13,6 @@ namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class VipService : IBaseService, IVipService
 {
-    private readonly IGiftVipCommand _giftVipCommand;
-    private readonly IRefundVipCommand _refundVipCommand;
-    private readonly ICheckUserHasVipsQuery _checkUserHasVipsQuery;
-    private readonly IUseVipCommand _useVipCommand;
-    private readonly IUseSuperVipCommand _useSuperVipCommand;
-    private readonly IModGiveVipCommand _modGiveVipCommand;
-    private readonly IGetUsersGiftedVipsQuery _getUsersGiftedVipsQuery;
-    private readonly IGetUserVipCountQuery _getUserVipCountQuery;
-    private readonly IGiveSubscriptionVipsCommand _giveSubscriptionVipsCommand;
-    private readonly IUpdateTotalBitsCommand _updateTotalBitsCommand;
-    private readonly IGiveChannelPointsVipCommand _giveChannelPointsVipCommand;
     private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IConfigService _configService;
     private readonly ISignalRService _signalRService;
@@ -34,40 +20,12 @@ public class VipService : IBaseService, IVipService
     private readonly ILogger<IVipService> _logger;
 
     public VipService(
-        IGiftVipCommand giftVipCommand,
-        IRefundVipCommand refundVipCommand,
-        ICheckUserHasVipsQuery checkUserHasVipsQuery,
-        IUseVipCommand useVipCommand,
-        IUseSuperVipCommand useSuperVipCommand,
-        IModGiveVipCommand modGiveVipCommand,
-        IGetUsersGiftedVipsQuery getUsersGiftedVipsQuery,
-        IGetUserVipCountQuery getUserVipCountQuery,
-        IGiveSubscriptionVipsCommand giveSubscriptionVipsCommand,
-        IUpdateTotalBitsCommand updateTotalBitsCommand,
-        IConvertBytesCommand convertBytesCommand,
-        IConvertAllBytesCommand convertAllBytesCommand,
-        IGiveGiftSubBytesCommand giveGiftSubBytesCommand,
-        IGiveChannelPointsVipCommand giveChannelPointsVipCommand,
         IChatbotContextFactory chatbotContextFactory,
         IConfigService configService,
         ISignalRService signalRService,
         IClientIdService clientIdService,
         ILogger<IVipService> logger)
     {
-        _giftVipCommand = giftVipCommand;
-        _refundVipCommand = refundVipCommand;
-        _checkUserHasVipsQuery = checkUserHasVipsQuery;
-        _useVipCommand = useVipCommand;
-        _useSuperVipCommand = useSuperVipCommand;
-        _modGiveVipCommand = modGiveVipCommand;
-        _getUsersGiftedVipsQuery = getUsersGiftedVipsQuery;
-        _getUserVipCountQuery = getUserVipCountQuery;
-        _giveSubscriptionVipsCommand = giveSubscriptionVipsCommand;
-        _updateTotalBitsCommand = updateTotalBitsCommand;
-        _convertBytesCommand = convertBytesCommand;
-        _convertAllBytesCommand = convertAllBytesCommand;
-        _giveGiftSubBytesCommand = giveGiftSubBytesCommand;
-        _giveChannelPointsVipCommand = giveChannelPointsVipCommand;
         _chatbotContextFactory = chatbotContextFactory;
         _configService = configService;
         _signalRService = signalRService;
@@ -89,8 +47,11 @@ public class VipService : IBaseService, IVipService
 
     public async void GiveChannelPointsVip(string username)
     {
-        _giveChannelPointsVipCommand.GiveChannelPointsVip(username);
-
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+        {
+            await repo.GiveChannelPointsVip(username);
+        }
+        
         await UpdateClientVips(username).ConfigureAwait(false);
     }
 
@@ -105,26 +66,35 @@ public class VipService : IBaseService, IVipService
 
     public async Task<bool> GiftVip(string donorUsername, string receiverUsername, int numberOfVips)
     {
-        var success = _giftVipCommand.GiftVip(donorUsername, receiverUsername, numberOfVips);
-
-        if (success)
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
-            await UpdateClientVips(donorUsername).ConfigureAwait(false);
-            await UpdateClientVips(receiverUsername).ConfigureAwait(false);
+            var hasVips = repo.GetUsersVipCount(donorUsername) >= numberOfVips;
+            if (!hasVips) return false;
+
+            await repo.GiftVip(donorUsername, receiverUsername, numberOfVips);
         }
 
-        return success;
+        await UpdateClientVips(donorUsername).ConfigureAwait(false);
+        await UpdateClientVips(receiverUsername).ConfigureAwait(false);
+
+        return true;
     }
 
     public async Task<bool> RefundVip(string username, bool deferSave = false)
     {
         try
         {
-            _refundVipCommand.Refund(new VipRefund
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
             {
-                Username = username,
-                VipsToRefund = 1
-            });
+                await repo.RefundVips(new List<VipRefund>
+                {
+                    new VipRefund
+                    {
+                        Username = username,
+                        VipsToRefund = 1
+                    }
+                });
+            }
 
             await UpdateClientVips(username).ConfigureAwait(false);
 
@@ -141,11 +111,17 @@ public class VipService : IBaseService, IVipService
     {
         try
         {
-            _refundVipCommand.Refund(new VipRefund
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
             {
-                Username = username,
-                VipsToRefund = _configService.Get<int>("SuperVipCost")
-            });
+                await repo.RefundVips(new List<VipRefund>
+                {
+                    new VipRefund
+                    {
+                        Username = username,
+                        VipsToRefund = _configService.Get<int>("SuperVipCost")
+                    }
+                });
+            }
 
             await UpdateClientVips(username).ConfigureAwait(false);
 
@@ -162,9 +138,10 @@ public class VipService : IBaseService, IVipService
     {
         try
         {
-            var userHasVip = _checkUserHasVipsQuery.CheckUserHasVips(username, 1);
-
-            return userHasVip;
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+            {
+                return repo.GetUsersVipCount(username) >= 1;
+            }
         }
         catch (Exception e)
         {
@@ -179,7 +156,10 @@ public class VipService : IBaseService, IVipService
         {
             if (!HasVip(username)) return false;
 
-            _useVipCommand.UseVip(username, 1);
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+            {
+                await repo.UseVip(username, 1);
+            }
 
             await UpdateClientVips(username).ConfigureAwait(false);
         }
@@ -196,9 +176,10 @@ public class VipService : IBaseService, IVipService
     {
         try
         {
-            var userHasVips = _checkUserHasVipsQuery.CheckUserHasVips(username, _configService.Get<int>("SuperVipCost") - discount);
-
-            return userHasVips;
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+            {
+                return repo.GetUsersVipCount(username) >= _configService.Get<int>("SuperVipCost") - discount;
+            }
         }
         catch (Exception e)
         {
@@ -213,7 +194,12 @@ public class VipService : IBaseService, IVipService
         {
             if (!HasSuperVip(username, discount)) return false;
 
-            _useSuperVipCommand.UseSuperVip(username, discount);
+            var vipsToUse = _configService.Get<int>("SuperVipCost") - discount;
+
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+            {
+                await repo.UseSuperVip(username, vipsToUse, 1);
+            }
 
             await UpdateClientVips(username).ConfigureAwait(false);
         }
@@ -230,7 +216,10 @@ public class VipService : IBaseService, IVipService
     {
         try
         {
-            _modGiveVipCommand.ModGiveVip(username, numberOfVips);
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+            {
+                await repo.ModGiveVip(username, numberOfVips);
+            }
 
             await UpdateClientVips(username).ConfigureAwait(false);
         }
@@ -245,21 +234,29 @@ public class VipService : IBaseService, IVipService
 
     public int GetUsersGiftedVips(string username)
     {
-        var vips = _getUsersGiftedVipsQuery.GetUsersGiftedVips(username);
-
-        return vips;
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+        {
+            return repo.GetUsersGiftedVips(username);
+        }
     }
 
     public int GetUserVipCount(string username)
     {
-        var vips = _getUserVipCountQuery.Get(username);
-
-        return vips;
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+        {
+            return repo.GetUsersVipCount(username);
+        }
     }
 
     public async Task GiveSubscriptionVips(List<UserSubDetail> usernames)
     {
-        _giveSubscriptionVipsCommand.Give(usernames);
+        var tier2ExtraVips = _configService.Get<int>("Tier2ExtraVip");
+        var tier3ExtraVips = _configService.Get<int>("Tier3ExtraVip");
+
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+        {
+            await repo.GiveSubVips(usernames, tier2ExtraVips, tier3ExtraVips);
+        }
 
         foreach (var user in usernames)
         {
@@ -267,9 +264,16 @@ public class VipService : IBaseService, IVipService
         }
     }
 
-    public void UpdateTotalBits(string username, int totalBits)
+    public async Task UpdateTotalBits(string username, int totalBits)
     {
-        _updateTotalBitsCommand.Update(username, totalBits);
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+        {
+            await repo.UpdateTotalBits(username, totalBits);
+            var bitsToVip = _configService.Get<double>("BitsToVip");
+            var donationAmountToVip = _configService.Get<double>("DonationAmountToVip");
+
+            await repo.UpdateDonationVips(username, bitsToVip, donationAmountToVip);
+        }
     }
 
     public string GetUserByteCount(string username)
@@ -284,7 +288,7 @@ public class VipService : IBaseService, IVipService
         var conversionAmount = _configService.Get<int>("BytesToVip");
 
         int bytesConverted;
-        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
             bytesConverted = await repo.ConvertBytes(username, requestedVips, conversionAmount);
         }
@@ -300,7 +304,7 @@ public class VipService : IBaseService, IVipService
         var conversionAmount = _configService.Get<int>("BytesToVip");
 
         float usersBytes;
-        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
             usersBytes = repo.GetUserByteCount(username, conversionAmount);
         }
@@ -308,7 +312,7 @@ public class VipService : IBaseService, IVipService
         var closestWholeBytes = (int)Math.Floor(usersBytes);
 
         int bytesConverted;
-        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
             bytesConverted = await repo.ConvertBytes(username, closestWholeBytes, conversionAmount);
         }
@@ -323,7 +327,7 @@ public class VipService : IBaseService, IVipService
     {
         var conversionAmount = _configService.Get<int>("BytesToVip");
 
-        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
             await repo.GiveGiftSubBytes(username, conversionAmount);
         }
@@ -334,7 +338,7 @@ public class VipService : IBaseService, IVipService
     {
         var conversionAmount = _configService.Get<int>("BytesToVip");
 
-        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
             var bytes = repo.GetUserByteCount(username, conversionAmount);
 

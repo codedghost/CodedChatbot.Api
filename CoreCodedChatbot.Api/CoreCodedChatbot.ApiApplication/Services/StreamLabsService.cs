@@ -112,7 +112,7 @@ public class StreamLabsService : IBaseService, IStreamLabsService
 
             await SaveStreamLabsDonations(donations);
 
-            using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
             {
                 foreach (var user in donations.Select(d => d.Name.ToLower()).Distinct())
                 {
@@ -143,7 +143,7 @@ public class StreamLabsService : IBaseService, IStreamLabsService
                 Amount = (int)Math.Round(d.Sum(rec => rec.Amount) * 100)
             }).ToList();
 
-        using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
         {
             await repo.UpdateUsersDonations(groupedDonations);
         }

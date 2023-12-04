@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiApplication.Repositories.Search;
@@ -16,21 +15,18 @@ namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class SearchService : IBaseService, ISearchService
 {
-    private readonly IGetSongBySearchIdQuery _getSongBySearchIdQuery;
     private readonly IDownloadChartService _downloadChartService;
     private readonly IServiceProvider _serviceProvider;
     private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly ILogger<SearchService> _logger;
 
     public SearchService(
-        IGetSongBySearchIdQuery getSongBySearchIdQuery,
         IDownloadChartService downloadChartService,
         IServiceProvider serviceProvider,
         IChatbotContextFactory chatbotContextFactory,
         ILogger<SearchService> logger
     )
     {
-        _getSongBySearchIdQuery = getSongBySearchIdQuery;
         _downloadChartService = downloadChartService;
         _serviceProvider = serviceProvider;
         _chatbotContextFactory = chatbotContextFactory;

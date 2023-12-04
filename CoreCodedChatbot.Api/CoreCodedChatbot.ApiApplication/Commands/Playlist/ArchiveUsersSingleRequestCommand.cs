@@ -12,19 +12,16 @@ public class ArchiveUsersSingleRequestCommand : IArchiveUsersSingleRequestComman
 {
     private readonly IGetUsersRequestsRepository _getUsersRequestsRepository;
     private readonly IArchiveRequestCommand _archiveRequestCommand;
-    private readonly IRefundVipCommand _refundVipCommand;
     private readonly IConfigService _configService;
 
     public ArchiveUsersSingleRequestCommand(
         IGetUsersRequestsRepository getUsersRequestsRepository,
         IArchiveRequestCommand archiveRequestCommand,
-        IRefundVipCommand refundVipCommand,
         IConfigService configService
     )
     {
         _getUsersRequestsRepository = getUsersRequestsRepository;
         _archiveRequestCommand = archiveRequestCommand;
-        _refundVipCommand = refundVipCommand;
         _configService = configService;
     }
 

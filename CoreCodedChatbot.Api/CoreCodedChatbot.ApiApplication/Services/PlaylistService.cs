@@ -46,7 +46,6 @@ public class PlaylistService : IBaseService, IPlaylistService
     private readonly ISecretService _secretService;
     private readonly IConfigService _configService;
     private readonly ISignalRService _signalRService;
-    private readonly IRefundVipCommand _refundVipCommand;
     private readonly ISearchService _searchService;
 
     private PlaylistItem _currentRequest;
@@ -80,7 +79,6 @@ public class PlaylistService : IBaseService, IPlaylistService
         ISecretService secretService,
         IConfigService configService,
         ISignalRService signalRService,
-        IRefundVipCommand refundVipCommand,
         ISearchService searchService
     )
     {
@@ -108,7 +106,6 @@ public class PlaylistService : IBaseService, IPlaylistService
         _secretService = secretService;
         _configService = configService;
         _signalRService = signalRService;
-        _refundVipCommand = refundVipCommand;
         _searchService = searchService;
 
         _concurrentVipSongsToPlay = configService.Get<int>("ConcurrentVipSongsToPlay");

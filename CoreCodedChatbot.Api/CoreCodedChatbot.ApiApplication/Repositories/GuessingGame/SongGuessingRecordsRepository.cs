@@ -8,11 +8,11 @@ using System;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.GuessingGame;
 
-public class SongGuessingRecordRepository : BaseRepository<SongGuessingRecord>
+public class SongGuessingRecordsRepository : BaseRepository<SongGuessingRecord>
 {
     private readonly ILogger _logger;
 
-    public SongGuessingRecordRepository(
+    public SongGuessingRecordsRepository(
         IChatbotContextFactory chatbotContextFactory,
         ILogger logger) 
         : base(chatbotContextFactory)

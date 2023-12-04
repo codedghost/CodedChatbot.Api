@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using CodedChatbot.ServiceBusContract;
 using CodedChatbot.TwitchFactories.Interfaces;
 using CodedGhost.AzureServiceBus.Abstractions;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.StreamStatuses;
 using CoreCodedChatbot.ApiApplication.Repositories.Users;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Database.Context.Interfaces;
@@ -19,7 +19,6 @@ namespace CoreCodedChatbot.ApiApplication.Services;
 public class ChatService : IBaseService, IChatService
 {
     private readonly IChatbotContextFactory _chatbotContextFactory;
-    private readonly IGetStreamStatusQuery _getStreamStatusQuery;
     private readonly IConfigService _configService;
     private readonly ISecretService _secretService;
     private readonly ITwitchAPI _twitchApi;
@@ -28,14 +27,12 @@ public class ChatService : IBaseService, IChatService
 
     public ChatService(
         IChatbotContextFactory chatbotContextFactory,
-        IGetStreamStatusQuery getStreamStatusQuery,
         IConfigService configService,
         ISecretService secretService,
         ITwitchApiFactory twitchApiFactory,
         ILogger<IChatService> logger)
     {
         _chatbotContextFactory = chatbotContextFactory;
-        _getStreamStatusQuery = getStreamStatusQuery;
         _configService = configService;
         _secretService = secretService;
         _twitchApi = twitchApiFactory.Get();
@@ -69,7 +66,11 @@ public class ChatService : IBaseService, IChatService
         {
             var streamerChannel = _configService.Get<string>("StreamerChannel");
 
-            var streamStatus = _getStreamStatusQuery.Get(streamerChannel);
+            bool streamStatus;
+            using (var repo = new StreamStatusesRepository(_chatbotContextFactory, _logger))
+            {
+                streamStatus = repo.GetStreamStatus(streamerChannel);
+            }
 
             if (streamStatus)
             {
@@ -80,7 +81,7 @@ public class ChatService : IBaseService, IChatService
 
                 var chatters = chattersResponse.Data.Select(d => d.UserLogin).ToList();
 
-                using (var repo = new UsersRepository(_chatbotContextFactory))
+                using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
                 {
                     await repo.UpdateWatchTime(chatters);
                 }

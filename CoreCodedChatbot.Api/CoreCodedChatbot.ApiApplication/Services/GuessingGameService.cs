@@ -57,7 +57,7 @@ public class GuessingGameService : IBaseService, IGuessingGameService
             }
         }
 
-        SetGuessingGameState(true);
+        await SetGuessingGameState(true);
 
         twitchClient.SendMessage(streamerChannelName,
             $"The guessing game has begun! You have {secondsForGuessingGame} seconds to !guess the accuracy that {streamerChannelName} will get on {songName}!");
@@ -75,7 +75,7 @@ public class GuessingGameService : IBaseService, IGuessingGameService
 
         twitchClient.SendMessage(streamerChannelName, "The guessing game has now closed. Good luck everyone!");
 
-        SetGuessingGameState(false);
+        await SetGuessingGameState(false);
     }
 
     public async Task<bool> SetPercentageAndFinishGame(decimal finalPercentage)
@@ -129,7 +129,7 @@ public class GuessingGameService : IBaseService, IGuessingGameService
                     Bytes = w.BytesWon
                 }).ToList();
 
-            using (var repo = new UsersRepository(_chatbotContextFactory, _configService))
+            using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
             {
                 repo.GiveBytes(bytesModel);
             }

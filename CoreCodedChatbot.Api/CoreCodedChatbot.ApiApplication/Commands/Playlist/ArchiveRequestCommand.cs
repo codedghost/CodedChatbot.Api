@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
 using CoreCodedChatbot.Config;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Playlist;
@@ -13,7 +15,6 @@ public class ArchiveRequestCommand : IArchiveRequestCommand
 {
     private readonly IArchiveRequestRepository _archiveRequestRepository;
     private readonly IGetSongRequestByIdQuery _getSongRequestByIdQuery;
-    private readonly IRefundVipCommand _refundVipCommand;
     private readonly IVipService _vipService;
     private readonly IConfigService _configService;
 
@@ -27,7 +28,6 @@ public class ArchiveRequestCommand : IArchiveRequestCommand
     {
         _archiveRequestRepository = archiveRequestRepository;
         _getSongRequestByIdQuery = getSongRequestByIdQuery;
-        _refundVipCommand = refundVipCommand;
         _vipService = vipService;
         _configService = configService;
     }
@@ -41,11 +41,17 @@ public class ArchiveRequestCommand : IArchiveRequestCommand
             var request = _getSongRequestByIdQuery.GetSongRequestById(requestId);
             if (request.isVip || request.isSuperVip)
             {
-                _refundVipCommand.Refund(new VipRefund
+                using (var repo = new UsersRepository(_chatbotContextFactory, configService, logger))
                 {
-                    Username = request.songRequester,
-                    VipsToRefund = request.isVip ? 1 : _configService.Get<int>("SuperVipCost")
-                });
+                    await repo.RefundVips(new List<VipRefund>
+                    {
+                        new VipRefund
+                        {
+                            Username = request.songRequester,
+                            VipsToRefund = request.isVip ? 1 : _configService.Get<int>("SuperVipCost")
+                        }
+                    });
+                }
             }
         }
 

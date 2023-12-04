@@ -1,5 +1,4 @@
 ﻿using CoreCodedChatbot.ApiApplication.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Commands.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreCodedChatbot.ApiApplication.Commands;
@@ -26,20 +25,6 @@ public static class CommandPackage
         services
             .AddSingleton<IRemoveUsersRequestByPlaylistIndexCommand, RemoveUsersRequestByPlaylistIndexCommand>();
         services.AddSingleton<IUpdatePlaylistStateCommand, UpdatePlaylistStateCommand>();
-
-        // Search
-        services.AddSingleton<ISaveSearchSynonymRequestCommand, SaveSearchSynonymRequestCommand>();
-
-        // Vip
-        services.AddSingleton<IGiftVipCommand, GiftVipCommand>();
-        services.AddSingleton<IGiveSubscriptionVipsCommand, GiveSubscriptionVipsCommand>();
-        services.AddSingleton<IModGiveVipCommand, ModGiveVipCommand>();
-        services.AddSingleton<IRefundVipCommand, RefundVipCommand>();
-        services.AddSingleton<IUpdateDonationVipsCommand, UpdateDonationVipsCommand>();
-        services.AddSingleton<IUpdateTotalBitsCommand, UpdateTotalBitsCommand>();
-        services.AddSingleton<IUseSuperVipCommand, UseSuperVipCommand>();
-        services.AddSingleton<IUseVipCommand, UseVipCommand>();
-        services.AddSingleton<IGiveChannelPointsVipCommand, GiveChannelPointsVipCommand>();
 
         return services;
     }

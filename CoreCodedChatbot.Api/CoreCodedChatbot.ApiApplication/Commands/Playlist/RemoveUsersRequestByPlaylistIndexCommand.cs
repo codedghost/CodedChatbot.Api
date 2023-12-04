@@ -1,10 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Services;
-using CoreCodedChatbot.Config;
+﻿using System.Threading.Tasks;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Playlist;
 
@@ -12,23 +6,14 @@ public class RemoveUsersRequestByPlaylistIndexCommand : IRemoveUsersRequestByPla
 {
     private readonly IGetUsersRequestsRepository _getUsersRequestsRepository;
     private readonly IArchiveRequestCommand _archiveRequestCommand;
-    private readonly IRefundVipCommand _refundVipCommand;
-    private readonly IConfigService _configService;
-    private readonly IVipService _vipService;
 
     public RemoveUsersRequestByPlaylistIndexCommand(
         IGetUsersRequestsRepository getUsersRequestsRepository,
-        IArchiveRequestCommand archiveRequestCommand,
-        IRefundVipCommand refundVipCommand,
-        IConfigService configService,
-        IVipService vipService
+        IArchiveRequestCommand archiveRequestCommand
     )
     {
         _getUsersRequestsRepository = getUsersRequestsRepository;
         _archiveRequestCommand = archiveRequestCommand;
-        _refundVipCommand = refundVipCommand;
-        _configService = configService;
-        _vipService = vipService;
     }
 
     public async Task<bool> Remove(string username, int playlistPosition)

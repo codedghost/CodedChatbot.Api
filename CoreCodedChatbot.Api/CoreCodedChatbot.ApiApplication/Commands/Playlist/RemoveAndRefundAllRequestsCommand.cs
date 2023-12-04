@@ -6,6 +6,7 @@ using CoreCodedChatbot.ApiApplication.Interfaces.Commands.Vip;
 using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Playlist;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
+using CoreCodedChatbot.ApiApplication.Repositories.Users;
 using CoreCodedChatbot.Config;
 
 namespace CoreCodedChatbot.ApiApplication.Commands.Playlist;
@@ -14,21 +15,18 @@ public class RemoveAndRefundAllRequestsCommand : IRemoveAndRefundAllRequestsComm
 {
     private readonly IGetCurrentRequestsRepository _getCurrentRequestsRepository;
     private readonly IClearRequestsRepository _clearRequestsRepository;
-    private readonly IRefundVipCommand _refundVipCommand;
     private readonly IConfigService _configService;
     private readonly IVipService _vipService;
 
     public RemoveAndRefundAllRequestsCommand(
         IGetCurrentRequestsRepository getCurrentRequestsRepository,
         IClearRequestsRepository clearRequestsRepository,
-        IRefundVipCommand refundVipCommand,
         IConfigService configService,
         IVipService vipService
     )
     {
         _getCurrentRequestsRepository = getCurrentRequestsRepository;
         _clearRequestsRepository = clearRequestsRepository;
-        _refundVipCommand = refundVipCommand;
         _configService = configService;
         _vipService = vipService;
     }
@@ -49,7 +47,10 @@ public class RemoveAndRefundAllRequestsCommand : IRemoveAndRefundAllRequestsComm
                     0
             }).ToList() ?? new List<VipRefund>();
 
-        _refundVipCommand.Refund(refundVips);
+        using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
+        {
+            await repo.RefundVips(refundVips);
+        }
 
         foreach (var refund in refundVips)
         {

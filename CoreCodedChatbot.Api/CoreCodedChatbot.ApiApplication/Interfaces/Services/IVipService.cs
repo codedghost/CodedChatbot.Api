@@ -17,7 +17,7 @@ public interface IVipService
     int GetUsersGiftedVips(string username);
     int GetUserVipCount(string username);
     Task GiveSubscriptionVips(List<UserSubDetail> usernames);
-    void UpdateTotalBits(string username, int totalBits);
+    Task UpdateTotalBits(string username, int totalBits);
     string GetUserByteCount(string username);
     Task<int> ConvertBytes(string username, int requestedVips);
     Task<int> ConvertAllBytes(string username);
