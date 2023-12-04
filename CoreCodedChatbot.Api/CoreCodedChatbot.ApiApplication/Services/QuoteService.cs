@@ -3,30 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using CoreCodedChatbot.ApiApplication.Interfaces.Repositories.Quote;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
+using CoreCodedChatbot.ApiApplication.Repositories.Quotes;
 using CoreCodedChatbot.ApiContract.ResponseModels.Quotes;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.VisualStudio.Services.GitHubConnector;
 using ApiQuote = CoreCodedChatbot.ApiContract.ResponseModels.Quotes.ChildModels.Quote;
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
 public class QuoteService : IBaseService, IQuoteService
 {
-    private readonly IQuoteRepository _quoteRepository;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IChatService _chatService;
     private readonly IMapper _mapper;
     private readonly Random _random;
 
     public QuoteService(
-        IQuoteRepository quoteRepository,
+        IChatbotContextFactory chatbotContextFactory,
         IChatService chatService,
         IMapper mapper)
     {
-        _quoteRepository = quoteRepository;
+        _chatbotContextFactory = chatbotContextFactory;
         _chatService = chatService;
         _mapper = mapper;
 
@@ -43,31 +43,56 @@ public class QuoteService : IBaseService, IQuoteService
             LastEdited = DateTime.UtcNow
         };
 
-        await _quoteRepository.CreateAsync(newEntity);
+        using (var repo = new QuotesRepository(_chatbotContextFactory))
+        {
+            await repo.CreateAsync(newEntity);
+        }
 
         return newEntity.QuoteId;
     }
 
     public async Task EditQuote(int quoteId, string quoteText, string username, bool isMod)
     {
-        await _quoteRepository.Edit(quoteId, quoteText, username, isMod);
+        using (var repo = new QuotesRepository(_chatbotContextFactory))
+        {
+            await repo.Edit(quoteId, quoteText, username, isMod);
+        }
     }
 
     public async Task RemoveQuote(int quoteId, string username, bool isMod)
     {
-        await _quoteRepository.Archive(quoteId, username, isMod);
+        using (var repo = new QuotesRepository(_chatbotContextFactory))
+        {
+            await repo.Archive(quoteId, username, isMod);
+        }
     }
 
     public async Task<ApiQuote> GetQuote(int? quoteId)
     {
-        var quote = quoteId == null ? await GetRandomQuote() : await _quoteRepository.GetByIdAsync(quoteId.Value);
+        Quote quote;
+        if (quoteId == null)
+        {
+            quote = await GetRandomQuote();
+        }
+        else
+        {
+            using (var repo = new QuotesRepository(_chatbotContextFactory))
+            {
+                quote = await repo.GetByIdOrNullAsync(quoteId.Value);
+            }
+        }
 
         return _mapper.Map<ApiQuote>(quote);
     }
         
     public async Task<GetQuotesResponse> GetQuotes(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue)
     {
-        var pagedResult = await _quoteRepository.GetAllPagedAsync(page, pageSize, orderByColumnName, desc, filterByColumn, filterValue);
+        PagedResult<Quote> pagedResult;
+        using (var repo = new QuotesRepository(_chatbotContextFactory))
+        {
+            pagedResult =
+                await repo.GetAllPagedAsync(page, pageSize, orderByColumnName, desc, filterByColumn, filterValue);
+        }
 
         return new GetQuotesResponse
         {
@@ -78,13 +103,16 @@ public class QuoteService : IBaseService, IQuoteService
 
     private async Task<Quote> GetRandomQuote()
     {
-        var quotesQuery = _quoteRepository.GetAll().Where(q => q.Enabled).OrderBy(q => q.QuoteId);
+        using (var repo = new QuotesRepository(_chatbotContextFactory))
+        {
+            var quotesQuery = repo.GetAll().Where(q => q.Enabled).OrderBy(q => q.QuoteId);
 
-        var count = quotesQuery.Count();
+            var count = quotesQuery.Count();
 
-        var randomInt = _random.Next(count);
+            var randomInt = _random.Next(count);
 
-        return await quotesQuery.Skip(randomInt).Take(1).FirstOrDefaultAsync();
+            return await quotesQuery.Skip(randomInt).Take(1).FirstOrDefaultAsync();
+        }
     }
 
     public async Task<bool> SendQuoteToChat(int id, string username)

@@ -6,9 +6,9 @@ using CoreCodedChatbot.Database.Context.Models;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Quotes;
 
-public class QuoteRepository : BaseRepository<Quote>
+public class QuotesRepository : BaseRepository<Quote>
 {
-    public QuoteRepository(IChatbotContextFactory chatbotContextFactory) 
+    public QuotesRepository(IChatbotContextFactory chatbotContextFactory) 
         : base(chatbotContextFactory)
     {
     }
