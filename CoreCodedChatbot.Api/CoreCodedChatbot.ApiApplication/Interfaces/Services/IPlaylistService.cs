@@ -9,7 +9,7 @@ namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
 
 public interface IPlaylistService
 {
-    PlaylistItem GetRequestById(int songId);
+    Task<PlaylistItem> GetRequestById(int songId);
     Task<(AddRequestResult, int)> AddRequest(string username, string commandText, bool vipRequest = false);
     Task<AddRequestResult> AddSuperVipRequest(string username, string commandText);
     Task<AddRequestResult> AddWebRequest(AddWebSongRequest requestSongViewModel, string username);
@@ -26,7 +26,7 @@ public interface IPlaylistService
 
     Task<EditRequestResult> EditWebRequest(EditWebRequestRequestModel editWebRequestRequestModel);
 
-    bool AddSongToDrive(int songId);
+    Task<bool> AddSongToDrive(int songId);
 
     Task<bool> OpenPlaylist();
     Task<bool> ClosePlaylist();

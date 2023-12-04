@@ -130,6 +130,21 @@ public class UsersRepository : BaseRepository<User>
 
     #endregion
 
+    #region Playlist
+    
+    public async Task<bool> IsUserInChat(string username)
+    {
+        var user = await GetByIdOrNullAsync(username);
+
+        if (user == null) return false;
+
+        var tmiReportedInChat = user.TimeLastInChat.AddMinutes(2) >= DateTime.UtcNow;
+
+        return tmiReportedInChat;
+    }
+
+    #endregion
+
     #region StreamLabs
 
     public async Task UpdateUsersDonations(List<StreamLabsDonation> groupedDonations)
