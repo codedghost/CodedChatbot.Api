@@ -1,8 +1,6 @@
 ﻿using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Playlist;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Vip;
 using CoreCodedChatbot.ApiApplication.Queries.Playlist;
-using CoreCodedChatbot.ApiApplication.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Queries.Vip;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,11 +22,6 @@ public static class QueryPackage
         services.AddSingleton<IGetUsersFormattedRequestsQuery, GetUsersFormattedRequestsQuery>();
         services.AddSingleton<IGetUsersRequestAtPlaylistIndexQuery, GetUsersRequestAtPlaylistIndexQuery>();
         services.AddSingleton<IIsSuperVipInQueueQuery, IsSuperVipInQueueQuery>();
-
-        // Search
-        services.AddSingleton<IGetPriorityChartFromSearchResultsQuery, GetPriorityChartFromSearchResultsQuery>();
-        services.AddSingleton<IGetSongBySearchIdQuery, GetSongBySearchIdQuery>();
-        services.AddSingleton<IGetSongsFromSearchResultsQuery, GetSongsFromSearchResultsQuery>();
 
         // Vip
         services.AddSingleton<ICheckUserHasVipsQuery, CheckUserHasVipsQuery>();

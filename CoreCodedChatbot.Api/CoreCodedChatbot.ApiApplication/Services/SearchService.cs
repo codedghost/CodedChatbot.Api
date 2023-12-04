@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
+using CoreCodedChatbot.ApiApplication.Models.Intermediates;
 using CoreCodedChatbot.ApiApplication.Repositories.Search;
 using CoreCodedChatbot.ApiContract.RequestModels.Search;
 using CoreCodedChatbot.ApiContract.ResponseModels.Playlist.ChildModels;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
 using CoreCodedChatbot.Database.Context.Interfaces;
+using CoreCodedChatbot.Database.Context.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -39,9 +41,14 @@ public class SearchService : IBaseService, ISearchService
     {
         try
         {
-            using (var repository = new SaveSearchSynonymRequestRepository(_chatbotContextFactory))
+            using (var repo = new SearchSynonymRequestsRepository(_chatbotContextFactory))
             {
-                await repository.Save(request.SearchSynonymRequest, request.Username);
+                await repo.CreateAndSaveAsync(
+                    new SearchSynonymRequest
+                    {
+                        SynonymRequest = request.SearchSynonymRequest,
+                        Username = request.Username
+                    });
             }
 
             return true;
@@ -55,9 +62,13 @@ public class SearchService : IBaseService, ISearchService
 
     public async Task DownloadSongToOneDrive(int requestSongId)
     {
-        var song = await _getSongBySearchIdQuery.Get(requestSongId).ConfigureAwait(false);
+        SongSearchIntermediate songRequest;
+        using (var repo = new SongsRepository(_chatbotContextFactory))
+        {
+            songRequest = await repo.GetSongBySearchId(requestSongId).ConfigureAwait(false);
+        }
 
-        await _downloadChartService.Download(song.DownloadUrl, song.SongId).ConfigureAwait(false);
+        await _downloadChartService.Download(songRequest.DownloadUrl, songRequest.SongId).ConfigureAwait(false);
     }
 
     public async Task<int> FindChartAndDownload(string requestText)

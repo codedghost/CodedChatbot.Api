@@ -5,7 +5,9 @@ using CoreCodedChatbot.ApiApplication.Extensions;
 using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
+using CoreCodedChatbot.ApiApplication.Repositories.Search;
 using CoreCodedChatbot.ApiContract.ResponseModels.Search.ChildModels;
+using CoreCodedChatbot.Database.Context.Interfaces;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 
@@ -15,17 +17,17 @@ public class SolrService : IBaseService, ISolrService
 {
     private readonly ISolrOperations<SongSearch> _songSearchOperations;
     private readonly IGetSongsFromSearchResultsQuery _getSongsFromSearchResultsQuery;
-    private readonly IGetPriorityChartFromSearchResultsQuery _getPriorityChartFromSearchResultsQuery;
+    private readonly IChatbotContextFactory _chatbotContextFactory;
 
     public SolrService(
         ISolrOperations<SongSearch> songSearchOperations,
         IGetSongsFromSearchResultsQuery getSongsFromSearchResultsQuery,
-        IGetPriorityChartFromSearchResultsQuery getPriorityChartFromSearchResultsQuery
+        IChatbotContextFactory chatbotContextFactory
     )
     {
         _songSearchOperations = songSearchOperations;
         _getSongsFromSearchResultsQuery = getSongsFromSearchResultsQuery;
-        _getPriorityChartFromSearchResultsQuery = getPriorityChartFromSearchResultsQuery;
+        _chatbotContextFactory = chatbotContextFactory;
     }
 
     public async Task<List<BasicSongSearchResult>> Search(string input)
@@ -55,9 +57,10 @@ public class SolrService : IBaseService, ISolrService
 
         var resultList = result.ToList();
 
-        var basicSongSearchResults = await _getSongsFromSearchResultsQuery.Get(resultList).ConfigureAwait(false);
-
-        return basicSongSearchResults;
+        using (var repo = new SongsRepository(_chatbotContextFactory))
+        {
+            return await repo.GetSongsFromSearchResults(resultList).ConfigureAwait(false);
+        }
     }
 
     private async Task<List<SongSearch>> Search(string artist, string songName)
@@ -122,9 +125,10 @@ public class SolrService : IBaseService, ISolrService
     {
         var solrResult = await SolrSearchWithFallback(artist, songName).ConfigureAwait(false);
 
-        var getBasicSongSearchResults = await _getSongsFromSearchResultsQuery.Get(solrResult).ConfigureAwait(false);
-
-        return getBasicSongSearchResults;
+        using (var repo = new SongsRepository(_chatbotContextFactory))
+        {
+            return await repo.GetSongsFromSearchResults(solrResult).ConfigureAwait(false);
+        }
     }
 
     private async Task<List<SongSearch>> SolrSearchWithFallback(string artist, string songName)
@@ -142,18 +146,27 @@ public class SolrService : IBaseService, ISolrService
     public async Task<BasicSongSearchResult> SearchSingleWithFallback(string artist, string songName)
     {
         var exact = true;
-        var solrResult = await SearchExact(artist, songName).ConfigureAwait(false);
+        var solrResults = await SearchExact(artist, songName).ConfigureAwait(false);
 
-        if (!solrResult.Any())
+        if (!solrResults.Any())
         {
             exact = false;
-            solrResult = await Search(artist, songName).ConfigureAwait(false);
+            solrResults = await Search(artist, songName).ConfigureAwait(false);
         }
 
-        if (!solrResult.Any()) return null;
-        var priorityChart = await _getPriorityChartFromSearchResultsQuery.Get(solrResult, exact).ConfigureAwait(false);
+        if (!solrResults.Any()) return null;
 
-        return priorityChart;
+        using (var repo = new SongsRepository(_chatbotContextFactory))
+        {
+            var priorityChart = await repo.GetPriorityChartFromSearchResults(exact
+                ? solrResults
+                : new List<SongSearch>
+                {
+                    solrResults.First()
+                }).ConfigureAwait(false);
+
+            return priorityChart;
+        }
     }
 
     private static List<string>? GetStringSearchTerms(string searchTerm)
