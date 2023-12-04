@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Extensions;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.Search;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Models.Solr;
 using CoreCodedChatbot.ApiApplication.Repositories.Search;
@@ -16,17 +15,14 @@ namespace CoreCodedChatbot.ApiApplication.Services;
 public class SolrService : IBaseService, ISolrService
 {
     private readonly ISolrOperations<SongSearch> _songSearchOperations;
-    private readonly IGetSongsFromSearchResultsQuery _getSongsFromSearchResultsQuery;
     private readonly IChatbotContextFactory _chatbotContextFactory;
 
     public SolrService(
         ISolrOperations<SongSearch> songSearchOperations,
-        IGetSongsFromSearchResultsQuery getSongsFromSearchResultsQuery,
         IChatbotContextFactory chatbotContextFactory
     )
     {
         _songSearchOperations = songSearchOperations;
-        _getSongsFromSearchResultsQuery = getSongsFromSearchResultsQuery;
         _chatbotContextFactory = chatbotContextFactory;
     }
 
