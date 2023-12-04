@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Extensions;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.AzureDevOps;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.DevOps;
 using CoreCodedChatbot.ApiContract.ResponseModels.DevOps;
@@ -19,26 +18,14 @@ namespace CoreCodedChatbot.Api.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class DevOpsController : Controller
 {
-    private readonly IGetAllCurrentWorkItemsQuery _getAllCurrentWorkItemsQuery;
-    private readonly IGetAllBacklogWorkItemsQuery _getAllBacklogWorkItemsQuery;
-    private readonly IGetWorkItemByIdQuery _getWorkItemByIdQuery;
-    private readonly IRaiseBugQuery _raiseBugQuery;
     private readonly IAzureDevOpsService _azureDevOpsService;
     private readonly ILogger<DevOpsController> _logger;
 
     public DevOpsController(
-        IGetAllCurrentWorkItemsQuery getAllCurrentWorkItemsQuery,
-        IGetAllBacklogWorkItemsQuery getAllBacklogWorkItemsQuery,
-        IGetWorkItemByIdQuery getWorkItemByIdQuery,
-        IRaiseBugQuery raiseBugQuery,
         IAzureDevOpsService azureDevOpsService,
         ILogger<DevOpsController> logger
     )
     {
-        _getAllCurrentWorkItemsQuery = getAllCurrentWorkItemsQuery;
-        _getAllBacklogWorkItemsQuery = getAllBacklogWorkItemsQuery;
-        _getWorkItemByIdQuery = getWorkItemByIdQuery;
-        _raiseBugQuery = raiseBugQuery;
         _azureDevOpsService = azureDevOpsService;
 
         _logger = logger;
@@ -128,7 +115,7 @@ public class DevOpsController : Controller
     }
 
     [HttpPost]
-    public IActionResult PracticeSongRequest([FromBody] PracticeSongRequest request)
+    public async Task<IActionResult> PracticeSongRequest([FromBody] PracticeSongRequest request)
     {
         if (request == null ||
             string.IsNullOrWhiteSpace(request.SongName) ||
@@ -142,7 +129,7 @@ public class DevOpsController : Controller
 
         try
         {
-            _azureDevOpsService.RaisePracticeSongRequest(request.Username, new DevOpsProductBacklogItem
+            await _azureDevOpsService.RaisePracticeSongRequest(request.Username, new DevOpsProductBacklogItem
             {
                 Title = request.SongName,
                 Description = request.ExtraInformation,

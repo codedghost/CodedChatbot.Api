@@ -190,11 +190,11 @@ public class VipController : Controller
     }
 
     [HttpPost]
-    public IActionResult UpdateBitsDropped([FromBody] UpdateTotalBitsDroppedRequest request)
+    public async Task<IActionResult> UpdateBitsDropped([FromBody] UpdateTotalBitsDroppedRequest request)
     {
         try
         {
-            _vipService.UpdateTotalBits(request.Username, request.TotalBitsDropped);
+            await _vipService.UpdateTotalBits(request.Username, request.TotalBitsDropped);
 
             return Ok();
         }
@@ -267,11 +267,11 @@ public class VipController : Controller
     }
 
     [HttpPost]
-    public IActionResult GiveGiftSubBytes([FromBody]GiveGiftSubBytesRequest request)
+    public async Task<IActionResult> GiveGiftSubBytes([FromBody]GiveGiftSubBytesRequest request)
     {
         try
         {
-            _vipService.GiveGiftSubBytes(request.Username);
+            await _vipService.GiveGiftSubBytes(request.Username);
         }
         catch (Exception e)
         {

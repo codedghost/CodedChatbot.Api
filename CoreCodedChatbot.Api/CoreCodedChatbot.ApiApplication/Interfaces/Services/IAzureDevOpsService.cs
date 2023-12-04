@@ -12,6 +12,6 @@ public interface IAzureDevOpsService
     Task<List<WorkItem>> GetChildWorkItemsByPbi(WorkItem pbi);
     Task<bool> RaiseBugInBacklog(string twitchUsername, DevOpsBug bugInfo);
     Task<List<WorkItem>> GetBacklogWorkItems();
-    void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest);
+    Task RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest);
     //Task<string> GetCurrentSprintBurndownChart();
 }

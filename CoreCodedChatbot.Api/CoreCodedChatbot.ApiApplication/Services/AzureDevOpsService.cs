@@ -147,7 +147,7 @@ public class AzureDevOpsService : IBaseService, IAzureDevOpsService
         }
     }
 
-    public async void RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest)
+    public async Task RaisePracticeSongRequest(string twitchUsername, DevOpsProductBacklogItem songRequest)
     {
         var jsonPatchDocument = BuildJsonDocForWorkItem(twitchUsername, songRequest);
 

@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CodedChatbot.MerchContract;
 using CodedGhost.RabbitMQTools.Interfaces;
-using CodedGhost.RabbitMQTools.Models;
 using CoreCodedChatbot.Config;
 using CoreCodedChatbot.Secrets;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using PrintfulLib.Converters;
 using PrintfulLib.Interfaces.ExternalClients;
-using PrintfulLib.Models.ApiRequest;
 using PrintfulLib.Models.WebhookResponses;
 
 namespace CoreCodedChatbot.Api.Controllers;

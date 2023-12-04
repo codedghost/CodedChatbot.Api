@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CoreCodedChatbot.ApiApplication.Interfaces.Commands.StreamStatus;
-using CoreCodedChatbot.ApiApplication.Interfaces.Queries.StreamStatus;
 using CoreCodedChatbot.ApiApplication.Repositories.StreamStatuses;
 using CoreCodedChatbot.ApiContract.RequestModels.StreamStatus;
 using CoreCodedChatbot.ApiContract.ResponseModels.StreamStatus;

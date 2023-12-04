@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.CustomChatCommands;
 using CoreCodedChatbot.ApiContract.ResponseModels.CustomChatCommands;
@@ -25,11 +26,11 @@ public class CustomChatCommandsController : Controller
     }
 
     [HttpGet]
-    public IActionResult GetCommandText(string keyword)
+    public async Task<IActionResult> GetCommandText(string keyword)
     {
         try
         {
-            var commandText = _chatCommandService.GetCommandText(keyword);
+            var commandText = await _chatCommandService.GetCommandText(keyword);
 
             return new JsonResult(new GetCommandTextResponse
             {
@@ -45,11 +46,11 @@ public class CustomChatCommandsController : Controller
     }
 
     [HttpGet]
-    public IActionResult GetCommandHelpText(string keyword)
+    public async Task<IActionResult> GetCommandHelpText(string keyword)
     {
         try
         {
-            var helpText = _chatCommandService.GetCommandHelpText(keyword);
+            var helpText = await _chatCommandService.GetCommandHelpText(keyword);
 
             return new JsonResult(new GetCommandHelpTextResponse
             {
@@ -65,11 +66,11 @@ public class CustomChatCommandsController : Controller
     }
 
     [HttpPost]
-    public IActionResult AddCommand([FromBody] AddCommandRequest request)
+    public async Task<IActionResult> AddCommand([FromBody] AddCommandRequest request)
     {
         try
         {
-            _chatCommandService.AddCommand(request.Aliases, request.InformationText, request.HelpText,
+            await _chatCommandService.AddCommand(request.Aliases, request.InformationText, request.HelpText,
                 request.Username);
 
             return Ok();

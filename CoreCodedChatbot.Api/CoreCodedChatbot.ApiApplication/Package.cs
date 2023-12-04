@@ -84,7 +84,7 @@ public static class Package
         services.AddSingleton<ISearchService, SearchService>();
         services.AddSingleton<ISettingsService, SettingsService>();
         services.AddSingleton<ISignalRService, SignalRService>();
-        services.AddSingleton<ISolrService, SolrService>();
+        services.AddTransient<ISolrService, SolrService>();
         services.AddSingleton<IStreamLabsService, StreamLabsService>();
         services.AddSingleton<IVipService, VipService>();
         services.AddSingleton<IWatchTimeService, WatchTimeService>();

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Azure.Core;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Counters;
 using CoreCodedChatbot.ApiContract.ResponseModels.Counters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Framework;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
 
 namespace CoreCodedChatbot.Api.Controllers;
 

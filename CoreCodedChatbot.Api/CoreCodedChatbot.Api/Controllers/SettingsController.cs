@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,11 +20,11 @@ public class SettingsController : Controller
     }
 
     [HttpPost]
-    public IActionResult Update([FromBody] UpdateSettingsRequest request)
+    public async Task<IActionResult> Update([FromBody] UpdateSettingsRequest request)
     {
         try
         {
-            _settingsService.Update(request.Key, request.Value);
+            await _settingsService.Update(request.Key, request.Value);
 
             return Ok();
         }

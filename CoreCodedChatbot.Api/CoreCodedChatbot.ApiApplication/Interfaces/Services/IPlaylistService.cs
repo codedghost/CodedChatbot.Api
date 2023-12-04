@@ -16,7 +16,7 @@ public interface IPlaylistService
     PlaylistState GetPlaylistState();
     Task<PromoteSongResponse> PromoteRequest(string username, int songId, bool useSuperVip);
     void UpdateFullPlaylist(bool updateCurrent = false);
-    void ArchiveCurrentRequest(int songId = 0);
+    Task ArchiveCurrentRequest(int songId = 0);
     string GetUserRequests(string username);
     GetAllSongsResponse GetAllSongs();
     Task ClearRockRequests();

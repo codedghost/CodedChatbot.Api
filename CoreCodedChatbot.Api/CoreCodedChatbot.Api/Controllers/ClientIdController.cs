@@ -24,11 +24,11 @@ public class ClientIdController : Controller
     }
 
     [HttpPost]
-    public IActionResult ClientId([FromBody] SetClientIdRequestModel request)
+    public async Task<IActionResult> ClientId([FromBody] SetClientIdRequestModel request)
     {
         try
         {
-            _clientIdService.SaveClientId(request.HubType, request.ClientId, request.Username);
+            await _clientIdService.SaveClientId(request.HubType, request.ClientId, request.Username);
         }
         catch (Exception e)
         {
@@ -39,11 +39,11 @@ public class ClientIdController : Controller
     }
 
     [HttpDelete]
-    public IActionResult ClientId([FromQuery]string hubType, [FromQuery]string clientId)
+    public async Task<IActionResult> ClientId([FromQuery]string hubType, [FromQuery]string clientId)
     {
         try
         {
-            _clientIdService.RemoveClientId(hubType, clientId);
+            await _clientIdService.RemoveClientId(hubType, clientId);
         }
         catch (Exception e)
         {

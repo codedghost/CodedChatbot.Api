@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using AutoFixture.Kernel;
-using Microsoft.VisualStudio.Services.WebApi;
 
 namespace CoreCodedChatbot.ApiTests.TestExtensions;
 

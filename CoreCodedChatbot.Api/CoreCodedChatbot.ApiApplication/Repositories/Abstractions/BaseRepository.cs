@@ -15,7 +15,7 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
     {
         Context = chatbotContextFactory.Create();
 
-        if (typeof(TDbEntity).GetInterfaces().All(i => i.IsAssignableTo(typeof(IEntity))))
+        if (typeof(TDbEntity).GetInterfaces().All(i => !i.IsAssignableTo(typeof(IEntity))))
         {
             throw new ArgumentException(
                 $"Given TDbSet Type: {nameof(TDbEntity)} does not implement the required IEntity interface");

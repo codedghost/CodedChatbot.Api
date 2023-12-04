@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiContract.RequestModels.GuessingGame;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -52,9 +53,9 @@ public class GuessingGameController : Controller
     }
 
     [HttpPost]
-    public IActionResult FinishGuessingGame([FromBody] decimal finalPercentage)
+    public async Task<IActionResult> FinishGuessingGame([FromBody] decimal finalPercentage)
     {
-        if (_guessingGameService.SetPercentageAndFinishGame(finalPercentage))
+        if (await _guessingGameService.SetPercentageAndFinishGame(finalPercentage))
         {
             return Ok();
         }
@@ -63,20 +64,20 @@ public class GuessingGameController : Controller
     }
 
     [HttpPost]
-    public IActionResult SubmitGuess([FromBody] SubmitGuessRequest submitGuessModel)
+    public async Task<IActionResult> SubmitGuess([FromBody] SubmitGuessRequest submitGuessModel)
     {
-        if (_guessingGameService.SubmitOrUpdateGuess(submitGuessModel.Username, submitGuessModel.Guess))
+        if (await _guessingGameService.SubmitOrUpdateGuess(submitGuessModel.Username, submitGuessModel.Guess))
             return Ok();
 
         return BadRequest();
     }
 
     [HttpGet]
-    public IActionResult InitialiseGuessingGame()
+    public async Task<IActionResult> InitialiseGuessingGame()
     {
         try
         {
-            _guessingGameService.SetGuessingGameState(false);
+            await _guessingGameService.SetGuessingGameState(false);
 
             return Ok();
         }

@@ -164,14 +164,14 @@ public class PlaylistService : IBaseService, IPlaylistService
         return result.PromoteRequestResult;
     }
 
-    public void ArchiveCurrentRequest(int songId = 0)
+    public async Task ArchiveCurrentRequest(int songId = 0)
     {
         var currentRequest = songId == 0 ? _currentRequest :
             songId == _currentRequest?.songRequestId ? _currentRequest : null;
 
         if (currentRequest == null) return;
 
-        ArchiveRequest(currentRequest.songRequestId, false);
+        await ArchiveRequest(currentRequest.songRequestId, false);
 
         UpdateFullPlaylist(true);
     }

@@ -30,9 +30,9 @@ public class SearchController : Controller
     }
 
     [HttpPost]
-    public IActionResult SaveSearchSynonymRequest([FromBody] SaveSearchSynonymRequest request)
+    public async Task<IActionResult> SaveSearchSynonymRequest([FromBody] SaveSearchSynonymRequest request)
     {
-        if (_searchService.SaveSearchSynonymRequest(request))
+        if (await _searchService.SaveSearchSynonymRequest(request))
         {
             return Ok();
         }

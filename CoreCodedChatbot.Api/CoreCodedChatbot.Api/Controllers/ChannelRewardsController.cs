@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.ChannelRewards;
 using CoreCodedChatbot.ApiContract.ResponseModels.ChannelRewards;
@@ -26,11 +27,11 @@ public class ChannelRewardsController : Controller
     }
 
     [HttpPost]
-    public IActionResult CreateOrUpdate([FromBody] CreateOrUpdateChannelRewardRequest request)
+    public async Task<IActionResult> CreateOrUpdate([FromBody] CreateOrUpdateChannelRewardRequest request)
     {
         try
         {
-            _channelRewardsService.CreateOrUpdate(request.ChannelRewardId, request.RewardTitle,
+            await _channelRewardsService.CreateOrUpdate(request.ChannelRewardId, request.RewardTitle,
                 request.RewardDescription);
 
             return Ok();
@@ -43,11 +44,11 @@ public class ChannelRewardsController : Controller
     }
 
     [HttpPost]
-    public IActionResult StoreRedemption([FromBody] StoreRewardRedemptionRequest request)
+    public async Task<IActionResult> StoreRedemption([FromBody] StoreRewardRedemptionRequest request)
     {
         try
         {
-            var result = _channelRewardsService.Store(request.ChannelRewardId, request.RedeemedBy, Guid.Empty);
+            var result = await _channelRewardsService.Store(request.ChannelRewardId, request.RedeemedBy, Guid.Empty);
 
             return Ok(new StoreRedemptionResponse
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiContract.RequestModels.Moderation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,7 +25,7 @@ public class ModerationController : Controller
     }
 
     [HttpPost]
-    public IActionResult TransferUserAccount([FromBody]TransferUserAccountRequest request)
+    public async Task<IActionResult> TransferUserAccount([FromBody]TransferUserAccountRequest request)
     { 
         try
         {
@@ -34,7 +35,7 @@ public class ModerationController : Controller
                 return BadRequest();
             }
 
-            _moderationService.TransferUserAccount(request.RequestingModerator, request.OldUsername,
+            await _moderationService.TransferUserAccount(request.RequestingModerator, request.OldUsername,
                 request.NewUsername);
 
             return Ok();

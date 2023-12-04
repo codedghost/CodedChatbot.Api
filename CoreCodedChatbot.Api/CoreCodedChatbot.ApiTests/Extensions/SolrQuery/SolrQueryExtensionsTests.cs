@@ -1,5 +1,4 @@
-﻿using AutoFixture.NUnit3;
-using CoreCodedChatbot.ApiApplication.Extensions;
+﻿using CoreCodedChatbot.ApiApplication.Extensions;
 using NUnit.Framework;
 
 namespace CoreCodedChatbot.ApiTests.Extensions.SolrQuery;

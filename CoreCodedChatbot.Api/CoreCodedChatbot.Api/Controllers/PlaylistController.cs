@@ -93,11 +93,11 @@ public class PlaylistController : Controller
         return Json(_playlistService.GetPlaylistState());
     }
 
-    public IActionResult ArchiveCurrentRequest()
+    public async Task<IActionResult> ArchiveCurrentRequest()
     {
         try
         {
-            _playlistService.ArchiveCurrentRequest();
+            await _playlistService.ArchiveCurrentRequest();
             return Ok();
         }
         catch (Exception)
@@ -230,11 +230,11 @@ public class PlaylistController : Controller
     }
 
     [HttpGet]
-    public IActionResult ClearRequests()
+    public async Task<IActionResult> ClearRequests()
     {
         try
         {
-            _playlistService.ClearRockRequests();
+            await _playlistService.ClearRockRequests();
             return Ok();
         }
         catch (Exception e)
@@ -260,11 +260,11 @@ public class PlaylistController : Controller
     }
 
     [HttpGet]
-    public IActionResult GetRequestById(int songId)
+    public async Task<IActionResult> GetRequestById(int songId)
     {
         try
         {
-            var request = _playlistService.GetRequestById(songId);
+            var request = await _playlistService.GetRequestById(songId);
 
             var responseModel = new GetRequestByIdResponse
             {
@@ -297,11 +297,11 @@ public class PlaylistController : Controller
     }
 
     [HttpDelete]
-    public IActionResult ArchiveCurrentRequest(int songId)
+    public async Task<IActionResult> ArchiveCurrentRequest(int songId)
     {
         try
         {
-            _playlistService.ArchiveCurrentRequest(songId);
+            await _playlistService.ArchiveCurrentRequest(songId);
 
             return new JsonResult(true);
         }
@@ -356,11 +356,11 @@ public class PlaylistController : Controller
     }
 
     [HttpPost]
-    public IActionResult AddRequestToDrive([FromBody] AddSongToDriveRequest addSongToDriveRequest)
+    public async Task<IActionResult> AddRequestToDrive([FromBody] AddSongToDriveRequest addSongToDriveRequest)
     {
         try
         {
-            var result = _playlistService.AddSongToDrive(addSongToDriveRequest.SongRequestId);
+            var result = await _playlistService.AddSongToDrive(addSongToDriveRequest.SongRequestId);
 
             if (result) return Ok();
         }
