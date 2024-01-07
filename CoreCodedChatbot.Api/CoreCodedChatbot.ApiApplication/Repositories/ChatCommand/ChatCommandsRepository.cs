@@ -37,6 +37,7 @@ public class ChatCommandsRepository : BaseRepository<InfoCommand>
         });
 
         Context.InfoCommandKeywords.AddRange(infoCommandKeywords);
+
         await Context.SaveChangesAsync();
     }
 

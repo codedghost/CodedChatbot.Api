@@ -33,7 +33,7 @@ public class CounterService : IBaseService, ICounterService
 
         using (var repo = new CountersRepository(_chatbotContextFactory))
         {
-            await repo.CreateAsync(newEntity);
+            await repo.CreateAndSaveAsync(newEntity);
         }
     }
 

@@ -45,7 +45,7 @@ public class QuoteService : IBaseService, IQuoteService
 
         using (var repo = new QuotesRepository(_chatbotContextFactory))
         {
-            await repo.CreateAsync(newEntity);
+            await repo.CreateAndSaveAsync(newEntity);
         }
 
         return newEntity.QuoteId;

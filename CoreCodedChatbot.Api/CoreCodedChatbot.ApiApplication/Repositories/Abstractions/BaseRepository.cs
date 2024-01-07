@@ -79,6 +79,11 @@ public abstract class BaseRepository<TDbEntity> : IBaseRepository<TDbEntity> whe
         await Context.Set<TDbEntity>().AddAsync(entity);
     }
 
+    public async Task CreateRangeAsync(IEnumerable<TDbEntity> entities)
+    {
+        await Context.Set<TDbEntity>().AddRangeAsync(entities);
+    }
+
     public async Task CreateAndSaveAsync(TDbEntity entity)
     {
         await CreateAsync(entity);
