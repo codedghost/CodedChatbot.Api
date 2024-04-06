@@ -103,7 +103,7 @@ public class CounterController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Reset(ResetCounterRequest request)
+    public async Task<IActionResult> Reset([FromBody] ResetCounterRequest request)
     {
         try
         {
@@ -119,7 +119,7 @@ public class CounterController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateSuffix(UpdateCounterSuffixRequest request)
+    public async Task<IActionResult> UpdateSuffix([FromBody] UpdateCounterSuffixRequest request)
     {
         try
         {
