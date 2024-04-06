@@ -101,4 +101,36 @@ public class CounterController : Controller
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Reset(ResetCounterRequest request)
+    {
+        try
+        {
+            await _counterService.ResetCounter(request.CounterName);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.Log(LogLevel.Error, e, $"Error when Resetting Counter: {request.CounterName}");
+            return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateSuffix(UpdateCounterSuffixRequest request)
+    {
+        try
+        {
+            await _counterService.UpdateCounterSuffix(request.CounterName, request.CounterSuffix);
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.Log(LogLevel.Error, e, $"Error when Resetting Counter Suffix: {request.CounterName}");
+            return BadRequest();
+        }
+    }
 }

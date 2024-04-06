@@ -10,4 +10,6 @@ public interface ICounterService
     Task<Counter> GetCounter(string counterName);
     Task<List<Counter>> GetCounters(int? page, int? pageSize, string? orderByColumnName, bool? desc, string? filterByColumn, object? filterValue);
     Task<Counter> UpdateCounter(string counterName);
+    Task ResetCounter(string counterName);
+    Task UpdateCounterSuffix(string counterName, string counterSuffix);
 }

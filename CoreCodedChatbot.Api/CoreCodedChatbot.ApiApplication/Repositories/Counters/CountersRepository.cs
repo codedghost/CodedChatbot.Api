@@ -31,4 +31,20 @@ public class CountersRepository : BaseRepository<Counter>
 
         return counter;
     }
+
+    public async Task ResetCounter(string counterName)
+    {
+        var counter = await GetByIdAsync(counterName);
+
+        counter.CounterValue = 0;
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task UpdateCounterSuffix(string counterName, string newSuffix)
+    {
+        var counter = await GetByIdAsync(counterName);
+
+        counter.CounterSuffix = newSuffix;
+        await Context.SaveChangesAsync();
+    }
 }

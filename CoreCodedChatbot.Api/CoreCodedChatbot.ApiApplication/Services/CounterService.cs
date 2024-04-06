@@ -9,7 +9,7 @@ using ApiCounter = CoreCodedChatbot.ApiContract.ResponseModels.Counters.ChildMod
 
 namespace CoreCodedChatbot.ApiApplication.Services;
 
-public class CounterService : IBaseService, ICounterService
+public class CounterService : ICounterService, IBaseService
 {
     private readonly IChatbotContextFactory _chatbotContextFactory;
     private readonly IMapper _mapper;
@@ -65,6 +65,22 @@ public class CounterService : IBaseService, ICounterService
             var counter = await repo.UpdateCounter(counterName);
 
             return _mapper.Map<ApiCounter>(counter);
+        }
+    }
+
+    public async Task ResetCounter(string counterName)
+    {
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            await repo.ResetCounter(counterName);
+        }
+    }
+
+    public async Task UpdateCounterSuffix(string counterName, string counterSuffix)
+    {
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            await repo.UpdateCounterSuffix(counterName, counterSuffix);
         }
     }
 }
