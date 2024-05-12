@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CoreCodedChatbot.ApiApplication.Interfaces.Services;
 using CoreCodedChatbot.ApiApplication.Repositories.Counters;
+using CoreCodedChatbot.ApiContract.ResponseModels.Counters;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
 using ApiCounter = CoreCodedChatbot.ApiContract.ResponseModels.Counters.ChildModels.Counter;
@@ -81,6 +82,20 @@ public class CounterService : ICounterService, IBaseService
         using (var repo = new CountersRepository(_chatbotContextFactory))
         {
             await repo.UpdateCounterSuffix(counterName, counterSuffix);
+        }
+    }
+
+    public async Task<ArchiveCounterResponse> ArchiveCounter(string counterName)
+    {
+        using (var repo = new CountersRepository(_chatbotContextFactory))
+        {
+            var archivedCounter = await repo.ArchiveCounter(counterName);
+
+            return new ArchiveCounterResponse
+            {
+                CounterName = archivedCounter.CounterName,
+                CounterValue = archivedCounter.CounterValue
+            };
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CoreCodedChatbot.ApiContract.ResponseModels.Counters;
 using CoreCodedChatbot.ApiContract.ResponseModels.Counters.ChildModels;
 
 namespace CoreCodedChatbot.ApiApplication.Interfaces.Services;
@@ -12,4 +13,5 @@ public interface ICounterService
     Task<Counter> UpdateCounter(string counterName);
     Task ResetCounter(string counterName);
     Task UpdateCounterSuffix(string counterName, string counterSuffix);
+    Task<ArchiveCounterResponse> ArchiveCounter(string counterName);
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
@@ -21,10 +22,13 @@ public class CountersRepository : BaseRepository<Counter>
             {
                 CounterName = counterName,
                 CounterSuffix = "Oofs",
-                CounterValue = 0
+                CounterValue = 0,
+                Archived = false
             };
             await CreateAsync(counter);
         }
+
+        CheckCounterArchived(counter);
 
         counter.CounterValue++;
         await Context.SaveChangesAsync();
@@ -36,6 +40,8 @@ public class CountersRepository : BaseRepository<Counter>
     {
         var counter = await GetByIdAsync(counterName);
 
+        CheckCounterArchived(counter);
+
         counter.CounterValue = 0;
         await Context.SaveChangesAsync();
     }
@@ -44,7 +50,27 @@ public class CountersRepository : BaseRepository<Counter>
     {
         var counter = await GetByIdAsync(counterName);
 
+        CheckCounterArchived(counter);
+
         counter.CounterSuffix = newSuffix;
         await Context.SaveChangesAsync();
+    }
+
+    public async Task<Counter> ArchiveCounter(string counterName)
+    {
+        var counter = await GetByIdAsync(counterName);
+
+        counter.Archived = true;
+        await Context.SaveChangesAsync();
+
+        return counter;
+    }
+
+    private void CheckCounterArchived(Counter counter)
+    {
+        if (counter.Archived)
+        {
+            throw new Exception($"{counter.CounterName} could not be updated as it is archived");
+        }
     }
 }

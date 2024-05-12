@@ -133,4 +133,20 @@ public class CounterController : Controller
             return BadRequest();
         }
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Archive([FromBody] ArchiveCounterRequest request)
+    {
+        try
+        {
+            var response = await _counterService.ArchiveCounter(request.CounterName);
+
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            _logger.Log(LogLevel.Error, e, $"Error when Archiving Counter: {request.CounterName}");
+            return BadRequest();
+        }
+    }
 }
