@@ -87,6 +87,7 @@ public static class Package
         services.AddTransient<ISolrService, SolrService>();
         services.AddSingleton<IStreamLabsService, StreamLabsService>();
         services.AddSingleton<IVipService, VipService>();
+        services.AddSingleton<IYlylService, YlylService>();
         services.AddSingleton<IWatchTimeService, WatchTimeService>();
 
         return services;

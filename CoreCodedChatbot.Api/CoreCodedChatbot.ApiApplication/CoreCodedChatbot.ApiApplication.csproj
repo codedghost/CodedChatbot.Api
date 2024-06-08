@@ -13,8 +13,8 @@
     <PackageReference Include="CodedChatbot.TwitchFactories" Version="1.0.1188" />
     <PackageReference Include="CodedGhost.AzureServiceBus" Version="1.0.1189" />
     <PackageReference Include="CodedGhost.Config" Version="1.0.1191" />
-    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1267" />
-    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1268" />
+    <PackageReference Include="CoreCodedChatbot.ApiContract" Version="1.0.1278" />
+    <PackageReference Include="CoreCodedChatbot.Database" Version="1.0.1277" />
     <PackageReference Include="CoreCodedChatbot.Secrets" Version="1.0.1067" />
     <PackageReference Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Folder Include="Models\Intermediates\MapperProfiles\" />
     <Folder Include="Repositories\Abstractions\" />
+    <Folder Include="Repositories\Ylyl\" />
     <Folder Include="Repositories\Users\" />
   </ItemGroup>
 
