@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreCodedChatbot.ApiApplication.Services
 {
-    public class YlylService : IYlylService
+    public class YlylService : IBaseService, IYlylService
     {
         private readonly IChatbotContextFactory _chatbotContextFactory;
         private readonly ILogger<YlylService> _logger;
