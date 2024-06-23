@@ -56,6 +56,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
                     currentSessionId.Value,
                     request.ChannelId,
                     request.MessageId,
+                    request.UserId,
                     request.TotalImages,
                     request.TotalVideos);
             }

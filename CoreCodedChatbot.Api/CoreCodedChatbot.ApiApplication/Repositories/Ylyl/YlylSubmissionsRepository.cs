@@ -19,6 +19,7 @@ public class YlylSubmissionsRepository : BaseRepository<YlylSubmission>
         int currentSessionId,
         ulong channelId,
         ulong messageId,
+        ulong userId,
         int totalImages,
         int totalVideos)
     {
@@ -26,6 +27,7 @@ public class YlylSubmissionsRepository : BaseRepository<YlylSubmission>
         {
             SessionId = currentSessionId,
             ChannelId = channelId,
+            UserId = userId,
             MessageId = messageId,
             TotalImages = totalImages,
             TotalVideos = totalVideos,
