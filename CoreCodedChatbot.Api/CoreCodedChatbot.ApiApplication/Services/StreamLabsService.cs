@@ -119,7 +119,7 @@ public class StreamLabsService : IBaseService, IStreamLabsService
                     var bitsToVip = _configService.Get<double>("BitsToVip");
                     var donationAmountToVip = _configService.Get<double>("DonationAmountToVip");
 
-                    repo.UpdateDonationVips(user, bitsToVip, donationAmountToVip);
+                    await repo.UpdateDonationVips(user, bitsToVip, donationAmountToVip);
                 }
             }
         }

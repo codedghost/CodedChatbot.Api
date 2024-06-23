@@ -61,6 +61,20 @@ namespace CoreCodedChatbot.ApiApplication.Services
             }
         }
 
+        public async Task<YlylGetSubmissionsResponse> GetSubmissions(YlylGetSubmissionsRequest request)
+        {
+            using (var repo = new YlylSessionsRepository(_chatbotContextFactory))
+            {
+                var submissions = repo.GetUsersCurrentSessionSubmissions(request.ChannelId);
+
+                return new YlylGetSubmissionsResponse
+                {
+                    TotalImages = submissions.TotalImages,
+                    TotalVideos = submissions.TotalVideos
+                };
+            }
+        }
+
         private async Task<YlylSessionResponse> OpenSession()
         {
             try
@@ -96,7 +110,7 @@ namespace CoreCodedChatbot.ApiApplication.Services
             {
                 using (var repo = new YlylSessionsRepository(_chatbotContextFactory))
                 {
-                    var currentSessionEstimatedEntries = repo.GetCurrentSessionSubmissionTypes();
+                    var currentSessionEstimatedEntries = repo.GetCurrentSessionSubmissions();
 
                     await repo.CloseSessionsAsync();
 
@@ -124,6 +138,5 @@ namespace CoreCodedChatbot.ApiApplication.Services
                 };
             }
         }
-
     }
 }

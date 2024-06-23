@@ -56,7 +56,7 @@ public class YlylSessionsRepository : BaseRepository<YlylSession>
         return currentSession?.SessionId;
     }
 
-    public YlylSessionTotalSubmissionTypes? GetCurrentSessionSubmissionTypes()
+    public YlylSessionTotalSubmissions? GetCurrentSessionSubmissions()
     {
         var currentSession = GetAll()
             .Include(y => y.YlylSubmissions)
@@ -67,10 +67,32 @@ public class YlylSessionsRepository : BaseRepository<YlylSession>
             return null;
         }
 
-        return new YlylSessionTotalSubmissionTypes
+        return new YlylSessionTotalSubmissions
         {
             TotalImages = currentSession.YlylSubmissions.Sum(ys => ys.TotalImages),
             TotalVideos = currentSession.YlylSubmissions.Sum(ys => ys.TotalVideos)
+        };
+    }
+
+    public YlylSessionTotalSubmissions GetUsersCurrentSessionSubmissions(ulong channelId)
+    {
+        var currentSessions = GetAll()
+            .Include(y => y.YlylSubmissions);
+
+        var currentSession = currentSessions
+            .SingleOrDefault(y => y.IsActive);
+
+        if (currentSession == null)
+        {
+            currentSession = currentSessions.OrderByDescending(c => c.OpenedAt).First();
+        }
+
+        var usersSubmissions = currentSession.YlylSubmissions.Where(s => s.ChannelId == channelId);
+
+        return new YlylSessionTotalSubmissions
+        {
+            TotalImages = usersSubmissions.Sum(y => y.TotalImages),
+            TotalVideos = usersSubmissions.Sum(y => y.TotalVideos)
         };
     }
 }

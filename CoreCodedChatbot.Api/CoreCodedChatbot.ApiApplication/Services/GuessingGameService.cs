@@ -131,7 +131,7 @@ public class GuessingGameService : IBaseService, IGuessingGameService
 
             using (var repo = new UsersRepository(_chatbotContextFactory, _configService, _logger))
             {
-                repo.GiveBytes(bytesModel);
+                await repo.GiveBytes(bytesModel);
             }
 
             twitchClient.SendMessage(streamerChannelName,

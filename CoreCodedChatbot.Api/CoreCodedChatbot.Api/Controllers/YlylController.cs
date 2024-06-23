@@ -54,5 +54,20 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetUserSubmissions([FromBody] YlylGetSubmissionsRequest request)
+        {
+            try
+            {
+                return Ok(await _ylylService.GetSubmissions(request));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error when getting Users submissions");
+            }
+
+            return BadRequest();
+        }
     }
 }

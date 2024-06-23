@@ -8,4 +8,5 @@ public interface IYlylService
 {
     Task<YlylSessionResponse> ChangeSession(YlylSessionRequest request);
     Task SaveSubmission(YlylSubmissionRequest request);
+    Task<YlylGetSubmissionsResponse> GetSubmissions(YlylGetSubmissionsRequest request);
 }
