@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Models.Intermediates;
@@ -74,7 +75,7 @@ public class YlylSessionsRepository : BaseRepository<YlylSession>
         };
     }
 
-    public YlylSessionTotalSubmissions GetUsersCurrentSessionSubmissions(ulong channelId)
+    public YlylSessionTotalSubmissions GetUsersCurrentSessionSubmissions(ulong userId)
     {
         var currentSessions = GetAll()
             .Include(y => y.YlylSubmissions);
@@ -87,7 +88,7 @@ public class YlylSessionsRepository : BaseRepository<YlylSession>
             currentSession = currentSessions.OrderByDescending(c => c.OpenedAt).First();
         }
 
-        var usersSubmissions = currentSession.YlylSubmissions.Where(s => s.ChannelId == channelId);
+        var usersSubmissions = currentSession.YlylSubmissions.Where(s => s.UserId == userId);
 
         return new YlylSessionTotalSubmissions
         {

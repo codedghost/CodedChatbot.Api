@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CoreCodedChatbot.ApiApplication.Repositories.Abstractions;
 using CoreCodedChatbot.Database.Context.Interfaces;
 using CoreCodedChatbot.Database.Context.Models;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace CoreCodedChatbot.ApiApplication.Repositories.Ylyl;
 
@@ -30,5 +33,18 @@ public class YlylSubmissionsRepository : BaseRepository<YlylSubmission>
         };
 
         await CreateAndSaveAsync(newSubmission);
+    }
+
+    public async Task UpdateUsers(List<KeyValuePair<ulong, ulong>> submissionsToUpdate)
+    {
+        foreach (var submissionToUpdate in submissionsToUpdate)
+        {
+            var submissions = GetAll()
+                .Where(s => s.ChannelId == submissionToUpdate.Key);
+
+            submissions.ForEach((s) => s.UserId = submissionToUpdate.Value);
+
+            await Context.SaveChangesAsync();
+        }
     }
 }

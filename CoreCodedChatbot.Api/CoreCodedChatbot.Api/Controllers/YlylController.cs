@@ -69,5 +69,19 @@ namespace CoreCodedChatbot.Api.Controllers
 
             return BadRequest();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUsers([FromBody] YlylUpdateUsersRequest request)
+        {
+            try
+            {
+                await _ylylService.UpdateUsers(request);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

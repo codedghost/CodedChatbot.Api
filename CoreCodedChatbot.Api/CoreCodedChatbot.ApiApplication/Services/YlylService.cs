@@ -65,13 +65,21 @@ namespace CoreCodedChatbot.ApiApplication.Services
         {
             using (var repo = new YlylSessionsRepository(_chatbotContextFactory))
             {
-                var submissions = repo.GetUsersCurrentSessionSubmissions(request.ChannelId);
+                var submissions = repo.GetUsersCurrentSessionSubmissions(request.UserId);
 
                 return new YlylGetSubmissionsResponse
                 {
                     TotalImages = submissions.TotalImages,
                     TotalVideos = submissions.TotalVideos
                 };
+            }
+        }
+
+        public async Task UpdateUsers(YlylUpdateUsersRequest request)
+        {
+            using (var repo = new YlylSubmissionsRepository(_chatbotContextFactory))
+            {
+                await repo.UpdateUsers(request.ChannelsToUpdate);
             }
         }
 
